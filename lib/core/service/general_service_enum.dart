@@ -43,7 +43,7 @@ extension GeneralPathEnumExt on GeneralPathEnum {
   String get rawValue {
     switch (this) {
       case GeneralPathEnum.login:
-        return '162310e6dff756593003dd357d6d5623';
+        return 'login';
       /* 
       case GeneralPathEnum.stationRegistration:
         return '38e1ba807fbb7bff18a49699a4147521';

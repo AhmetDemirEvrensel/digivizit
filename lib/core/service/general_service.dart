@@ -1,46 +1,29 @@
-import 'dart:convert';
-
-import 'package:crypto/crypto.dart';
+import 'package:digivizit/core/models/auth/login_response.dart';
 import 'package:dio/dio.dart';
 import 'package:digivizit/core/common/result.dart';
 import 'package:digivizit/core/providers/async_process_manager.dart';
 import 'package:digivizit/core/service/base_repository.dart';
 import 'package:digivizit/core/service/general_service_enum.dart';
 
-
 class GeneralService implements BaseRepository {
-  /* final Dio dio; */
+  final Dio dio;
 
- /*  GeneralService({required this.dio});
+  GeneralService({required this.dio});
   @override
   Future<Result<LoginResponse>> login({
-    required String userName,
+    required String email,
     required String password,
     bool showLoader = true,
   }) async {
     try {
-      var bytes = utf8.encode(password);
-      var cryptoPassword = md5.convert(bytes).toString();
-
       Result<LoginResponse>? result;
-      /* final data = LoginRequest(
-        userName: userName,
-        password: cryptoPassword,
-        deviceId: AppSettings.instance.deviceInfo.phoneId!,
-        brand: AppSettings.instance.deviceInfo.brand!,
-        manufacturer: AppSettings.instance.deviceInfo.manufacturer!,
-        model: AppSettings.instance.deviceInfo.model!,
-        os: AppSettings.instance.deviceInfo.os.toString(),
-        petechVersion: AppSettings.instance.appVersion,
-        sdk: AppSettings.instance.deviceInfo.sdk!,
-        version: AppSettings.instance.deviceInfo.version!,
-      ).toJson(); */
+      final data = {"email": email, "password": password};
 
       await AsyncProcessController.init.run(() async {
         try {
           final response = await dio.post(
             GeneralPathEnum.login.path,
-            /* data: data, */
+            data: data,
           );
           if (response.data is! Map<String, dynamic>) {
             result = Result.failure(
@@ -52,16 +35,6 @@ class GeneralService implements BaseRepository {
             return;
           }
           final model = LoginResponse.fromJson(response.data);
-          if (model.error == true) {
-            result = Result.failure(
-              Failure(
-                message: model.message?.toString() ?? 'Giriş Yapılamadı.',
-                code: model.code?.toString(),
-                raw: model,
-              ),
-            );
-            return;
-          }
           result = Result.success(model);
         } on DioException catch (e) {
           final failure = failureFromDio(e);
@@ -73,8 +46,7 @@ class GeneralService implements BaseRepository {
           }
           result = Result.failure(
             Failure(
-              message: errorModel?.message?.toString() ?? failure.message,
-              code: errorModel?.code?.toString() ?? failure.code,
+              message: errorModel?.message ?? failure.message,
               raw: errorModel ?? failure.raw,
             ),
           );
@@ -87,7 +59,7 @@ class GeneralService implements BaseRepository {
     } catch (e) {
       return Result.failure(Failure(message: 'Bilinmeyen hata: $e'));
     }
-  } */
+  }
 
   /* 
 

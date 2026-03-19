@@ -1,22 +1,17 @@
-import 'dart:io';
-
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/enums/app_languages.dart';
+import 'package:digivizit/core/models/auth/login_response.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
-import 'package:digivizit/core/navigation/navigation_extension.dart';
 import 'package:digivizit/core/providers/async_process_manager.dart';
 import 'package:digivizit/core/service/dio_client.dart';
 import 'package:digivizit/core/service/general_service.dart';
 import 'package:digivizit/core/utils/app_sizer.dart';
 import 'package:digivizit/core/utils/shared_preferences_manager.dart';
-import 'package:digivizit/shared/components/bottom_sheet/custom_bottom_sheet_view.dart';
 
 class AppSettings extends GetxController {
   static AppSettings get instance => Get.find<AppSettings>();
@@ -73,7 +68,7 @@ class AppSettings extends GetxController {
       defaultTextColor: AppColors.baseBlack,
     );
     await initSharedReferences();
-    /* _generalService = GeneralService(dio: DioClient.instance.generalAPI); */
+    _generalService = GeneralService(dio: DioClient.instance.generalAPI);
   }
 
   Future<void> loggerInit() async {
@@ -101,6 +96,25 @@ class AppSettings extends GetxController {
 
     userName = await _sharedPreferencesManager.getLocalDb<String>(
       SharedKeys.userName,
+    );
+    apiToken = await _sharedPreferencesManager.getLocalDb<String>(
+      SharedKeys.apiToken,
+    );
+  }
+
+  Future<void> setUserFromLogin(LoginResponse loginResponse) async {
+    final loginData = loginResponse.data;
+
+    userName = loginData.user.name;
+    apiToken = loginData.token;
+
+    await _sharedPreferencesManager.saveLocalDb(
+      SharedKeys.userName,
+      loginData.user.name,
+    );
+    await _sharedPreferencesManager.saveLocalDb(
+      SharedKeys.apiToken,
+      loginData.token,
     );
   }
 }

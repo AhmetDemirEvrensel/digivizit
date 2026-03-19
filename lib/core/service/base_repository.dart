@@ -1,7 +1,12 @@
 import 'package:digivizit/core/common/result.dart';
+import 'package:digivizit/core/models/auth/login_response.dart';
+
 abstract interface class BaseRepository {
   // ----------- Auth & User ----------- //
-  /* Future<Result<LoginResponse>> login({required String userName, required String password}); */
+  Future<Result<LoginResponse>> login({
+    required String email,
+    required String password,
+  });
 
   /* // ----------- Station Registration ----------- //
   Future<Result<StationRegistrationResponse>> stationRegistration({

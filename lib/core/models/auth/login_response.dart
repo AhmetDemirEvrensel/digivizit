@@ -13,7 +13,7 @@ LoginResponse loginResponseFromJson(String str) => LoginResponse.fromJson(json.d
 String loginResponseToJson(LoginResponse data) => json.encode(data.toJson());
 
 @freezed
-class LoginResponse with _$LoginResponse {
+abstract class LoginResponse with _$LoginResponse {
     const factory LoginResponse({
         @JsonKey(name: "success")
         required bool success,
@@ -27,7 +27,7 @@ class LoginResponse with _$LoginResponse {
 }
 
 @freezed
-class Data with _$Data {
+abstract class Data with _$Data {
     const factory Data({
         @JsonKey(name: "user")
         required User user,
@@ -39,7 +39,7 @@ class Data with _$Data {
 }
 
 @freezed
-class User with _$User {
+abstract class User with _$User {
     const factory User({
         @JsonKey(name: "id")
         required int id,

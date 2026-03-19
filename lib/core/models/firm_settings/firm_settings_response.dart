@@ -13,7 +13,7 @@ FirmSettingsResponse firmSettingsResponseFromJson(String str) => FirmSettingsRes
 String firmSettingsResponseToJson(FirmSettingsResponse data) => json.encode(data.toJson());
 
 @freezed
-class FirmSettingsResponse with _$FirmSettingsResponse {
+abstract class FirmSettingsResponse with _$FirmSettingsResponse {
     const factory FirmSettingsResponse({
         @JsonKey(name: "success")
         required bool success,
@@ -27,7 +27,7 @@ class FirmSettingsResponse with _$FirmSettingsResponse {
 }
 
 @freezed
-class Datum with _$Datum {
+abstract class Datum with _$Datum {
     const factory Datum({
         @JsonKey(name: "id")
         required int id,
@@ -63,7 +63,7 @@ class Datum with _$Datum {
 }
 
 @freezed
-class Catalog with _$Catalog {
+abstract class Catalog with _$Catalog {
     const factory Catalog({
         @JsonKey(name: "id")
         required int id,
@@ -111,7 +111,7 @@ class Catalog with _$Catalog {
 }
 
 @freezed
-class Logo with _$Logo {
+abstract class Logo with _$Logo {
     const factory Logo({
         @JsonKey(name: "id")
         required int id,
@@ -165,7 +165,7 @@ class Logo with _$Logo {
 }
 
 @freezed
-class GeneratedConversionsClass with _$GeneratedConversionsClass {
+abstract class GeneratedConversionsClass with _$GeneratedConversionsClass {
     const factory GeneratedConversionsClass({
         @JsonKey(name: "thumb")
         required bool thumb,
@@ -177,7 +177,7 @@ class GeneratedConversionsClass with _$GeneratedConversionsClass {
 }
 
 @freezed
-class Media with _$Media {
+abstract class Media with _$Media {
     const factory Media({
         @JsonKey(name: "id")
         required int id,

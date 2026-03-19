@@ -13,7 +13,7 @@ AppointmentRequest appointmentRequestFromJson(String str) => AppointmentRequest.
 String appointmentRequestToJson(AppointmentRequest data) => json.encode(data.toJson());
 
 @freezed
-class AppointmentRequest with _$AppointmentRequest {
+abstract class AppointmentRequest with _$AppointmentRequest {
     const factory AppointmentRequest({
         @JsonKey(name: "employee_id")
         required int employeeId,

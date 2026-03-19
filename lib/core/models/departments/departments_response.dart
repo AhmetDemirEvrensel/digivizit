@@ -13,7 +13,7 @@ DepartmentsResponse departmentsResponseFromJson(String str) => DepartmentsRespon
 String departmentsResponseToJson(DepartmentsResponse data) => json.encode(data.toJson());
 
 @freezed
-class DepartmentsResponse with _$DepartmentsResponse {
+abstract class DepartmentsResponse with _$DepartmentsResponse {
     const factory DepartmentsResponse({
         @JsonKey(name: "success")
         required bool success,
@@ -27,7 +27,7 @@ class DepartmentsResponse with _$DepartmentsResponse {
 }
 
 @freezed
-class Datum with _$Datum {
+abstract class Datum with _$Datum {
     const factory Datum({
         @JsonKey(name: "id")
         required int id,
@@ -51,7 +51,7 @@ class Datum with _$Datum {
 }
 
 @freezed
-class BannerBackground with _$BannerBackground {
+abstract class BannerBackground with _$BannerBackground {
     const factory BannerBackground({
         @JsonKey(name: "id")
         required int id,
@@ -99,7 +99,7 @@ class BannerBackground with _$BannerBackground {
 }
 
 @freezed
-class GeneratedConversions with _$GeneratedConversions {
+abstract class GeneratedConversions with _$GeneratedConversions {
     const factory GeneratedConversions({
         @JsonKey(name: "thumb")
         required bool thumb,

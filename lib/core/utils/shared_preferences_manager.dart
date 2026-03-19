@@ -1,6 +1,14 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum SharedKeys { userName, password, onboardingCompleted, unitPriceCache, contactNotes }
+enum SharedKeys {
+  userName,
+  password,
+  onboardingCompleted,
+  unitPriceCache,
+  contactNotes,
+  email,
+  apiToken,
+}
 
 class SharedPreferencesManager {
   SharedPreferences? preferences;

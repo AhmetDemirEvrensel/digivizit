@@ -13,7 +13,7 @@ AppointmentResponse appointmentResponseFromJson(String str) => AppointmentRespon
 String appointmentResponseToJson(AppointmentResponse data) => json.encode(data.toJson());
 
 @freezed
-class AppointmentResponse with _$AppointmentResponse {
+abstract class AppointmentResponse with _$AppointmentResponse {
     const factory AppointmentResponse({
         @JsonKey(name: "success")
         required bool success,
@@ -27,7 +27,7 @@ class AppointmentResponse with _$AppointmentResponse {
 }
 
 @freezed
-class Datum with _$Datum {
+abstract class Datum with _$Datum {
     const factory Datum({
         @JsonKey(name: "id")
         required int id,
@@ -59,7 +59,7 @@ class Datum with _$Datum {
 }
 
 @freezed
-class Employee with _$Employee {
+abstract class Employee with _$Employee {
     const factory Employee({
         @JsonKey(name: "id")
         required int id,
@@ -123,7 +123,7 @@ class Employee with _$Employee {
 }
 
 @freezed
-class Photo with _$Photo {
+abstract class Photo with _$Photo {
     const factory Photo({
         @JsonKey(name: "id")
         required int id,
@@ -177,7 +177,7 @@ class Photo with _$Photo {
 }
 
 @freezed
-class GeneratedConversions with _$GeneratedConversions {
+abstract class GeneratedConversions with _$GeneratedConversions {
     const factory GeneratedConversions({
         @JsonKey(name: "thumb")
         required bool thumb,

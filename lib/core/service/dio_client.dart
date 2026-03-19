@@ -26,7 +26,7 @@ class DioClient {
 
   // Base API
   Dio get generalAPI {
-    _general = _build(AppConfig.isTestMode ? AppConfig.testUrl : AppConfig.baseUrl);
+    _general = _build(AppConfig.baseUrl);
     return _general!;
   }
 }

@@ -13,7 +13,7 @@ EmployeesRequest employeesRequestFromJson(String str) => EmployeesRequest.fromJs
 String employeesRequestToJson(EmployeesRequest data) => json.encode(data.toJson());
 
 @freezed
-class EmployeesRequest with _$EmployeesRequest {
+abstract class EmployeesRequest with _$EmployeesRequest {
     const factory EmployeesRequest({
         @JsonKey(name: "name")
         required String name,

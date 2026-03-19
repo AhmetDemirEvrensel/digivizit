@@ -13,7 +13,7 @@ EmployeesResponse employeesResponseFromJson(String str) => EmployeesResponse.fro
 String employeesResponseToJson(EmployeesResponse data) => json.encode(data.toJson());
 
 @freezed
-class EmployeesResponse with _$EmployeesResponse {
+abstract class EmployeesResponse with _$EmployeesResponse {
     const factory EmployeesResponse({
         @JsonKey(name: "success")
         required bool success,
@@ -27,7 +27,7 @@ class EmployeesResponse with _$EmployeesResponse {
 }
 
 @freezed
-class Datum with _$Datum {
+abstract class Datum with _$Datum {
     const factory Datum({
         @JsonKey(name: "id")
         required int id,
@@ -95,7 +95,7 @@ class Datum with _$Datum {
 }
 
 @freezed
-class Department with _$Department {
+abstract class Department with _$Department {
     const factory Department({
         @JsonKey(name: "id")
         required int id,
@@ -119,7 +119,7 @@ class Department with _$Department {
 }
 
 @freezed
-class QrPhoto with _$QrPhoto {
+abstract class QrPhoto with _$QrPhoto {
     const factory QrPhoto({
         @JsonKey(name: "id")
         required int id,
@@ -173,7 +173,7 @@ class QrPhoto with _$QrPhoto {
 }
 
 @freezed
-class GeneratedConversionsClass with _$GeneratedConversionsClass {
+abstract class GeneratedConversionsClass with _$GeneratedConversionsClass {
     const factory GeneratedConversionsClass({
         @JsonKey(name: "thumb")
         required bool thumb,
@@ -185,7 +185,7 @@ class GeneratedConversionsClass with _$GeneratedConversionsClass {
 }
 
 @freezed
-class FirmName with _$FirmName {
+abstract class FirmName with _$FirmName {
     const factory FirmName({
         @JsonKey(name: "id")
         required int id,
@@ -221,7 +221,7 @@ class FirmName with _$FirmName {
 }
 
 @freezed
-class Catalog with _$Catalog {
+abstract class Catalog with _$Catalog {
     const factory Catalog({
         @JsonKey(name: "id")
         required int id,
@@ -269,7 +269,7 @@ class Catalog with _$Catalog {
 }
 
 @freezed
-class Media with _$Media {
+abstract class Media with _$Media {
     const factory Media({
         @JsonKey(name: "id")
         required int id,
@@ -323,7 +323,7 @@ class Media with _$Media {
 }
 
 @freezed
-class OfficeAddress with _$OfficeAddress {
+abstract class OfficeAddress with _$OfficeAddress {
     const factory OfficeAddress({
         @JsonKey(name: "id")
         required int id,

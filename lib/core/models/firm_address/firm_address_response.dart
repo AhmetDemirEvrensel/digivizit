@@ -13,7 +13,7 @@ FirmAddressResponse firmAddressResponseFromJson(String str) => FirmAddressRespon
 String firmAddressResponseToJson(FirmAddressResponse data) => json.encode(data.toJson());
 
 @freezed
-class FirmAddressResponse with _$FirmAddressResponse {
+abstract class FirmAddressResponse with _$FirmAddressResponse {
     const factory FirmAddressResponse({
         @JsonKey(name: "success")
         required bool success,
@@ -27,7 +27,7 @@ class FirmAddressResponse with _$FirmAddressResponse {
 }
 
 @freezed
-class Datum with _$Datum {
+abstract class Datum with _$Datum {
     const factory Datum({
         @JsonKey(name: "id")
         required int id,
