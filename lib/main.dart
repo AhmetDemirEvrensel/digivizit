@@ -1,9 +1,6 @@
 import 'package:digivizit/app.dart';
-import 'package:digivizit/core/constants/app_config.dart';
-import 'package:digivizit/core/enums/app_languages.dart';
 import 'package:digivizit/core/navigation/navigation_manager.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

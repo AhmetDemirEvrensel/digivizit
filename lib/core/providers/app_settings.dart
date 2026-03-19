@@ -32,10 +32,13 @@ class AppSettings extends GetxController {
   AppLanguage language = AppLanguage.en;
   String? apiToken;
   String? userName;
+  String? userEmail;
+  bool rememberMe = false;
 
   // late PackageInfo _info;
   late SharedPreferencesManager _sharedPreferencesManager;
   late Logger logger;
+  bool _isHandlingUnauthorized = false;
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
   GeneralService get generalService => _generalService;
@@ -43,6 +46,8 @@ class AppSettings extends GetxController {
   BuildContext? get context => navigatorKey.currentContext;
   SharedPreferencesManager get sharedPreferencesManager =>
       _sharedPreferencesManager;
+  bool get hasActiveToken => apiToken?.trim().isNotEmpty ?? false;
+  bool get hasPersistedSession => rememberMe && hasActiveToken;
 
   /// PopUntil ile veri aktarımı için geçici depolama
   Object? popUntilData;
@@ -94,27 +99,106 @@ class AppSettings extends GetxController {
     _sharedPreferencesManager = SharedPreferencesManager();
     await _sharedPreferencesManager.init();
 
+    rememberMe =
+        await _sharedPreferencesManager.getLocalDb<bool>(SharedKeys.rememberMe) ??
+        false;
     userName = await _sharedPreferencesManager.getLocalDb<String>(
       SharedKeys.userName,
+    );
+    userEmail = await _sharedPreferencesManager.getLocalDb<String>(
+      SharedKeys.email,
     );
     apiToken = await _sharedPreferencesManager.getLocalDb<String>(
       SharedKeys.apiToken,
     );
+
+    await _cleanupStaleAuthState();
   }
 
-  Future<void> setUserFromLogin(LoginResponse loginResponse) async {
+  Future<void> _cleanupStaleAuthState() async {
+    if (!hasActiveToken) {
+      apiToken = null;
+      userName = null;
+      await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.apiToken);
+      await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.userName);
+    }
+
+    if (!rememberMe) {
+      userEmail = null;
+      await _sharedPreferencesManager.saveLocalDb(SharedKeys.rememberMe, false);
+      await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.email);
+      await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.password);
+    }
+  }
+
+  Future<void> setUserFromLogin(
+    LoginResponse loginResponse, {
+    required String email,
+    required String password,
+    required bool rememberUser,
+  }) async {
     final loginData = loginResponse.data;
 
     userName = loginData.user.name;
+    userEmail = email;
     apiToken = loginData.token;
+    rememberMe = rememberUser;
 
     await _sharedPreferencesManager.saveLocalDb(
-      SharedKeys.userName,
-      loginData.user.name,
+      SharedKeys.rememberMe,
+      rememberUser,
     );
-    await _sharedPreferencesManager.saveLocalDb(
-      SharedKeys.apiToken,
-      loginData.token,
+
+    if (rememberUser) {
+      await _sharedPreferencesManager.saveLocalDb(
+        SharedKeys.userName,
+        loginData.user.name,
+      );
+      await _sharedPreferencesManager.saveLocalDb(SharedKeys.email, email);
+      await _sharedPreferencesManager.saveLocalDb(SharedKeys.password, password);
+      await _sharedPreferencesManager.saveLocalDb(
+        SharedKeys.apiToken,
+        loginData.token,
+      );
+      return;
+    }
+
+    await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.userName);
+    await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.email);
+    await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.password);
+    await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.apiToken);
+  }
+
+  Future<void> clearSession() async {
+    apiToken = null;
+    userName = null;
+    userEmail = null;
+    rememberMe = false;
+
+    await _sharedPreferencesManager.saveLocalDb(SharedKeys.rememberMe, false);
+    await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.userName);
+    await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.email);
+    await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.password);
+    await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.apiToken);
+  }
+
+  Future<void> logout() async {
+    await clearSession();
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      NavigationEnums.login.rawValue,
+      (route) => false,
     );
+  }
+
+  Future<void> handleUnauthorizedSession() async {
+    if (_isHandlingUnauthorized) return;
+
+    _isHandlingUnauthorized = true;
+    await clearSession();
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      NavigationEnums.login.rawValue,
+      (route) => false,
+    );
+    _isHandlingUnauthorized = false;
   }
 }

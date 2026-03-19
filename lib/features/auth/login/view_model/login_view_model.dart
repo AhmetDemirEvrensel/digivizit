@@ -26,15 +26,18 @@ abstract class LoginViewModelBase with Store {
 
   @action
   Future<void> loadSavedCredentials() async {
+    rememberMe = AppSettings.instance.rememberMe;
     final savedEmail = await AppSettings.instance.sharedPreferencesManager
         .getLocalDb<String>(SharedKeys.email);
     final savedPassword = await AppSettings.instance.sharedPreferencesManager
         .getLocalDb<String>(SharedKeys.password);
 
-    if (savedEmail!.isNotNullOrNoEmpty && savedPassword.isNotNullOrNoEmpty) {
+    if (savedEmail.isNotNullOrNoEmpty) {
       emailController.value = savedEmail;
+    }
+
+    if (savedPassword.isNotNullOrNoEmpty) {
       passwordController.value = savedPassword;
-      rememberMe = true;
     }
   }
 
@@ -46,23 +49,20 @@ abstract class LoginViewModelBase with Store {
   @action
   Future<void> login() async {
     if (passwordController.valid && emailController.valid) {
+      final email = (emailController.value as String? ?? '').trim();
+      final password = (passwordController.value as String? ?? '');
       final result = await AppSettings.instance.generalService.login(
-        email: emailController.value,
-        password: passwordController.value,
+        email: email,
+        password: password,
       );
       if (result.isSuccess) {
-        await AppSettings.instance.setUserFromLogin(result.data!);
+        await AppSettings.instance.setUserFromLogin(
+          result.data!,
+          email: email,
+          password: password,
+          rememberUser: rememberMe,
+        );
         NavigationEnums.mainNavigation.navigateToPageReplacement();
-        if (rememberMe) {
-          await AppSettings.instance.sharedPreferencesManager.saveLocalDb(
-            SharedKeys.email,
-            emailController.value,
-          );
-          await AppSettings.instance.sharedPreferencesManager.saveLocalDb(
-            SharedKeys.password,
-            passwordController.value,
-          );
-        }
       } else {
         CustomBottomSheet.errorView(text: result.error!.message);
       }

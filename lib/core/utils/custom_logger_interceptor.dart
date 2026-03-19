@@ -13,6 +13,15 @@ class CustomLoggerInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    final token = AppSettings.instance.apiToken?.trim();
+    final hasAuthHeader = options.headers['Authorization'] != null;
+
+    if ((token?.isNotEmpty ?? false) &&
+        !hasAuthHeader &&
+        !_isLoginRequest(options.path)) {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
+
     if (!kReleaseMode) {
       final serviceName = options.path.split("/").last.toUpperCase();
       final buffer = StringBuffer();
@@ -80,7 +89,23 @@ class CustomLoggerInterceptor extends Interceptor {
 
       AppSettings.instance.logError(buffer.toString());
     }
+
+    final statusCode = err.response?.statusCode;
+    final shouldResetSession =
+        statusCode == 401 &&
+        !_isLoginRequest(err.requestOptions.path) &&
+        AppSettings.instance.hasActiveToken;
+
+    if (shouldResetSession) {
+      AppSettings.instance.handleUnauthorizedSession();
+    }
+
     handler.next(err);
+  }
+
+  bool _isLoginRequest(String path) {
+    final normalizedPath = path.toLowerCase().split('?').first;
+    return normalizedPath == 'login' || normalizedPath.endsWith('/login');
   }
 
   String prettyJson(dynamic json, {int indent = 2, int limit = 1600, bool limitLength = false}) {

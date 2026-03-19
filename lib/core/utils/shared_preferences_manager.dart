@@ -8,6 +8,7 @@ enum SharedKeys {
   contactNotes,
   email,
   apiToken,
+  rememberMe,
 }
 
 class SharedPreferencesManager {

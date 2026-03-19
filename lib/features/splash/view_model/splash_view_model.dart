@@ -1,5 +1,6 @@
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/navigation/navigation_extension.dart';
+import 'package:digivizit/core/providers/app_settings.dart';
 
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
@@ -49,7 +50,10 @@ abstract class SplashViewModelBase with Store {
     if (!isMounted) return;
 
     Future.delayed(navigationDelay, () async {
-      NavigationEnums.login.navigateToPageReplacement();
+      final targetPage = AppSettings.instance.hasPersistedSession
+          ? NavigationEnums.mainNavigation
+          : NavigationEnums.login;
+      await targetPage.navigateToPageReplacement();
     });
   }
 

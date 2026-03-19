@@ -1,7 +1,5 @@
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
-import 'package:digivizit/core/navigation/navigation_enums.dart';
-import 'package:digivizit/core/navigation/navigation_extension.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/auth/login/view_model/login_view_model.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
@@ -32,6 +30,7 @@ class _LoginViewState extends State<LoginView>
   @override
   void initState() {
     super.initState();
+    model.loadSavedCredentials();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -74,70 +73,7 @@ class _LoginViewState extends State<LoginView>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(
-                        child: Column(
-                          children: [
-                            FigmaContainer(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    AppColors.baseWhite.withValues(alpha: 0.25),
-                                    AppColors.baseWhite.withValues(alpha: 0.10),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(28),
-                                border: Border.all(
-                                  color: AppColors.baseWhite.withValues(
-                                    alpha: 0.3,
-                                  ),
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.baseBlack.withValues(
-                                      alpha: 0.1,
-                                    ),
-                                    blurRadius: 20,
-                                    offset: const Offset(0, 10),
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.account_circle_outlined,
-                                size: 50,
-                                color: AppColors.baseWhite,
-                              ),
-                            ),
-                            FigmaBox(height: 16),
-                            // Başlık
-                            Text(
-                              "Hoş Geldiniz",
-                              style: AppFonts.baseBold.copyWith(
-                                fontSize: 36,
-                                color: AppColors.baseWhite,
-                                height: 1.2,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                            FigmaBox(height: 16),
-                            // Alt Başlık
-                            Text(
-                              "Hesabınıza giriş yapın",
-                              style: AppFonts.baseRegular.copyWith(
-                                fontSize: 16,
-                                color: AppColors.baseWhite.withValues(
-                                  alpha: 0.85,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
+                      buildAuthHeader(),
                       FigmaBox(height: 30),
                       CustomTextField.regular(
                         formControlName: 'email',
@@ -159,82 +95,10 @@ class _LoginViewState extends State<LoginView>
                       ),
                       FigmaBox(height: 32),
                       // Divider veya Alternatif Giriş
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              color: AppColors.baseWhite.withValues(alpha: 0.3),
-                              thickness: 1,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              "veya",
-                              style: AppFonts.baseRegular.copyWith(
-                                fontSize: 14,
-                                color: AppColors.baseWhite.withValues(
-                                  alpha: 0.7,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: AppColors.baseWhite.withValues(alpha: 0.3),
-                              thickness: 1,
-                            ),
-                          ),
-                        ],
-                      ),
+                      buildDivider(),
                       FigmaBox(height: 32),
-
                       // Kayıt Ol Bölümü
-                      Center(
-                        child: FigmaContainer(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 16,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.baseWhite.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: AppColors.baseWhite.withValues(alpha: 0.2),
-                              width: 1,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "Hesabınız yok mu? ",
-                                style: AppFonts.baseRegular.copyWith(
-                                  fontSize: 15,
-                                  color: AppColors.baseWhite.withValues(
-                                    alpha: 0.85,
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  // Kayıt sayfasına yönlendir
-                                },
-                                child: Text(
-                                  "Kayıt Ol",
-                                  style: AppFonts.baseBold.copyWith(
-                                    fontSize: 15,
-                                    color: AppColors.baseWhite,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: AppColors.baseWhite,
-                                    decorationThickness: 2,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      buildRegisterSection(),
                       FigmaBox(height: 40),
                     ],
                   ),
@@ -244,6 +108,138 @@ class _LoginViewState extends State<LoginView>
           ),
         ),
       ],
+    );
+  }
+
+  Center buildRegisterSection() {
+    return Center(
+      child: FigmaContainer(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        decoration: BoxDecoration(
+          color: AppColors.baseWhite.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColors.baseWhite.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Hesabınız yok mu? ",
+              style: AppFonts.baseRegular.copyWith(
+                fontSize: 15,
+                color: AppColors.baseWhite.withValues(alpha: 0.85),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                // Kayıt sayfasına yönlendir
+              },
+              child: Text(
+                "Kayıt Ol",
+                style: AppFonts.baseBold.copyWith(
+                  fontSize: 15,
+                  color: AppColors.baseWhite,
+                  decoration: TextDecoration.underline,
+                  decorationColor: AppColors.baseWhite,
+                  decorationThickness: 2,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Row buildDivider() {
+    return Row(
+      children: [
+        Expanded(
+          child: Divider(
+            color: AppColors.baseWhite.withValues(alpha: 0.3),
+            thickness: 1,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "veya",
+            style: AppFonts.baseRegular.copyWith(
+              fontSize: 14,
+              color: AppColors.baseWhite.withValues(alpha: 0.7),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Divider(
+            color: AppColors.baseWhite.withValues(alpha: 0.3),
+            thickness: 1,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Center buildAuthHeader() {
+    return Center(
+      child: Column(
+        children: [
+          FigmaContainer(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.baseWhite.withValues(alpha: 0.25),
+                  AppColors.baseWhite.withValues(alpha: 0.10),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(
+                color: AppColors.baseWhite.withValues(alpha: 0.3),
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.baseBlack.withValues(alpha: 0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.account_circle_outlined,
+              size: 50,
+              color: AppColors.baseWhite,
+            ),
+          ),
+          FigmaBox(height: 16),
+          // Başlık
+          Text(
+            "Hoş Geldiniz",
+            style: AppFonts.baseBold.copyWith(
+              fontSize: 36,
+              color: AppColors.baseWhite,
+              height: 1.2,
+              letterSpacing: -0.5,
+            ),
+          ),
+          FigmaBox(height: 16),
+          // Alt Başlık
+          Text(
+            "Hesabınıza giriş yapın",
+            style: AppFonts.baseRegular.copyWith(
+              fontSize: 16,
+              color: AppColors.baseWhite.withValues(alpha: 0.85),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
+import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/meeting_requests/view/meeting_requests_view.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
 import 'package:digivizit/shared/components/containers/figma_box.dart';
@@ -490,6 +491,14 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
             // Rehbere ekle
           },
         ),
+        FigmaBox(height: 20),
+        _buildActionButton(
+          icon: Icons.logout_rounded,
+          text: "Oturumu Kapat",
+          backgroundColor: Color(0xFFDC2626),
+          textColor: AppColors.baseWhite,
+          onTap: _confirmLogout,
+        ),
         FigmaBox(height: 80),
       ],
     );
@@ -527,6 +536,34 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Future<void> _confirmLogout() async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Oturumu kapat'),
+          content: const Text(
+            'Bu cihazdaki aktif oturum kapatılacak. Devam etmek istiyor musunuz?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Vazgeç'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Çıkış Yap'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldLogout == true) {
+      await AppSettings.instance.logout();
     }
   }
 }
