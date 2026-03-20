@@ -1,3 +1,4 @@
+import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/features/home/view/contacts_view.dart';
 import 'package:digivizit/features/home/view/home_view.dart';
 import 'package:digivizit/features/home/view/qr_view.dart';
@@ -5,7 +6,8 @@ import 'package:digivizit/shared/components/navigation/custom_bottom_nav_bar.dar
 import 'package:flutter/material.dart';
 
 class MainNavigationView extends StatefulWidget {
-  const MainNavigationView({super.key});
+  final GetPersonelInfoResponse personelInfo;
+  const MainNavigationView({super.key, required this.personelInfo});
 
   @override
   State<MainNavigationView> createState() => _MainNavigationViewState();
@@ -14,10 +16,10 @@ class MainNavigationView extends StatefulWidget {
 class _MainNavigationViewState extends State<MainNavigationView> {
   int _currentIndex = 1; // Başlangıçta Kartvizit sayfası
 
-  final List<Widget> _pages = [
+  List<Widget> get _pages => [
     // Kişiler Sayfası
     // Kartvizit Sayfası (Ana Sayfa)
-    const HomeView(),
+    HomeView(personelInfo: widget.personelInfo),
     const QrView(),
     const ContactsView(),
     /*

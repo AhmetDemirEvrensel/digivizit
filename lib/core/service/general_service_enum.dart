@@ -2,6 +2,7 @@
 
 enum GeneralPathEnum {
   login,
+  getPersonelInfo,
   /*   
   stationRegistration,
   stationDelete,
@@ -44,6 +45,8 @@ extension GeneralPathEnumExt on GeneralPathEnum {
     switch (this) {
       case GeneralPathEnum.login:
         return 'login';
+      case GeneralPathEnum.getPersonelInfo:
+        return 'v1/employees';
       /* 
       case GeneralPathEnum.stationRegistration:
         return '38e1ba807fbb7bff18a49699a4147521';

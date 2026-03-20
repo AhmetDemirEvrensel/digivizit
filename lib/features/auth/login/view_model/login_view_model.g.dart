@@ -57,6 +57,16 @@ mixin _$LoginViewModel on LoginViewModelBase, Store {
     );
   }
 
+  late final _$loginAsyncAction = AsyncAction(
+    'LoginViewModelBase.login',
+    context: context,
+  );
+
+  @override
+  Future<void> login() {
+    return _$loginAsyncAction.run(() => super.login());
+  }
+
   late final _$LoginViewModelBaseActionController = ActionController(
     name: 'LoginViewModelBase',
     context: context,

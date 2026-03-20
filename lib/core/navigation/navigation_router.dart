@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/features/auth/login/view/login_view.dart';
 import 'package:digivizit/features/home/view/contact_detail_view.dart';
 import 'package:digivizit/features/home/view/contacts_view.dart' hide ActivityModel;
@@ -47,14 +48,14 @@ class NavigationRoute {
 
       case NavigationEnums.home:
         return _buildRoute(
-          widget: const HomeView(),
+          widget: HomeView(personelInfo: navArgs?.data as GetPersonelInfoResponse),
           screenEnum: NavigationEnums.home,
           navArgs: navArgs,
         );
 
       case NavigationEnums.mainNavigation:
         return _buildRoute(
-          widget: const MainNavigationView(),
+          widget: MainNavigationView(personelInfo: navArgs?.data as GetPersonelInfoResponse),
           screenEnum: NavigationEnums.mainNavigation,
           navArgs: navArgs,
         );

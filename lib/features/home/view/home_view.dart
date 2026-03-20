@@ -1,6 +1,7 @@
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
+import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/meeting_requests/view/meeting_requests_view.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
@@ -10,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+  final GetPersonelInfoResponse personelInfo;
+  const HomeView({super.key, required this.personelInfo});
 
   @override
   State<HomeView> createState() => _HomeViewState();

@@ -9,6 +9,7 @@ enum SharedKeys {
   email,
   apiToken,
   rememberMe,
+  personelInfo,
 }
 
 class SharedPreferencesManager {

@@ -3,6 +3,7 @@ import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/navigation/navigation_extension.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/core/utils/shared_preferences_manager.dart';
+import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/shared/components/bottom_sheet/custom_bottom_sheet_view.dart';
 import 'package:mobx/mobx.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -56,13 +57,34 @@ abstract class LoginViewModelBase with Store {
         password: password,
       );
       if (result.isSuccess) {
+        if (rememberMe) {
+          await AppSettings.instance.sharedPreferencesManager.saveLocalDb(
+            SharedKeys.userName,
+            emailController.value,
+          );
+          await AppSettings.instance.sharedPreferencesManager.saveLocalDb(
+            SharedKeys.password,
+            passwordController.value,
+          );
+        }
         await AppSettings.instance.setUserFromLogin(
           result.data!,
           email: email,
           password: password,
           rememberUser: rememberMe,
         );
-        NavigationEnums.mainNavigation.navigateToPageReplacement();
+
+        final homeViewModel = HomeViewModel();
+        await homeViewModel.getPersonelInfo();
+        final personelInfo = homeViewModel.getPersonelInfoResponse;
+        if (personelInfo != null) {
+          NavigationEnums.mainNavigation.navigateToPageReplacement();
+        } else {
+          CustomBottomSheet.errorView(
+            text:
+                'Kullanıcı bilgileri alınırken bir hata oluştu. Lütfen tekrar deneyin.',
+          );
+        }
       } else {
         CustomBottomSheet.errorView(text: result.error!.message);
       }

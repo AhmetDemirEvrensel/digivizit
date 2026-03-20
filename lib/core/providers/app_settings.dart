@@ -6,6 +6,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/enums/app_languages.dart';
 import 'package:digivizit/core/models/auth/login_response.dart';
+import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/providers/async_process_manager.dart';
 import 'package:digivizit/core/service/dio_client.dart';
@@ -33,6 +34,7 @@ class AppSettings extends GetxController {
   String? apiToken;
   String? userName;
   String? userEmail;
+  GetPersonelInfoResponse? personelInfo;
   bool rememberMe = false;
 
   // late PackageInfo _info;
@@ -100,7 +102,9 @@ class AppSettings extends GetxController {
     await _sharedPreferencesManager.init();
 
     rememberMe =
-        await _sharedPreferencesManager.getLocalDb<bool>(SharedKeys.rememberMe) ??
+        await _sharedPreferencesManager.getLocalDb<bool>(
+          SharedKeys.rememberMe,
+        ) ??
         false;
     userName = await _sharedPreferencesManager.getLocalDb<String>(
       SharedKeys.userName,
@@ -111,6 +115,24 @@ class AppSettings extends GetxController {
     apiToken = await _sharedPreferencesManager.getLocalDb<String>(
       SharedKeys.apiToken,
     );
+    final savedPersonelInfo = await _sharedPreferencesManager
+        .getLocalDb<String>(SharedKeys.personelInfo);
+
+    if (savedPersonelInfo?.trim().isNotEmpty ?? false) {
+      try {
+        personelInfo = getPersonelInfoResponseFromJson(savedPersonelInfo!);
+      } catch (error, stackTrace) {
+        logWarning(
+          'Saved personel info could not be parsed and will be cleared.',
+        );
+        logDebug(error.toString());
+        logTrace(stackTrace.toString());
+        personelInfo = null;
+        await _sharedPreferencesManager.removeItemFromLocalDb(
+          SharedKeys.personelInfo,
+        );
+      }
+    }
 
     await _cleanupStaleAuthState();
   }
@@ -119,15 +141,21 @@ class AppSettings extends GetxController {
     if (!hasActiveToken) {
       apiToken = null;
       userName = null;
-      await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.apiToken);
-      await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.userName);
+      await _sharedPreferencesManager.removeItemFromLocalDb(
+        SharedKeys.apiToken,
+      );
+      await _sharedPreferencesManager.removeItemFromLocalDb(
+        SharedKeys.userName,
+      );
     }
 
     if (!rememberMe) {
       userEmail = null;
       await _sharedPreferencesManager.saveLocalDb(SharedKeys.rememberMe, false);
       await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.email);
-      await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.password);
+      await _sharedPreferencesManager.removeItemFromLocalDb(
+        SharedKeys.password,
+      );
     }
   }
 
@@ -155,7 +183,10 @@ class AppSettings extends GetxController {
         loginData.user.name,
       );
       await _sharedPreferencesManager.saveLocalDb(SharedKeys.email, email);
-      await _sharedPreferencesManager.saveLocalDb(SharedKeys.password, password);
+      await _sharedPreferencesManager.saveLocalDb(
+        SharedKeys.password,
+        password,
+      );
       await _sharedPreferencesManager.saveLocalDb(
         SharedKeys.apiToken,
         loginData.token,
@@ -173,6 +204,7 @@ class AppSettings extends GetxController {
     apiToken = null;
     userName = null;
     userEmail = null;
+    personelInfo = null;
     rememberMe = false;
 
     await _sharedPreferencesManager.saveLocalDb(SharedKeys.rememberMe, false);
@@ -180,6 +212,17 @@ class AppSettings extends GetxController {
     await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.email);
     await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.password);
     await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.apiToken);
+    await _sharedPreferencesManager.removeItemFromLocalDb(
+      SharedKeys.personelInfo,
+    );
+  }
+
+  Future<void> setPersonelInfo(GetPersonelInfoResponse value) async {
+    personelInfo = value;
+    await _sharedPreferencesManager.saveLocalDb(
+      SharedKeys.personelInfo,
+      getPersonelInfoResponseToJson(value),
+    );
   }
 
   Future<void> logout() async {
