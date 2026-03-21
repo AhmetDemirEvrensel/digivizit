@@ -166,8 +166,9 @@ class AppSettings extends GetxController {
     required bool rememberUser,
   }) async {
     final loginData = loginResponse.data;
+    final userDisplayName = loginData.user.name.trim();
 
-    userName = loginData.user.name;
+    userName = userDisplayName;
     userEmail = email;
     apiToken = loginData.token;
     rememberMe = rememberUser;
@@ -180,7 +181,7 @@ class AppSettings extends GetxController {
     if (rememberUser) {
       await _sharedPreferencesManager.saveLocalDb(
         SharedKeys.userName,
-        loginData.user.name,
+        userDisplayName,
       );
       await _sharedPreferencesManager.saveLocalDb(SharedKeys.email, email);
       await _sharedPreferencesManager.saveLocalDb(

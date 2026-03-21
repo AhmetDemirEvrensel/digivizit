@@ -18,6 +18,9 @@ abstract class HomeViewModelBase with Store {
     final result = await AppSettings.instance.generalService.getPersonelInfo();
     if (result.isSuccess) {
       getPersonelInfoResponse = result.data;
+      if (result.data != null) {
+        await AppSettings.instance.setPersonelInfo(result.data!);
+      }
     } else {
       if (result.isFailure && result.error?.code == "6401") {
         CustomBottomSheet.errorView(

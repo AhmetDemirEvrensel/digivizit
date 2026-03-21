@@ -50,10 +50,17 @@ abstract class SplashViewModelBase with Store {
     if (!isMounted) return;
 
     Future.delayed(navigationDelay, () async {
-      final targetPage = AppSettings.instance.hasPersistedSession
+      final savedPersonelInfo = AppSettings.instance.personelInfo;
+      final hasSession =
+          AppSettings.instance.hasPersistedSession && savedPersonelInfo != null;
+
+      final targetPage = hasSession
           ? NavigationEnums.mainNavigation
           : NavigationEnums.login;
-      await targetPage.navigateToPageReplacement();
+
+      await targetPage.navigateToPageReplacement(
+        data: hasSession ? savedPersonelInfo : null,
+      );
     });
   }
 

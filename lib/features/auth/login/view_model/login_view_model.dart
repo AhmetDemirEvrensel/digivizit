@@ -57,16 +57,6 @@ abstract class LoginViewModelBase with Store {
         password: password,
       );
       if (result.isSuccess) {
-        if (rememberMe) {
-          await AppSettings.instance.sharedPreferencesManager.saveLocalDb(
-            SharedKeys.userName,
-            emailController.value,
-          );
-          await AppSettings.instance.sharedPreferencesManager.saveLocalDb(
-            SharedKeys.password,
-            passwordController.value,
-          );
-        }
         await AppSettings.instance.setUserFromLogin(
           result.data!,
           email: email,
@@ -77,8 +67,11 @@ abstract class LoginViewModelBase with Store {
         final homeViewModel = HomeViewModel();
         await homeViewModel.getPersonelInfo();
         final personelInfo = homeViewModel.getPersonelInfoResponse;
+
         if (personelInfo != null) {
-          NavigationEnums.mainNavigation.navigateToPageReplacement();
+          await NavigationEnums.mainNavigation.navigateToPageReplacement(
+            data: personelInfo,
+          );
         } else {
           CustomBottomSheet.errorView(
             text:

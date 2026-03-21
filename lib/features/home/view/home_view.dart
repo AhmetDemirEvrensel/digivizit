@@ -3,6 +3,7 @@ import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
+import 'package:digivizit/core/utils/color_extractor.dart';
 import 'package:digivizit/features/meeting_requests/view/meeting_requests_view.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
 import 'package:digivizit/shared/components/containers/figma_box.dart';
@@ -18,26 +19,80 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin {
+class _HomeViewState extends State<HomeView>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   bool _isContactInfoExpanded = false;
   bool _isCompanyConnectionsExpanded = false;
+  late final personel = widget.personelInfo.data.first;
+  Color _topColor = const Color(0xFF2D1B69);
+  Color _bottomColor = const Color(0xFF1A0F3D);
+
+  String get _profileName {
+    final loginName = AppSettings.instance.userName?.trim();
+    if (loginName != null && loginName.isNotEmpty) {
+      return loginName;
+    }
+
+    return ''; 
+  }
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.15),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
+    _loadBackgroundColors();
     _animationController.forward();
+  }
+
+  Future<void> _loadBackgroundColors() async {
+    final imageUrl = _getFirmImageUrl();
+    if (imageUrl == null) return;
+
+    final gradientColors = await ColorExtractor.getGradientColorsFromUrl(
+      imageUrl,
+      topFallback: _topColor,
+      bottomFallback: _bottomColor,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _topColor = gradientColors.topColor;
+      _bottomColor = gradientColors.bottomColor;
+    });
+  }
+
+  String? _getFirmImageUrl() {
+    final logoUrl = personel.firmName.logo.originalUrl.trim();
+    if (logoUrl.isNotEmpty) {
+      return logoUrl;
+    }
+
+    final backgroundUrl = personel.firmName.mainBackground.originalUrl.trim();
+    if (backgroundUrl.isNotEmpty) {
+      return backgroundUrl;
+    }
+
+    return null;
   }
 
   @override
@@ -49,11 +104,8 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return BaseDesign(
-      backgroundWidget: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF2D1B69), Color(0xFF1A0F3D)]),
-        ),
-      ),
+      topColor: _topColor,
+      bottomColor: _bottomColor,
       children: [
         FadeTransition(
           opacity: _fadeAnimation,
@@ -90,16 +142,26 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: AppColors.baseWhite, width: 4),
-            boxShadow: [BoxShadow(color: AppColors.baseBlack.withValues(alpha: 0.3), blurRadius: 30, offset: const Offset(0, 15))],
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.baseBlack.withValues(alpha: 0.3),
+                blurRadius: 30,
+                offset: const Offset(0, 15),
+              ),
+            ],
           ),
           child: ClipOval(
             child: Image.network(
-              'https://via.placeholder.com/160',
+              personel.photo?.originalUrl ?? '',
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   color: AppColors.neutral700,
-                  child: Icon(Icons.person, size: 80, color: AppColors.baseWhite),
+                  child: Icon(
+                    Icons.person,
+                    size: 80,
+                    color: AppColors.baseWhite,
+                  ),
                 );
               },
             ),
@@ -107,20 +169,43 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
         ),
         FigmaBox(height: 24),
         // İsim
-        Text("Balkan EVRENSEL", style: AppFonts.baseBold.copyWith(fontSize: 28, color: AppColors.baseWhite, height: 1.2, letterSpacing: 0.5)),
+        Text(
+          _profileName,
+          style: AppFonts.baseBold.copyWith(
+            fontSize: 28,
+            color: AppColors.baseWhite,
+            height: 1.2,
+            letterSpacing: 0.5,
+          ),
+        ),
         FigmaBox(height: 12),
         // Unvan ve Şirket
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Kurucu", style: AppFonts.baseSemibold.copyWith(fontSize: 16, color: AppColors.baseWhite.withValues(alpha: 0.9))),
+            Text(
+              personel.title,
+              style: AppFonts.baseSemibold.copyWith(
+                fontSize: 16,
+                color: AppColors.baseWhite.withValues(alpha: 0.9),
+              ),
+            ),
             Container(
               width: 6,
               height: 6,
               margin: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.primary500.withValues(alpha: 0.6)),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary500.withValues(alpha: 0.6),
+              ),
             ),
-            Text("ExpoNot", style: AppFonts.baseSemibold.copyWith(fontSize: 16, color: AppColors.baseWhite.withValues(alpha: 0.9))),
+            Text(
+              personel.firmName.firmName,
+              style: AppFonts.baseSemibold.copyWith(
+                fontSize: 16,
+                color: AppColors.baseWhite.withValues(alpha: 0.9),
+              ),
+            ),
           ],
         ),
       ],
@@ -176,7 +261,12 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
         decoration: BoxDecoration(
           color: Color(0xFF1E293B).withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: _isContactInfoExpanded ? Color(0xFF60A5FA).withValues(alpha: 0.3) : AppColors.baseWhite.withValues(alpha: 0.1), width: 1.5),
+          border: Border.all(
+            color: _isContactInfoExpanded
+                ? Color(0xFF60A5FA).withValues(alpha: 0.3)
+                : AppColors.baseWhite.withValues(alpha: 0.1),
+            width: 1.5,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,21 +276,36 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                 FigmaContainer(
                   width: 8,
                   height: 8,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: Color(0xFF60A5FA)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFF60A5FA),
+                  ),
                 ),
                 const SizedBox(width: 12),
-                Text("İletişim Bilgileri", style: AppFonts.baseBold.copyWith(fontSize: 18, color: AppColors.baseWhite)),
+                Text(
+                  "İletişim Bilgileri",
+                  style: AppFonts.baseBold.copyWith(
+                    fontSize: 18,
+                    color: AppColors.baseWhite,
+                  ),
+                ),
                 const Spacer(),
                 AnimatedRotation(
                   duration: const Duration(milliseconds: 300),
                   turns: _isContactInfoExpanded ? 0.5 : 0,
-                  child: Icon(Icons.keyboard_arrow_down, color: Color(0xFF60A5FA), size: 28),
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Color(0xFF60A5FA),
+                    size: 28,
+                  ),
                 ),
               ],
             ),
             AnimatedCrossFade(
               duration: const Duration(milliseconds: 300),
-              crossFadeState: _isContactInfoExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+              crossFadeState: _isContactInfoExpanded
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
               firstChild: const SizedBox(),
               secondChild: Column(
                 children: [
@@ -209,31 +314,31 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                     icon: Icons.email,
                     iconColor: Color(0xFF60A5FA),
                     label: "E-posta Adresi",
-                    value: "balkan.evrensel@exponot.com",
-                    onTap: () => _launchURL('mailto:balkan.evrensel@exponot.com'),
+                    value: personel.email,
+                    onTap: () => _launchURL('mailto:${personel.email}'),
                   ),
                   FigmaBox(height: 20),
                   _buildContactItem(
                     icon: Icons.phone,
                     iconColor: Color(0xFF10B981),
                     label: "Telefon Numarası",
-                    value: "0 (535) 508 4747",
-                    onTap: () => _launchURL('tel:05355084747'),
+                    value: personel.phone,
+                    onTap: () => _launchURL('tel:${personel.phone}'),
                   ),
                   FigmaBox(height: 20),
                   _buildContactItem(
                     icon: Icons.language,
                     iconColor: Color(0xFF8B5CF6),
                     label: "Website",
-                    value: "https://exponot.com/",
-                    onTap: () => _launchURL('https://exponot.com'),
+                    value: personel.firmName.website,
+                    onTap: () => _launchURL(personel.firmName.website),
                   ),
                   FigmaBox(height: 20),
                   _buildContactItem(
                     icon: Icons.location_on,
                     iconColor: Color(0xFFF59E0B),
                     label: "Adres",
-                    value: "Suadiye Mah. Bağdat Cad. Ark 399 No: 399 / 1. İç Kapı No: 1 34740 Kadıköy/İstanbul",
+                    value: personel.officeAddress.streetAddress,
                     onTap: () {},
                     isMultiline: true,
                   ),
@@ -257,12 +362,17 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
     return GestureDetector(
       onTap: onTap,
       child: Row(
-        crossAxisAlignment: isMultiline ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment: isMultiline
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: [
           Container(
             width: 44,
             height: 44,
-            decoration: BoxDecoration(color: iconColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Icon(icon, color: iconColor, size: 22),
           ),
           const SizedBox(width: 16),
@@ -270,18 +380,31 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: AppFonts.baseRegular.copyWith(fontSize: 13, color: AppColors.baseWhite.withValues(alpha: 0.6))),
+                Text(
+                  label,
+                  style: AppFonts.baseRegular.copyWith(
+                    fontSize: 13,
+                    color: AppColors.baseWhite.withValues(alpha: 0.6),
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: AppFonts.baseSemibold.copyWith(fontSize: 15, color: AppColors.baseWhite),
+                  style: AppFonts.baseSemibold.copyWith(
+                    fontSize: 15,
+                    color: AppColors.baseWhite,
+                  ),
                   maxLines: isMultiline ? 3 : 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_ios, color: AppColors.baseWhite.withValues(alpha: 0.4), size: 16),
+          Icon(
+            Icons.arrow_forward_ios,
+            color: AppColors.baseWhite.withValues(alpha: 0.4),
+            size: 16,
+          ),
         ],
       ),
     );
@@ -303,14 +426,25 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF1E3A8A).withValues(alpha: 0.6), Color(0xFF1E293B).withValues(alpha: 0.4)],
+            colors: [
+              Color(0xFF1E3A8A).withValues(alpha: 0.6),
+              Color(0xFF1E293B).withValues(alpha: 0.4),
+            ],
           ),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: _isCompanyConnectionsExpanded ? Color(0xFFF59E0B).withValues(alpha: 0.4) : AppColors.baseWhite.withValues(alpha: 0.15),
+            color: _isCompanyConnectionsExpanded
+                ? Color(0xFFF59E0B).withValues(alpha: 0.4)
+                : AppColors.baseWhite.withValues(alpha: 0.15),
             width: 1.5,
           ),
-          boxShadow: [BoxShadow(color: Color(0xFF1E3A8A).withValues(alpha: 0.2), blurRadius: 20, offset: const Offset(0, 10))],
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFF1E3A8A).withValues(alpha: 0.2),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,23 +454,42 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: Color(0xFFF59E0B).withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)),
-                  child: Icon(Icons.business, color: Color(0xFFF59E0B), size: 20),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFF59E0B).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.business,
+                    color: Color(0xFFF59E0B),
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text("Şirket Bağlantıları", style: AppFonts.baseBold.copyWith(fontSize: 18, color: AppColors.baseWhite)),
+                  child: Text(
+                    "Şirket Bağlantıları",
+                    style: AppFonts.baseBold.copyWith(
+                      fontSize: 18,
+                      color: AppColors.baseWhite,
+                    ),
+                  ),
                 ),
                 AnimatedRotation(
                   duration: const Duration(milliseconds: 300),
                   turns: _isCompanyConnectionsExpanded ? 0.5 : 0,
-                  child: Icon(Icons.keyboard_arrow_down, color: Color(0xFFF59E0B), size: 28),
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Color(0xFFF59E0B),
+                    size: 28,
+                  ),
                 ),
               ],
             ),
             AnimatedCrossFade(
               duration: const Duration(milliseconds: 300),
-              crossFadeState: _isCompanyConnectionsExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+              crossFadeState: _isCompanyConnectionsExpanded
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
               firstChild: const SizedBox(),
               secondChild: Column(
                 children: [
@@ -344,39 +497,73 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
 
                   // Katalog Butonu
                   GestureDetector(
-                    onTap: () => _launchURL('https://exponot.com/catalog'),
+                    onTap: () =>
+                        _launchURL(personel.firmName.catalogTr.originalUrl),
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [Color(0xFF3B82F6), Color(0xFF2563EB)]),
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+                        ),
                         borderRadius: BorderRadius.circular(16),
-                        boxShadow: [BoxShadow(color: Color(0xFF3B82F6).withValues(alpha: 0.4), blurRadius: 15, offset: const Offset(0, 8))],
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF3B82F6).withValues(alpha: 0.4),
+                            blurRadius: 15,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
                       ),
                       child: Row(
                         children: [
                           Container(
                             padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(color: AppColors.baseWhite.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
-                            child: Icon(Icons.menu_book_rounded, color: AppColors.baseWhite, size: 24),
+                            decoration: BoxDecoration(
+                              color: AppColors.baseWhite.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.menu_book_rounded,
+                              color: AppColors.baseWhite,
+                              size: 24,
+                            ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Kataloğu İncele", style: AppFonts.baseBold.copyWith(fontSize: 16, color: AppColors.baseWhite)),
+                                Text(
+                                  "Kataloğu İncele",
+                                  style: AppFonts.baseBold.copyWith(
+                                    fontSize: 16,
+                                    color: AppColors.baseWhite,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
                                 Text(
                                   "Ürün ve hizmetlerimizi keşfedin",
-                                  style: AppFonts.baseRegular.copyWith(fontSize: 13, color: AppColors.baseWhite.withValues(alpha: 0.85)),
+                                  style: AppFonts.baseRegular.copyWith(
+                                    fontSize: 13,
+                                    color: AppColors.baseWhite.withValues(
+                                      alpha: 0.85,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(color: AppColors.baseWhite.withValues(alpha: 0.2), shape: BoxShape.circle),
-                            child: Icon(Icons.arrow_forward_ios, color: AppColors.baseWhite, size: 16),
+                            decoration: BoxDecoration(
+                              color: AppColors.baseWhite.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: AppColors.baseWhite,
+                              size: 16,
+                            ),
                           ),
                         ],
                       ),
@@ -387,12 +574,28 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                   // Divider
                   Row(
                     children: [
-                      Expanded(child: Divider(color: AppColors.baseWhite.withValues(alpha: 0.2), thickness: 1)),
+                      Expanded(
+                        child: Divider(
+                          color: AppColors.baseWhite.withValues(alpha: 0.2),
+                          thickness: 1,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text("Sosyal Medya", style: AppFonts.baseRegular.copyWith(fontSize: 12, color: AppColors.baseWhite.withValues(alpha: 0.6))),
+                        child: Text(
+                          "Sosyal Medya",
+                          style: AppFonts.baseRegular.copyWith(
+                            fontSize: 12,
+                            color: AppColors.baseWhite.withValues(alpha: 0.6),
+                          ),
+                        ),
                       ),
-                      Expanded(child: Divider(color: AppColors.baseWhite.withValues(alpha: 0.2), thickness: 1)),
+                      Expanded(
+                        child: Divider(
+                          color: AppColors.baseWhite.withValues(alpha: 0.2),
+                          thickness: 1,
+                        ),
+                      ),
                     ],
                   ),
                   FigmaBox(height: 20),
@@ -401,19 +604,30 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                   Row(
                     children: [
                       Expanded(
-                        child: _buildCompanySocialButton(icon: Icons.language, label: "Website", onTap: () => _launchURL('https://exponot.com')),
+                        child: _buildCompanySocialButton(
+                          icon: Icons.ondemand_video_outlined,
+                          label: "Youtube",
+                          onTap: () =>
+                              _launchURL(personel.firmName.youtubeVideoUrl),
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildCompanySocialButton(
                           icon: Icons.business_center,
                           label: "LinkedIn",
-                          onTap: () => _launchURL('https://linkedin.com/company/exponot'),
+                          onTap: () =>
+                              _launchURL(personel.firmName.linkedinUrl),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _buildCompanySocialButton(icon: Icons.camera_alt, label: "Instagram", onTap: () => _launchURL('https://instagram.com/exponot')),
+                        child: _buildCompanySocialButton(
+                          icon: Icons.camera_alt,
+                          label: "Instagram",
+                          onTap: () =>
+                              _launchURL(personel.firmName.instagramUrl),
+                        ),
                       ),
                     ],
                   ),
@@ -426,7 +640,11 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _buildCompanySocialButton({required IconData icon, required String label, required VoidCallback onTap}) {
+  Widget _buildCompanySocialButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -434,19 +652,28 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
         decoration: BoxDecoration(
           color: AppColors.baseWhite.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.15), width: 1),
+          border: Border.all(
+            color: AppColors.baseWhite.withValues(alpha: 0.15),
+            width: 1,
+          ),
         ),
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: AppColors.baseWhite.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(
+                color: AppColors.baseWhite.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Icon(icon, color: AppColors.baseWhite, size: 24),
             ),
             const SizedBox(height: 8),
             Text(
               label,
-              style: AppFonts.baseRegular.copyWith(fontSize: 12, color: AppColors.baseWhite.withValues(alpha: 0.9)),
+              style: AppFonts.baseRegular.copyWith(
+                fontSize: 12,
+                color: AppColors.baseWhite.withValues(alpha: 0.9),
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -479,7 +706,9 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const MeetingRequestsView()),
+              MaterialPageRoute(
+                builder: (context) => const MeetingRequestsView(),
+              ),
             );
           },
         ),
@@ -518,16 +747,31 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
       child: Container(
         height: 60,
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [backgroundColor, backgroundColor.withValues(alpha: 0.8)]),
+          gradient: LinearGradient(
+            colors: [backgroundColor, backgroundColor.withValues(alpha: 0.8)],
+          ),
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: backgroundColor.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))],
+          boxShadow: [
+            BoxShadow(
+              color: backgroundColor.withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: textColor, size: 24),
             const SizedBox(width: 12),
-            Text(text, style: AppFonts.baseBold.copyWith(fontSize: 17, color: textColor, letterSpacing: 0.3)),
+            Text(
+              text,
+              style: AppFonts.baseBold.copyWith(
+                fontSize: 17,
+                color: textColor,
+                letterSpacing: 0.3,
+              ),
+            ),
           ],
         ),
       ),
