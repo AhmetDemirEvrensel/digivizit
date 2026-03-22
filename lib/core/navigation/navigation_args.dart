@@ -4,10 +4,18 @@ import 'package:digivizit/core/navigation/navigation_enums.dart';
 
 class NavigationArgs {
   final Object? data;
+  final Object? data2;
   final TransitionType? transitionType;
   final PageTransitionType? pageTransitionType;
   final Duration? transitionDuration;
   final Widget? childCurrent;
 
-  const NavigationArgs({this.data, this.transitionType, this.pageTransitionType, this.transitionDuration, this.childCurrent});
+  const NavigationArgs({
+    this.data,
+    this.data2,
+    this.transitionType,
+    this.pageTransitionType,
+    this.transitionDuration,
+    this.childCurrent,
+  });
 }

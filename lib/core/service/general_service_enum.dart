@@ -3,6 +3,7 @@
 enum GeneralPathEnum {
   login,
   getPersonelInfo,
+  getContactsInfo,
   /*   
   stationRegistration,
   stationDelete,
@@ -47,6 +48,8 @@ extension GeneralPathEnumExt on GeneralPathEnum {
         return 'login';
       case GeneralPathEnum.getPersonelInfo:
         return 'v1/employees';
+      case GeneralPathEnum.getContactsInfo:
+        return 'v1/business-cards';
       /* 
       case GeneralPathEnum.stationRegistration:
         return '38e1ba807fbb7bff18a49699a4147521';

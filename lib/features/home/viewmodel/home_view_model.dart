@@ -1,3 +1,6 @@
+import 'package:digivizit/core/models/business_cards/contacts_response.dart';
+import 'package:digivizit/core/utils/color_extractor.dart';
+import 'package:flutter/material.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/navigation/navigation_extension.dart';
@@ -12,6 +15,67 @@ class HomeViewModel = HomeViewModelBase with _$HomeViewModel;
 abstract class HomeViewModelBase with Store {
   @observable
   GetPersonelInfoResponse? getPersonelInfoResponse;
+
+  @observable
+  ContactsResponse? getContactsResponse;
+
+  Datum? get personel {
+    final response = getPersonelInfoResponse;
+    if (response == null || response.data.isEmpty) {
+      return null;
+    }
+
+    return response.data.first;
+  }
+
+  String get profileName {
+    final loginName = AppSettings.instance.userName?.trim();
+    if (loginName != null && loginName.isNotEmpty) {
+      return loginName;
+    }
+
+    return '';
+  }
+
+  void setInitialPersonelInfo(GetPersonelInfoResponse value) {
+    getPersonelInfoResponse = value;
+  }
+
+  Future<({Color topColor, Color bottomColor})> loadBackgroundColors({
+    Color topFallback = const Color(0xFF2D1B69),
+    Color bottomFallback = const Color(0xFF1A0F3D),
+  }) async {
+    final imageUrl = _getFirmImageUrl();
+    if (imageUrl == null) {
+      return (topColor: topFallback, bottomColor: bottomFallback);
+    }
+
+    return ColorExtractor.getGradientColorsFromUrl(
+      imageUrl,
+      topFallback: topFallback,
+      bottomFallback: bottomFallback,
+    );
+  }
+
+  String? _getFirmImageUrl() {
+    final currentPersonel = personel;
+    if (currentPersonel == null) {
+      return null;
+    }
+
+    final logoUrl = currentPersonel.firmName.logo.originalUrl.trim();
+    if (logoUrl.isNotEmpty) {
+      return logoUrl;
+    }
+
+    final backgroundUrl = currentPersonel.firmName.mainBackground.originalUrl
+        .trim();
+    if (backgroundUrl.isNotEmpty) {
+      return backgroundUrl;
+    }
+
+    return null;
+  }
 
   @action
   Future<void> getPersonelInfo() async {
@@ -31,6 +95,16 @@ abstract class HomeViewModelBase with Store {
       } else {
         CustomBottomSheet.errorView(text: result.error!.message);
       }
+    }
+  }
+
+  @action
+  Future<void> getContactsInfo() async {
+    final result = await AppSettings.instance.generalService.getContactsInfo();
+    if (result.isSuccess) {
+      getContactsResponse = result.data;
+    } else {
+      CustomBottomSheet.errorView(text: result.error!.message);
     }
   }
 }

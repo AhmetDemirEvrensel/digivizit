@@ -66,11 +66,14 @@ abstract class LoginViewModelBase with Store {
 
         final homeViewModel = HomeViewModel();
         await homeViewModel.getPersonelInfo();
+        await homeViewModel.getContactsInfo();
         final personelInfo = homeViewModel.getPersonelInfoResponse;
+        final contactsInfo = homeViewModel.getContactsResponse;
 
-        if (personelInfo != null) {
+        if (personelInfo != null && contactsInfo != null) {
           await NavigationEnums.mainNavigation.navigateToPageReplacement(
             data: personelInfo,
+            data2: contactsInfo
           );
         } else {
           CustomBottomSheet.errorView(

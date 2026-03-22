@@ -1,5 +1,6 @@
 import 'package:digivizit/core/common/result.dart';
 import 'package:digivizit/core/models/auth/login_response.dart';
+import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 
 abstract interface class BaseRepository {
@@ -10,6 +11,7 @@ abstract interface class BaseRepository {
   });
 
   Future<Result<GetPersonelInfoResponse>> getPersonelInfo();
+  Future<Result<ContactsResponse>> getContactsInfo();
 
   /* // ----------- Station Registration ----------- //
   Future<Result<StationRegistrationResponse>> stationRegistration({

@@ -1,4 +1,5 @@
 import 'package:digivizit/core/models/auth/login_response.dart';
+import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:dio/dio.dart';
@@ -106,6 +107,68 @@ class GeneralService implements BaseRepository {
           if (e.response?.data is Map<String, dynamic>) {
             try {
               errorModel = GetPersonelInfoResponse.fromJson(e.response!.data);
+            } catch (_) {}
+          }
+          result = Result.failure(
+            Failure(
+              message: errorModel?.message?.toString() ?? failure.message,
+              code: errorModel?.data?.toString() ?? failure.code,
+              raw: errorModel ?? failure.raw,
+            ),
+          );
+        }
+      }, showLoader: showLoader);
+      return result ?? Result.failure(await getAppropriateFailure());
+    } on DioException catch (e) {
+      return Result.failure(failureFromDio(e));
+    } catch (e) {
+      return Result.failure(Failure(message: 'Bilinmeyen hata: $e'));
+    }
+  }
+
+  @override
+  Future<Result<ContactsResponse>> getContactsInfo({
+    bool showLoader = true,
+  }) async {
+    try {
+      Result<ContactsResponse>? result;
+      await AsyncProcessController.init.run(() async {
+        try {
+          final response = await dio.get(
+            GeneralPathEnum.getContactsInfo.path,
+            options: Options(
+              headers: {
+                "Authorization": "${AppSettings.instance.apiToken}",
+              },
+            ),
+          );
+          if (response.data is! Map<String, dynamic>) {
+            result = Result.failure(
+              Failure(
+                message: response.statusMessage ?? 'Sunucu hatası',
+                raw: response.data,
+              ),
+            );
+            return;
+          }
+          final model = ContactsResponse.fromJson(response.data);
+          if (model.success == false) {
+            result = Result.failure(
+              Failure(
+                message: model.message?.toString() ?? 'İstasyon Seçilemedi.',
+                code: model.data.toString(),
+                raw: model,
+              ),
+            );
+            return;
+          }
+          result = Result.success(model);
+        } on DioException catch (e) {
+          final failure = failureFromDio(e);
+          ContactsResponse? errorModel;
+          if (e.response?.data is Map<String, dynamic>) {
+            try {
+              errorModel = ContactsResponse.fromJson(e.response!.data);
             } catch (_) {}
           }
           result = Result.failure(

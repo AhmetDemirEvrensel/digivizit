@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/features/auth/login/view/login_view.dart';
 import 'package:digivizit/features/home/view/contact_detail_view.dart';
-import 'package:digivizit/features/home/view/contacts_view.dart' hide ActivityModel;
+import 'package:digivizit/features/home/view/contacts_view.dart'
+    hide ActivityModel;
 import 'package:digivizit/features/home/view/home_view.dart';
 import 'package:digivizit/features/main_navigation/view/main_navigation_view.dart';
 import 'package:digivizit/features/splash/view/splash_view.dart';
@@ -48,21 +50,28 @@ class NavigationRoute {
 
       case NavigationEnums.home:
         return _buildRoute(
-          widget: HomeView(personelInfo: navArgs?.data as GetPersonelInfoResponse),
+          widget: HomeView(
+            personelInfo: navArgs?.data as GetPersonelInfoResponse,
+          ),
           screenEnum: NavigationEnums.home,
           navArgs: navArgs,
         );
 
       case NavigationEnums.mainNavigation:
         return _buildRoute(
-          widget: MainNavigationView(personelInfo: navArgs?.data as GetPersonelInfoResponse),
+          widget: MainNavigationView(
+            personelInfo: navArgs?.data as GetPersonelInfoResponse,
+            contactsResponse: navArgs?.data2 as ContactsResponse,
+          ),
           screenEnum: NavigationEnums.mainNavigation,
           navArgs: navArgs,
         );
 
       case NavigationEnums.cardsList:
         return _buildRoute(
-          widget: const ContactsView(),
+          widget: ContactsView(
+            contactsResponse: navArgs?.data as ContactsResponse,
+          ),
           screenEnum: NavigationEnums.cardsList,
           navArgs: navArgs,
         );

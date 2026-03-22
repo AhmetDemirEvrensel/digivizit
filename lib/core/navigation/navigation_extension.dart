@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 extension NavigationEnumsExt on NavigationEnums {
   Future<void> navigateToPageClear({
     Object? data,
+    Object? data2,
     TransitionType? customTransition,
     Duration? transitionDuration,
     Widget? childCurrent,
@@ -16,6 +17,7 @@ extension NavigationEnumsExt on NavigationEnums {
     AppSettings.instance.context!.read<NavigationService>().navigateToPageClear(
       path: rawValue,
       data: data,
+      data2: data2,
       customTransition: customTransition,
       transitionDuration: transitionDuration,
       childCurrent: childCurrent,
@@ -25,46 +27,59 @@ extension NavigationEnumsExt on NavigationEnums {
 
   Future<Object?> navigateToPage({
     Object? data,
+    Object? data2,
     TransitionType? customTransition,
     Duration? transitionDuration,
     Widget? childCurrent,
     PageTransitionType? fallback,
     dynamic Function()? poppedBack,
   }) async {
-    return AppSettings.instance.context!.read<NavigationService>().navigateToPage(
-      path: rawValue,
-      data: data,
-      customTransition: customTransition,
-      transitionDuration: transitionDuration,
-      childCurrent: childCurrent,
-      fallback: fallback,
-      poppedBack: poppedBack,
-    );
+    return AppSettings.instance.context!
+        .read<NavigationService>()
+        .navigateToPage(
+          path: rawValue,
+          data: data,
+          data2: data2,
+          customTransition: customTransition,
+          transitionDuration: transitionDuration,
+          childCurrent: childCurrent,
+          fallback: fallback,
+          poppedBack: poppedBack,
+        );
   }
 
   Future<void> navigateToPageReplacement({
     Object? data,
+    Object? data2,
     TransitionType? customTransition,
     Duration? transitionDuration,
     Widget? childCurrent,
     PageTransitionType? fallback,
   }) async {
-    AppSettings.instance.context!.read<NavigationService>().navigateToPageReplacement(
-      path: rawValue,
-      data: data,
-      customTransition: customTransition,
-      transitionDuration: transitionDuration,
-      childCurrent: childCurrent,
-      fallback: fallback,
-    );
+    AppSettings.instance.context!
+        .read<NavigationService>()
+        .navigateToPageReplacement(
+          path: rawValue,
+          data: data,
+          data2: data2,
+          customTransition: customTransition,
+          transitionDuration: transitionDuration,
+          childCurrent: childCurrent,
+          fallback: fallback,
+        );
   }
 
   Future<void> backToPageClear({Object? data}) async {
-    AppSettings.instance.context!.read<NavigationService>().backToPageClear(path: rawValue, data: data);
+    AppSettings.instance.context!.read<NavigationService>().backToPageClear(
+      path: rawValue,
+      data: data,
+    );
   }
 
   /// PopUntil ile belirtilen sayfaya kadar pop yapar ve veri aktarır
   Future<void> backToPageUntil({Object? data}) async {
-    await AppSettings.instance.context!.read<NavigationService>().backToPageUntil(targetPath: rawValue, data: data);
+    await AppSettings.instance.context!
+        .read<NavigationService>()
+        .backToPageUntil(targetPath: rawValue, data: data);
   }
 }

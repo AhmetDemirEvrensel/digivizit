@@ -31,6 +31,24 @@ mixin _$HomeViewModel on HomeViewModelBase, Store {
     );
   }
 
+  late final _$getContactsResponseAtom = Atom(
+    name: 'HomeViewModelBase.getContactsResponse',
+    context: context,
+  );
+
+  @override
+  ContactsResponse? get getContactsResponse {
+    _$getContactsResponseAtom.reportRead();
+    return super.getContactsResponse;
+  }
+
+  @override
+  set getContactsResponse(ContactsResponse? value) {
+    _$getContactsResponseAtom.reportWrite(value, super.getContactsResponse, () {
+      super.getContactsResponse = value;
+    });
+  }
+
   late final _$getPersonelInfoAsyncAction = AsyncAction(
     'HomeViewModelBase.getPersonelInfo',
     context: context,
@@ -41,10 +59,21 @@ mixin _$HomeViewModel on HomeViewModelBase, Store {
     return _$getPersonelInfoAsyncAction.run(() => super.getPersonelInfo());
   }
 
+  late final _$getContactsInfoAsyncAction = AsyncAction(
+    'HomeViewModelBase.getContactsInfo',
+    context: context,
+  );
+
+  @override
+  Future<void> getContactsInfo() {
+    return _$getContactsInfoAsyncAction.run(() => super.getContactsInfo());
+  }
+
   @override
   String toString() {
     return '''
-getPersonelInfoResponse: ${getPersonelInfoResponse}
+getPersonelInfoResponse: ${getPersonelInfoResponse},
+getContactsResponse: ${getContactsResponse}
     ''';
   }
 }

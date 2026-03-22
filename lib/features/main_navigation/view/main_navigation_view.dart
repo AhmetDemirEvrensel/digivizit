@@ -1,3 +1,4 @@
+import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/features/home/view/contacts_view.dart';
 import 'package:digivizit/features/home/view/home_view.dart';
@@ -7,7 +8,8 @@ import 'package:flutter/material.dart';
 
 class MainNavigationView extends StatefulWidget {
   final GetPersonelInfoResponse personelInfo;
-  const MainNavigationView({super.key, required this.personelInfo});
+  final ContactsResponse contactsResponse;
+  const MainNavigationView({super.key, required this.personelInfo, required this.contactsResponse});
 
   @override
   State<MainNavigationView> createState() => _MainNavigationViewState();
@@ -21,7 +23,7 @@ class _MainNavigationViewState extends State<MainNavigationView> {
     // Kartvizit Sayfası (Ana Sayfa)
     HomeView(personelInfo: widget.personelInfo),
     const QrView(),
-    const ContactsView(),
+    ContactsView(contactsResponse: widget.contactsResponse,),
     /*
     // Ayarlar Sayfası
     const SettingsView(), */

@@ -8,6 +8,7 @@ abstract class INavigationService {
   Future<Object?> navigateToPage<T>({
     required String path,
     Object? data,
+    Object? data2,
     TransitionType? customTransition,
     Duration? transitionDuration,
     Widget? childCurrent,
@@ -18,6 +19,7 @@ abstract class INavigationService {
   Future<T?> navigateToPageReplacement<T>({
     required String path,
     Object? data,
+    Object? data2,
     TransitionType? customTransition,
     Duration? transitionDuration,
     Widget? childCurrent,
@@ -27,6 +29,7 @@ abstract class INavigationService {
   Future<T?> navigateToPageClear<T>({
     required String path,
     Object? data,
+    Object? data2,
     TransitionType? customTransition,
     Duration? transitionDuration,
     Widget? childCurrent,
@@ -43,6 +46,7 @@ class NavigationService implements INavigationService {
   Future<Object?> navigateToPage<T>({
     required String path,
     Object? data,
+    Object? data2,
     TransitionType? customTransition,
     Duration? transitionDuration,
     Widget? childCurrent,
@@ -63,6 +67,7 @@ class NavigationService implements INavigationService {
     // 3) argümanı hazırla
     final args = NavigationArgs(
       data: data,
+      data2: data2,
       transitionType: effectiveCustom,
       pageTransitionType: effectivePage,
       transitionDuration: effectiveDuration,
@@ -70,18 +75,21 @@ class NavigationService implements INavigationService {
     );
 
     // 4) navigator
-    return await settings.navigatorKey.currentState?.pushNamed(path, arguments: args).then((value) {
-      settings.currentPage = exPage;
-      settings.pageStackCount -= 1;
-      if (poppedBack != null) poppedBack();
-      return value;
-    });
+    return await settings.navigatorKey.currentState
+        ?.pushNamed(path, arguments: args)
+        .then((value) {
+          settings.currentPage = exPage;
+          settings.pageStackCount -= 1;
+          if (poppedBack != null) poppedBack();
+          return value;
+        });
   }
 
   @override
   Future<T?> navigateToPageReplacement<T>({
     required String path,
     Object? data,
+    Object? data2,
     TransitionType? customTransition,
     Duration? transitionDuration,
     Widget? childCurrent,
@@ -97,19 +105,24 @@ class NavigationService implements INavigationService {
 
     final args = NavigationArgs(
       data: data,
+      data2: data2,
       transitionType: effectiveCustom,
       pageTransitionType: effectivePage,
       transitionDuration: effectiveDuration,
       childCurrent: childCurrent,
     );
 
-    return await settings.navigatorKey.currentState?.pushReplacementNamed(path, arguments: args);
+    return await settings.navigatorKey.currentState?.pushReplacementNamed(
+      path,
+      arguments: args,
+    );
   }
 
   @override
   Future<T?> navigateToPageClear<T>({
     required String path,
     Object? data,
+    Object? data2,
     TransitionType? customTransition,
     Duration? transitionDuration,
     Widget? childCurrent,
@@ -125,13 +138,18 @@ class NavigationService implements INavigationService {
 
     final args = NavigationArgs(
       data: data,
+      data2: data2,
       transitionType: effectiveCustom,
       pageTransitionType: effectivePage,
       transitionDuration: effectiveDuration,
       childCurrent: childCurrent,
     );
 
-    return await settings.navigatorKey.currentState?.pushNamedAndRemoveUntil(path, (Route<dynamic> route) => false, arguments: args);
+    return await settings.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      path,
+      (Route<dynamic> route) => false,
+      arguments: args,
+    );
   }
 
   @override
@@ -141,18 +159,35 @@ class NavigationService implements INavigationService {
     settings.pageStackCount = 1;
     settings.currentPage = path;
 
-    final args = NavigationArgs(data: data, transitionType: settings.backwardCustom, transitionDuration: settings.backwardDuration);
+    final args = NavigationArgs(
+      data: data,
+      transitionType: settings.backwardCustom,
+      transitionDuration: settings.backwardDuration,
+    );
 
-    return await settings.navigatorKey.currentState?.pushNamedAndRemoveUntil(path, (Route<dynamic> route) => false, arguments: args);
+    return await settings.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      path,
+      (Route<dynamic> route) => false,
+      arguments: args,
+    );
   }
 
-  Future<T?> generateNewRoute<T>({required Widget page, required String path, Object? data}) async {
+  Future<T?> generateNewRoute<T>({
+    required Widget page,
+    required String path,
+    Object? data,
+  }) async {
     AppSettings.instance.currentPage = path;
-    return await AppSettings.instance.navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => page));
+    return await AppSettings.instance.navigatorKey.currentState?.push(
+      MaterialPageRoute(builder: (context) => page),
+    );
   }
 
   @override
-  Future<T?> backToPageUntil<T>({required String targetPath, Object? data}) async {
+  Future<T?> backToPageUntil<T>({
+    required String targetPath,
+    Object? data,
+  }) async {
     final settings = AppSettings.instance;
     settings.currentPage = targetPath;
 

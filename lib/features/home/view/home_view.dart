@@ -3,7 +3,7 @@ import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
-import 'package:digivizit/core/utils/color_extractor.dart';
+import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/features/meeting_requests/view/meeting_requests_view.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
 import 'package:digivizit/shared/components/containers/figma_box.dart';
@@ -21,23 +21,17 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView>
     with SingleTickerProviderStateMixin {
+  final HomeViewModel _homeViewModel = HomeViewModel();
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   bool _isContactInfoExpanded = false;
   bool _isCompanyConnectionsExpanded = false;
-  late final personel = widget.personelInfo.data.first;
   Color _topColor = const Color(0xFF2D1B69);
   Color _bottomColor = const Color(0xFF1A0F3D);
 
-  String get _profileName {
-    final loginName = AppSettings.instance.userName?.trim();
-    if (loginName != null && loginName.isNotEmpty) {
-      return loginName;
-    }
-
-    return ''; 
-  }
+  Datum get personel => _homeViewModel.personel!;
+  String get _profileName => _homeViewModel.profileName;
 
   @override
   void initState() {
@@ -59,40 +53,21 @@ class _HomeViewState extends State<HomeView>
           ),
         );
 
-    _loadBackgroundColors();
+    _homeViewModel.setInitialPersonelInfo(widget.personelInfo);
+    _homeViewModel
+        .loadBackgroundColors(
+          topFallback: _topColor,
+          bottomFallback: _bottomColor,
+        )
+        .then((gradientColors) {
+          if (!mounted) return;
+
+          setState(() {
+            _topColor = gradientColors.topColor;
+            _bottomColor = gradientColors.bottomColor;
+          });
+        });
     _animationController.forward();
-  }
-
-  Future<void> _loadBackgroundColors() async {
-    final imageUrl = _getFirmImageUrl();
-    if (imageUrl == null) return;
-
-    final gradientColors = await ColorExtractor.getGradientColorsFromUrl(
-      imageUrl,
-      topFallback: _topColor,
-      bottomFallback: _bottomColor,
-    );
-
-    if (!mounted) return;
-
-    setState(() {
-      _topColor = gradientColors.topColor;
-      _bottomColor = gradientColors.bottomColor;
-    });
-  }
-
-  String? _getFirmImageUrl() {
-    final logoUrl = personel.firmName.logo.originalUrl.trim();
-    if (logoUrl.isNotEmpty) {
-      return logoUrl;
-    }
-
-    final backgroundUrl = personel.firmName.mainBackground.originalUrl.trim();
-    if (backgroundUrl.isNotEmpty) {
-      return backgroundUrl;
-    }
-
-    return null;
   }
 
   @override
