@@ -3,8 +3,7 @@ import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/navigation/navigation_args.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
-import 'package:digivizit/features/home/view/contact_detail_view.dart'
-    as detail;
+import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
 import 'package:digivizit/shared/components/containers/figma_box.dart';
@@ -27,9 +26,8 @@ class _ContactsViewState extends State<ContactsView>
   String _selectedFilter = 'All';
   final HomeViewModel _homeViewModel = HomeViewModel();
 
-  Color _topColor = const Color(0xFF2D1B69);
-  Color _bottomColor = const Color(0xFF1A0F3D);
-
+  Color _topColor = AppColors.info900;
+  Color _bottomColor = AppColors.info950;
   @override
   void initState() {
     super.initState();
@@ -41,6 +39,11 @@ class _ContactsViewState extends State<ContactsView>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+    final savedPersonelInfo = AppSettings.instance.personelInfo;
+    if (savedPersonelInfo != null) {
+      _homeViewModel.setInitialPersonelInfo(savedPersonelInfo);
+    }
+
     _homeViewModel
         .loadBackgroundColors(
           topFallback: _topColor,
@@ -65,6 +68,34 @@ class _ContactsViewState extends State<ContactsView>
 
   @override
   Widget build(BuildContext context) {
+    final contacts = widget.contactsResponse.data;
+    final filters = _buildSectorFilters(contacts);
+    final normalizedQuery = _searchQuery.trim().toLowerCase();
+    final filteredContacts = contacts.where((contact) {
+      final matchesFilter =
+          _selectedFilter == 'All' || contact.sector.trim() == _selectedFilter;
+      if (!matchesFilter) return false;
+
+      if (normalizedQuery.isEmpty) {
+        return true;
+      }
+
+      final searchableValues = [
+        contact.companyName,
+        contact.email,
+        contact.phone,
+        contact.website,
+        contact.address,
+        contact.sector,
+        ...contact.nameSurname,
+        ...contact.unvan,
+      ];
+
+      return searchableValues.any(
+        (value) => value.toLowerCase().contains(normalizedQuery),
+      );
+    }).toList();
+
     return BaseDesign(
       topColor: _topColor,
       bottomColor: _bottomColor,
@@ -92,8 +123,19 @@ class _ContactsViewState extends State<ContactsView>
               FigmaBox(height: 20),
 
               // Filtre Butonları
-              _buildFilterButtons(),
-              FigmaBox(height: 24),
+              _buildFilterButtons(filters),
+              FigmaBox(height: 20),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: filteredContacts.length,
+                  itemBuilder: (context, index) {
+                    final contact = filteredContacts[index];
+                    return _buildContactCard(contact);
+                  },
+                ),
+              ),
 
               /* // Kişi Listesi
               ..._filteredContacts
@@ -140,7 +182,7 @@ class _ContactsViewState extends State<ContactsView>
                 color: AppColors.baseWhite,
               ),
               decoration: InputDecoration(
-                hintText: 'Search contacts...',
+                hintText: 'Ara ...',
                 hintStyle: AppFonts.baseRegular.copyWith(
                   fontSize: 15,
                   color: AppColors.baseWhite.withValues(alpha: 0.5),
@@ -156,16 +198,24 @@ class _ContactsViewState extends State<ContactsView>
     );
   }
 
-  Widget _buildFilterButtons() {
-    final filters = [
-      'All',
-      'Technology',
-      'Finance',
-      'Marketing',
-      'VIP',
-      'Partner',
-    ];
+  List<String> _buildSectorFilters(List<ContactsData> contacts) {
+    final uniqueSectors = <String>[];
+    final seenSectors = <String>{};
 
+    for (final contact in contacts) {
+      final sector = contact.sector.trim();
+      if (sector.isEmpty) continue;
+
+      final normalizedSector = sector.toLowerCase();
+      if (seenSectors.add(normalizedSector)) {
+        uniqueSectors.add(sector);
+      }
+    }
+
+    return ['All', ...uniqueSectors];
+  }
+
+  Widget _buildFilterButtons(List<String> filters) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -228,38 +278,17 @@ class _ContactsViewState extends State<ContactsView>
     );
   }
 
-  Widget _buildContactCard(ContactModel contact) {
+  Widget _buildContactCard(ContactsData contact) {
+    final name = contact.nameSurname.isNotEmpty
+        ? contact.nameSurname.first
+        : '';
+    final position = contact.unvan.isNotEmpty ? contact.unvan.first : '';
+
     return GestureDetector(
       onTap: () {
         Get.toNamed(
           NavigationEnums.contactDetail.rawValue,
-          arguments: NavigationArgs(
-            data: detail.ContactDetailModel(
-              name: contact.name,
-              company: contact.company,
-              position: contact.position,
-              contactPerson: contact.contactPerson,
-              contactPhone: contact.contactPhone,
-              contactEmail: contact.contactEmail,
-              phone: contact.phone,
-              email: contact.email,
-              website: contact.website,
-              location: contact.location,
-              country: contact.country,
-              sector: contact.sector,
-              tags: contact.tags,
-              tagColors: contact.tagColors,
-              businessCardImages: contact.businessCardImages,
-              activities: contact.activities
-                  .map(
-                    (activity) => detail.ActivityModel(
-                      date: activity.date,
-                      description: activity.description,
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
+          arguments: NavigationArgs(data: contact),
         );
       },
       child: Container(
@@ -289,7 +318,7 @@ class _ContactsViewState extends State<ContactsView>
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(14),
                 child: Image.network(
-                  contact.imageUrl,
+                  "https://via.placeholder.com/150",
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
@@ -313,7 +342,7 @@ class _ContactsViewState extends State<ContactsView>
                 children: [
                   // İsim
                   Text(
-                    contact.name,
+                    name,
                     style: AppFonts.baseBold.copyWith(
                       fontSize: 16,
                       color: AppColors.baseWhite,
@@ -322,7 +351,7 @@ class _ContactsViewState extends State<ContactsView>
                   const SizedBox(height: 4),
                   // Şirket
                   Text(
-                    contact.company,
+                    contact.companyName,
                     style: AppFonts.baseRegular.copyWith(
                       fontSize: 13,
                       color: AppColors.baseWhite.withValues(alpha: 0.7),
@@ -331,7 +360,7 @@ class _ContactsViewState extends State<ContactsView>
                   const SizedBox(height: 2),
                   // Pozisyon
                   Text(
-                    contact.position,
+                    position,
                     style: AppFonts.baseRegular.copyWith(
                       fontSize: 12,
                       color: AppColors.baseWhite.withValues(alpha: 0.6),
@@ -341,38 +370,22 @@ class _ContactsViewState extends State<ContactsView>
                   ),
                   const SizedBox(height: 8),
                   // Etiketler
-                  Wrap(
+                  /* Wrap(
                     spacing: 6,
                     runSpacing: 6,
                     children: List.generate(
                       contact.tags.length,
                       (index) => Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: contact.tagColors[index].withValues(
-                            alpha: 0.2,
-                          ),
+                          color: contact.tagColors[index].withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: contact.tagColors[index].withValues(
-                              alpha: 0.3,
-                            ),
-                            width: 1,
-                          ),
+                          border: Border.all(color: contact.tagColors[index].withValues(alpha: 0.3), width: 1),
                         ),
-                        child: Text(
-                          contact.tags[index],
-                          style: AppFonts.baseSemibold.copyWith(
-                            fontSize: 11,
-                            color: contact.tagColors[index],
-                          ),
-                        ),
+                        child: Text(contact.tags[index], style: AppFonts.baseSemibold.copyWith(fontSize: 11, color: contact.tagColors[index])),
                       ),
                     ),
-                  ),
+                  ), */
                 ],
               ),
             ),
@@ -410,53 +423,4 @@ class _ContactsViewState extends State<ContactsView>
       ),
     );
   }
-}
-
-// Contact Model
-class ContactModel {
-  final String name;
-  final String company;
-  final String position;
-  final String imageUrl;
-  final String contactPerson;
-  final String contactPhone;
-  final String contactEmail;
-  final String phone;
-  final String email;
-  final String website;
-  final String location;
-  final String country;
-  final String sector;
-  final List<String> tags;
-  final List<Color> tagColors;
-  final List<String> businessCardImages;
-  final List<ActivityModel> activities;
-
-  ContactModel({
-    required this.name,
-    required this.company,
-    required this.position,
-    required this.imageUrl,
-    this.contactPerson = '',
-    this.contactPhone = '',
-    this.contactEmail = '',
-    required this.phone,
-    required this.email,
-    required this.website,
-    required this.location,
-    this.country = '',
-    required this.sector,
-    required this.tags,
-    required this.tagColors,
-    required this.businessCardImages,
-    required this.activities,
-  });
-}
-
-// Activity Model (contacts_view için)
-class ActivityModel {
-  final String date;
-  final String description;
-
-  ActivityModel({required this.date, required this.description});
 }

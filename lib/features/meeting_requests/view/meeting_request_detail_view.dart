@@ -1,37 +1,32 @@
+import 'package:digivizit/core/constants/app_fonts.dart';
+import 'package:digivizit/core/models/appointment/appointment_response.dart' as appointment_model;
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MeetingRequestDetailView extends StatelessWidget {
-  final int index;
+  final appointment_model.Datum appointment;
 
-  const MeetingRequestDetailView({super.key, required this.index});
+  static const List<String> _monthNames = ['', 'Ocak', 'Subat', 'Mart', 'Nisan', 'Mayis', 'Haziran', 'Temmuz', 'Agustos', 'Eylul', 'Ekim', 'Kasim', 'Aralik'];
+
+  const MeetingRequestDetailView({super.key, required this.appointment});
 
   @override
   Widget build(BuildContext context) {
-    // Örnek datalar
-    final names = ['Ahmet Yılmaz', 'Mehmet Çalışma', 'Ebru Korkmaz', 'Deniz Kaya'];
-    final companies = ['Turcaf Teknoloji A.Ş.', 'Hepta Yazılım', 'ExpoNot Danışmanlık', 'Gözen Holding'];
-    final titles = ['Yazılım Müdürü', 'Proje Koordinatörü', 'İş Geliştirme Uzmanı', 'Lead Yöneticisi'];
-    final dates = ['26 Şubat 2026', '26 Şubat 2026', '26 Şubat 2026', '26 Şubat 2026'];
-    final times = ['09:00 - 10:00', '10:00 - 11:00', '13:00 - 14:00', '14:00 - 14:45'];
-    final notes = [
-      'Yeni proje görüşmesi yapmak istiyorum. Dijital dönüşüm süreçlerimiz ve ExpoNot platformu hakkında detaylı bilgi almak istiyorum. Özellikle mobil uygulama entegrasyonları konusunda görüşmek isterim.',
-      'Hepta yazılım projesi için görüşme talebi. Mevcut sistemlerimizin entegrasyonu ve yeni özelliklerin eklenmesi konusunda fikir alışverişinde bulunmak istiyoruz.',
-      'Potansiyel iş birliği fırsatlarını değerlendirmek istiyoruz. ExpoNot platformunun danışmanlık hizmetlerimize entegrasyonu hakkında konuşalım.',
-      'Gözen Holding bünyesindeki lead yönetim sistemi için görüşme talebi. Mevcut CRM sistemimizle entegrasyon olanaklarını değerlendirmek istiyoruz.'
-    ];
-    final emails = [
-      'ahmet.yilmaz@turcaf.com',
-      'mehmet.bulbul@hepta.com.tr',
-      'ebru.korkmaz@exponot.com',
-      'deniz.kaya@gozen.com.tr'
-    ];
-    final phones = [
-      '+90 (532) 123 45 67',
-      '+90 (535) 234 56 78',
-      '+90 (538) 345 67 89',
-      '+90 (533) 456 78 90'
-    ];
+    final requesterName = appointment.fullName?.trim().isNotEmpty == true ? appointment.fullName!.trim() : 'Isimsiz Talep';
+    final company = appointment.company?.trim().isNotEmpty == true ? appointment.company!.trim() : 'Sirket belirtilmedi';
+    final title = appointment.employee?.title?.trim().isNotEmpty == true
+        ? appointment.employee!.title!.trim()
+        : (appointment.employee?.department?.name?.trim().isNotEmpty == true ? appointment.employee!.department!.name!.trim() : 'Unvan belirtilmedi');
+    final statusText = _statusLabel(appointment.status);
+    final statusColor = _statusColor(appointment.status);
+    final appointmentDateTime = _appointmentDateTime(appointment.preferredDate);
+    final note = appointment.note?.trim().isNotEmpty == true ? appointment.note!.trim() : 'Talep notu bulunmuyor.';
+    final subject = appointment.subject?.trim().isNotEmpty == true ? appointment.subject!.trim() : 'Gorusme Talebi';
+    final email = appointment.employee?.email?.trim() ?? '';
+    final phone = appointment.employee?.phone?.trim() ?? '';
+    final department = appointment.employee?.department?.name?.trim() ?? '';
+    final createdAt = _appointmentDateTime(appointment.createdAt);
 
     return Scaffold(
       backgroundColor: const Color(0xFF1C1C1E),
@@ -42,16 +37,7 @@ class MeetingRequestDetailView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          'Görüşme Talebi Detayı',
-          style: AppFonts.baseBold.copyWith(fontSize: 18, color: Colors.white),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
+        title: Text('Gorusme Talebi Detayi', style: AppFonts.baseBold.copyWith(fontSize: 18, color: Colors.white)),
       ),
       body: Column(
         children: [
@@ -61,102 +47,85 @@ class MeetingRequestDetailView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Profil Kartı
                   Container(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2C2C2E),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    decoration: BoxDecoration(color: const Color(0xFF2C2C2E), borderRadius: BorderRadius.circular(16)),
                     child: Column(
                       children: [
-                        // Profil resmi
-                        Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF0A84FF),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              names[index].split(' ').map((e) => e[0]).join(),
-                              style: AppFonts.baseBold.copyWith(
-                                fontSize: 28,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
+                        Center(child: _buildProfileAvatar(requesterName)),
                         const SizedBox(height: 16),
-                        // İsim
                         Text(
-                          names[index],
-                          style: AppFonts.baseBold.copyWith(
-                            fontSize: 24,
-                            color: Colors.white,
-                          ),
+                          requesterName,
+                          textAlign: TextAlign.center,
+                          style: AppFonts.baseBold.copyWith(fontSize: 24, color: Colors.white),
                         ),
                         const SizedBox(height: 4),
-                        // Ünvan
                         Text(
-                          titles[index],
-                          style: AppFonts.baseRegular.copyWith(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
+                          title,
+                          textAlign: TextAlign.center,
+                          style: AppFonts.baseRegular.copyWith(fontSize: 16, color: Colors.grey),
                         ),
                         const SizedBox(height: 2),
-                        // Firma
                         Text(
-                          companies[index],
-                          style: AppFonts.baseSemibold.copyWith(
-                            fontSize: 15,
-                            color: const Color(0xFF0A84FF),
-                          ),
+                          company,
+                          textAlign: TextAlign.center,
+                          style: AppFonts.baseSemibold.copyWith(fontSize: 15, color: const Color(0xFF0A84FF)),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(color: statusColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(999)),
+                          child: Text(statusText, style: AppFonts.baseBold.copyWith(fontSize: 12, color: statusColor)),
                         ),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
-                  // Tarih ve Saat Kartı
+                  _buildInfoCard(icon: Icons.topic, title: 'Konu', content: subject, iconColor: const Color(0xFF5AC8FA)),
+                  const SizedBox(height: 12),
                   _buildInfoCard(
                     icon: Icons.calendar_today,
                     title: 'Talep Edilen Tarih ve Saat',
-                    content: '${dates[index]}\n${times[index]}',
+                    content: _formatDateTime(appointmentDateTime),
                     iconColor: const Color(0xFFFF9500),
                   ),
-
+                  if (department.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _buildInfoCard(icon: Icons.apartment, title: 'Departman', content: department, iconColor: const Color(0xFFBF5AF2)),
+                  ],
+                  if (email.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _buildInfoCard(
+                      icon: Icons.email,
+                      title: 'E-posta',
+                      content: email,
+                      iconColor: const Color(0xFF0A84FF),
+                      onTap: () => _launchUri(Uri.parse('mailto:$email')),
+                    ),
+                  ],
+                  if (phone.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _buildInfoCard(
+                      icon: Icons.phone,
+                      title: 'Telefon',
+                      content: phone,
+                      iconColor: const Color(0xFF34C759),
+                      onTap: () => _launchUri(Uri(scheme: 'tel', path: phone)),
+                    ),
+                  ],
+                  if (createdAt != null) ...[
+                    const SizedBox(height: 12),
+                    _buildInfoCard(
+                      icon: Icons.schedule,
+                      title: 'Talep Olusturma Zamani',
+                      content: DateFormat('dd.MM.yyyy HH:mm').format(createdAt),
+                      iconColor: const Color(0xFF8E8E93),
+                    ),
+                  ],
                   const SizedBox(height: 12),
-
-                  // İletişim Bilgileri
-                  _buildInfoCard(
-                    icon: Icons.email,
-                    title: 'E-posta',
-                    content: emails[index],
-                    iconColor: const Color(0xFF0A84FF),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  _buildInfoCard(
-                    icon: Icons.phone,
-                    title: 'Telefon',
-                    content: phones[index],
-                    iconColor: const Color(0xFF34C759),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Not Kartı
                   Container(
                     padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2C2C2E),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    decoration: BoxDecoration(color: const Color(0xFF2C2C2E), borderRadius: BorderRadius.circular(12)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -164,63 +133,39 @@ class MeetingRequestDetailView extends StatelessWidget {
                           children: [
                             Container(
                               padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFAF52DE).withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.notes,
-                                color: Color(0xFFAF52DE),
-                                size: 20,
-                              ),
+                              decoration: BoxDecoration(color: const Color(0xFFAF52DE).withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
+                              child: const Icon(Icons.notes, color: Color(0xFFAF52DE), size: 20),
                             ),
                             const SizedBox(width: 12),
-                            Text(
-                              'Görüşme Notu',
-                              style: AppFonts.baseBold.copyWith(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
+                            Text('Gorusme Notu', style: AppFonts.baseBold.copyWith(fontSize: 16, color: Colors.white)),
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Text(
-                          notes[index],
-                          style: AppFonts.baseRegular.copyWith(
-                            fontSize: 15,
-                            color: Colors.grey[300],
-                            height: 1.5,
-                          ),
-                        ),
+                        Text(note, style: AppFonts.baseRegular.copyWith(fontSize: 15, color: Colors.grey[300], height: 1.5)),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 100),
                 ],
               ),
             ),
           ),
-
-          // Alt Butonlar
-          Container(
+          /* Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: const Color(0xFF2C2C2E),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 20,
                   offset: const Offset(0, -5),
                 ),
               ],
-            ),
-            child: SafeArea(
+            ), */
+          /* child: SafeArea(
               top: false,
               child: Row(
                 children: [
-                  // Onayla Butonu
                   Expanded(
                     flex: 2,
                     child: _buildActionButton(
@@ -229,12 +174,11 @@ class MeetingRequestDetailView extends StatelessWidget {
                       text: 'Onayla',
                       color: const Color(0xFF34C759),
                       onTap: () {
-                        _showSuccessDialog(context, 'Görüşme onaylandı!');
+                        _showSuccessDialog(context, 'Gorusme onaylandi.');
                       },
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // Revize Öner Butonu
                   Expanded(
                     child: _buildActionButton(
                       context: context,
@@ -247,7 +191,6 @@ class MeetingRequestDetailView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // Reddet Butonu
                   Expanded(
                     child: _buildActionButton(
                       context: context,
@@ -262,98 +205,155 @@ class MeetingRequestDetailView extends StatelessWidget {
                 ],
               ),
             ),
-          ),
+          ), */
         ],
       ),
     );
   }
 
-  Widget _buildInfoCard({
-    required IconData icon,
-    required String title,
-    required String content,
-    required Color iconColor,
-  }) {
+  Widget _buildProfileAvatar(String requesterName) {
+    final photoUrl = appointment.employee?.photo?.originalUrl?.trim() ?? '';
+    if (photoUrl.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(photoUrl, width: 80, height: 80, fit: BoxFit.cover, errorBuilder: (_, __, ___) => _buildInitialAvatar(requesterName)),
+      );
+    }
+
+    return _buildInitialAvatar(requesterName);
+  }
+
+  Widget _buildInitialAvatar(String requesterName) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2E),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              icon,
-              color: iconColor,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppFonts.baseRegular.copyWith(
-                    fontSize: 13,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  content,
-                  style: AppFonts.baseSemibold.copyWith(
-                    fontSize: 15,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      width: 80,
+      height: 80,
+      decoration: const BoxDecoration(color: Color(0xFF0A84FF), shape: BoxShape.circle),
+      alignment: Alignment.center,
+      child: Text(_initials(requesterName), style: AppFonts.baseBold.copyWith(fontSize: 28, color: Colors.white)),
     );
   }
 
-  Widget _buildActionButton({
-    required BuildContext context,
-    required IconData icon,
-    required String text,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildInfoCard({required IconData icon, required String title, required String content, required Color iconColor, VoidCallback? onTap}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: const Color(0xFF2C2C2E), borderRadius: BorderRadius.circular(12)),
+        child: Row(
           children: [
-            Icon(icon, color: Colors.white, size: 24),
-            const SizedBox(height: 4),
-            Text(
-              text,
-              style: AppFonts.baseBold.copyWith(
-                fontSize: 12,
-                color: Colors.white,
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: iconColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
+              child: Icon(icon, color: iconColor, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: AppFonts.baseRegular.copyWith(fontSize: 13, color: Colors.grey)),
+                  const SizedBox(height: 4),
+                  Text(content, style: AppFonts.baseSemibold.copyWith(fontSize: 15, color: Colors.white)),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildActionButton({required BuildContext context, required IconData icon, required String text, required Color color, required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.white, size: 24),
+            const SizedBox(height: 4),
+            Text(text, style: AppFonts.baseBold.copyWith(fontSize: 12, color: Colors.white)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  DateTime? _appointmentDateTime(String? raw) {
+    final value = raw?.trim();
+    if (value == null || value.isEmpty) return null;
+
+    final parsed = DateTime.tryParse(value) ?? DateTime.tryParse(value.replaceFirst(' ', 'T'));
+    if (parsed != null) {
+      return parsed;
+    }
+
+    for (final pattern in const [
+      'yyyy-MM-dd HH:mm:ss',
+      'yyyy-MM-dd HH:mm',
+      'yyyy-MM-dd',
+      'dd-MM-yyyy HH:mm:ss',
+      'dd-MM-yyyy HH:mm',
+      'dd-MM-yyyy',
+      'dd.MM.yyyy HH:mm',
+      'dd.MM.yyyy',
+    ]) {
+      try {
+        return DateFormat(pattern).parseStrict(value);
+      } catch (_) {}
+    }
+
+    return null;
+  }
+
+  String _formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) return 'Tarih belirtilmedi';
+    final day = dateTime.day.toString().padLeft(2, '0');
+    final month = _monthNames[dateTime.month];
+    final time = DateFormat('HH:mm').format(dateTime);
+    return '$day $month ${dateTime.year}, $time';
+  }
+
+  String _statusLabel(String? status) {
+    final normalized = status?.trim().toLowerCase() ?? '';
+    switch (normalized) {
+      case 'approved':
+        return 'Onaylandi';
+      case 'pending':
+        return 'Bekliyor';
+      case 'rejected':
+        return 'Reddedildi';
+      default:
+        return status?.trim().isNotEmpty == true ? status!.trim() : 'Belirsiz';
+    }
+  }
+
+  Color _statusColor(String? status) {
+    final normalized = status?.trim().toLowerCase() ?? '';
+    switch (normalized) {
+      case 'approved':
+        return const Color(0xFF34C759);
+      case 'pending':
+        return const Color(0xFFFF9500);
+      case 'rejected':
+        return const Color(0xFFFF453A);
+      default:
+        return const Color(0xFF8E8E93);
+    }
+  }
+
+  String _initials(String value) {
+    final parts = value.trim().split(RegExp(r'\s+')).where((part) => part.isNotEmpty).toList();
+    if (parts.isEmpty) return '?';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
+
+  Future<void> _launchUri(Uri uri) async {
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   void _showSuccessDialog(BuildContext context, String message) {
@@ -374,10 +374,7 @@ class MeetingRequestDetailView extends StatelessWidget {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: Text(
-              'Tamam',
-              style: AppFonts.baseBold.copyWith(fontSize: 16, color: const Color(0xFF0A84FF)),
-            ),
+            child: Text('Tamam', style: AppFonts.baseBold.copyWith(fontSize: 16, color: const Color(0xFF0A84FF))),
           ),
         ],
       ),
@@ -390,21 +387,14 @@ class MeetingRequestDetailView extends StatelessWidget {
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2C2C2E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          'Revize Tarihi Öner',
-          style: AppFonts.baseBold.copyWith(fontSize: 20, color: Colors.white),
-        ),
+        title: Text('Revize Tarihi Oner', style: AppFonts.baseBold.copyWith(fontSize: 20, color: Colors.white)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Yeni bir tarih ve saat önerisi göndermek ister misiniz?',
-              style: AppFonts.baseRegular.copyWith(fontSize: 15, color: Colors.grey[300]),
-            ),
+            Text('Yeni bir tarih ve saat onerisi gondermek ister misiniz?', style: AppFonts.baseRegular.copyWith(fontSize: 15, color: Colors.grey[300])),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                // Tarih seçici
                 final date = await showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),
@@ -413,20 +403,15 @@ class MeetingRequestDetailView extends StatelessWidget {
                   builder: (context, child) {
                     return Theme(
                       data: ThemeData.dark().copyWith(
-                        colorScheme: const ColorScheme.dark(
-                          primary: Color(0xFFFF9500),
-                          surface: Color(0xFF2C2C2E),
-                        ),
+                        colorScheme: const ColorScheme.dark(primary: Color(0xFFFF9500), surface: Color(0xFF2C2C2E)),
                       ),
                       child: child!,
                     );
                   },
                 );
-                if (date != null) {
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                    _showSuccessDialog(context, 'Revize önerisi gönderildi!');
-                  }
+                if (date != null && context.mounted) {
+                  Navigator.pop(context);
+                  _showSuccessDialog(context, 'Revize onerisi gonderildi.');
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -434,20 +419,14 @@ class MeetingRequestDetailView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: Text(
-                'Tarih Seç',
-                style: AppFonts.baseBold.copyWith(fontSize: 16, color: Colors.white),
-              ),
+              child: Text('Tarih Sec', style: AppFonts.baseBold.copyWith(fontSize: 16, color: Colors.white)),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              'İptal',
-              style: AppFonts.baseBold.copyWith(fontSize: 16, color: Colors.grey),
-            ),
+            child: Text('Iptal', style: AppFonts.baseBold.copyWith(fontSize: 16, color: Colors.grey)),
           ),
         ],
       ),
@@ -456,23 +435,17 @@ class MeetingRequestDetailView extends StatelessWidget {
 
   void _showRejectDialog(BuildContext context) {
     final reasonController = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2C2C2E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          'Görüşmeyi Reddet',
-          style: AppFonts.baseBold.copyWith(fontSize: 20, color: Colors.white),
-        ),
+        title: Text('Gorusmeyi Reddet', style: AppFonts.baseBold.copyWith(fontSize: 20, color: Colors.white)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Bu görüşme talebini reddetmek istediğinize emin misiniz?',
-              style: AppFonts.baseRegular.copyWith(fontSize: 15, color: Colors.grey[300]),
-            ),
+            Text('Bu gorusme talebini reddetmek istediginize emin misiniz?', style: AppFonts.baseRegular.copyWith(fontSize: 15, color: Colors.grey[300])),
             const SizedBox(height: 16),
             TextField(
               controller: reasonController,
@@ -483,10 +456,7 @@ class MeetingRequestDetailView extends StatelessWidget {
                 hintStyle: AppFonts.baseRegular.copyWith(color: Colors.grey),
                 filled: true,
                 fillColor: const Color(0xFF1C1C1E),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
               ),
             ),
           ],
@@ -494,20 +464,14 @@ class MeetingRequestDetailView extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              'İptal',
-              style: AppFonts.baseBold.copyWith(fontSize: 16, color: Colors.grey),
-            ),
+            child: Text('Iptal', style: AppFonts.baseBold.copyWith(fontSize: 16, color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              _showSuccessDialog(context, 'Görüşme reddedildi');
+              _showSuccessDialog(context, 'Gorusme reddedildi.');
             },
-            child: Text(
-              'Reddet',
-              style: AppFonts.baseBold.copyWith(fontSize: 16, color: const Color(0xFFFF3B30)),
-            ),
+            child: Text('Reddet', style: AppFonts.baseBold.copyWith(fontSize: 16, color: const Color(0xFFFF3B30))),
           ),
         ],
       ),

@@ -65,8 +65,10 @@ mixin _$HomeViewModel on HomeViewModelBase, Store {
   );
 
   @override
-  Future<void> getContactsInfo() {
-    return _$getContactsInfoAsyncAction.run(() => super.getContactsInfo());
+  Future<void> getContactsInfo(String email, String password) {
+    return _$getContactsInfoAsyncAction.run(
+      () => super.getContactsInfo(email, password),
+    );
   }
 
   @override

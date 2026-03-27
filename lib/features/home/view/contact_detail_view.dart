@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
+import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/core/utils/shared_preferences_manager.dart';
+import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
 import 'package:digivizit/shared/components/bottom_sheet/custom_bottom_sheet_view.dart';
 import 'package:digivizit/shared/components/buttons/button_properties.dart';
@@ -13,9 +15,10 @@ import 'package:digivizit/shared/components/containers/figma_container.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
 class ContactDetailView extends StatefulWidget {
-  final ContactDetailModel contact;
+  final ContactsData contact;
 
   const ContactDetailView({super.key, required this.contact});
 
@@ -24,14 +27,17 @@ class ContactDetailView extends StatefulWidget {
 }
 
 class _ContactDetailViewState extends State<ContactDetailView> with SingleTickerProviderStateMixin {
+  final HomeViewModel _homeViewModel = HomeViewModel();
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  int _currentImageIndex = 0;
   bool _isContactInfoExpanded = false;
   bool _isNotesExpanded = false;
   final TextEditingController _noteController = TextEditingController();
   List<ActivityModel> _localNotes = [];
+  Color _topColor = const Color(0xFFFFFFFF);
+  Color _bottomColor = const Color(0xFFFFFFFF);
+  String get _contactNotesKey => 'contact_${widget.contact.id}';
 
   @override
   void initState() {
@@ -45,6 +51,20 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
 
+    final savedPersonelInfo = AppSettings.instance.personelInfo;
+    if (savedPersonelInfo != null) {
+      _homeViewModel.setInitialPersonelInfo(savedPersonelInfo);
+    }
+
+    _homeViewModel.loadBackgroundColors(topFallback: _topColor, bottomFallback: _bottomColor).then((gradientColors) {
+      if (!mounted) return;
+
+      setState(() {
+        _topColor = gradientColors.topColor;
+        _bottomColor = gradientColors.bottomColor;
+      });
+    });
+
     _animationController.forward();
     _loadLocalNotes();
   }
@@ -53,7 +73,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
     final String? notesJson = AppSettings.instance.sharedPreferencesManager.getString(SharedKeys.contactNotes);
     if (notesJson != null) {
       final Map<String, dynamic> allNotes = jsonDecode(notesJson);
-      final List<dynamic>? contactNotes = allNotes[widget.contact.name];
+      final List<dynamic>? contactNotes = allNotes[_contactNotesKey];
       if (contactNotes != null) {
         setState(() {
           _localNotes = contactNotes.map((e) => ActivityModel(date: e['date'], description: e['description'])).toList();
@@ -74,9 +94,9 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
       allNotes = jsonDecode(notesJson);
     }
 
-    final List<dynamic> contactNotes = allNotes[widget.contact.name] ?? [];
+    final List<dynamic> contactNotes = allNotes[_contactNotesKey] ?? [];
     contactNotes.add({'date': date, 'description': note});
-    allNotes[widget.contact.name] = contactNotes;
+    allNotes[_contactNotesKey] = contactNotes;
 
     await AppSettings.instance.sharedPreferencesManager.saveString(SharedKeys.contactNotes, jsonEncode(allNotes));
 
@@ -91,10 +111,10 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
     if (notesJson == null) return;
 
     final Map<String, dynamic> allNotes = jsonDecode(notesJson);
-    final List<dynamic> contactNotes = allNotes[widget.contact.name] ?? [];
+    final List<dynamic> contactNotes = allNotes[_contactNotesKey] ?? [];
 
     contactNotes.removeWhere((e) => e['date'] == note.date && e['description'] == note.description);
-    allNotes[widget.contact.name] = contactNotes;
+    allNotes[_contactNotesKey] = contactNotes;
 
     await AppSettings.instance.sharedPreferencesManager.saveString(SharedKeys.contactNotes, jsonEncode(allNotes));
 
@@ -113,11 +133,8 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
   @override
   Widget build(BuildContext context) {
     return BaseDesign(
-      backgroundWidget: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF2D1B69), Color(0xFF1A0F3D)]),
-        ),
-      ),
+      topColor: _topColor,
+      bottomColor: _bottomColor,
       children: [
         FadeTransition(
           opacity: _fadeAnimation,
@@ -168,9 +185,9 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                 _buildTagsSection(),
                 FigmaBox(height: 24),
 
-                // Professional Details
+                /*      // Professional Details
                 _buildProfessionalDetails(),
-                FigmaBox(height: 24),
+                FigmaBox(height: 24), */
 
                 // Action Buttons
                 _buildActionButtons(),
@@ -265,7 +282,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
           border: Border.all(
             color: _isContactInfoExpanded ? const Color(0xFF60A5FA).withValues(alpha: 0.3) : AppColors.baseWhite.withValues(alpha: 0.1),
             width: 1.5,
-          )
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +295,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                   decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF60A5FA)),
                 ),
                 const SizedBox(width: 12),
-                Text('Contact Information', style: AppFonts.baseBold.copyWith(fontSize: 18, color: AppColors.baseWhite)),
+                Text('Bağlantı Bilgileri', style: AppFonts.baseBold.copyWith(fontSize: 18, color: AppColors.baseWhite)),
                 const Spacer(),
                 AnimatedRotation(
                   duration: const Duration(milliseconds: 300),
@@ -323,7 +340,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                       iconColor: const Color(0xFF10B981),
                       label: 'İlgili Kişi Telefon',
                       value: widget.contact.contactPhone,
-                      onTap: () => _launchURL('tel:${widget.contact.contactPhone}'),
+                      onTap: () => _launchUrl(Uri.parse('tel:${widget.contact.contactPhone}')),
                     ),
                     FigmaBox(height: 12),
                   ],
@@ -334,7 +351,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                       iconColor: const Color(0xFF3B82F6),
                       label: 'İlgili Kişi Mail',
                       value: widget.contact.contactEmail,
-                      onTap: () => _launchURL('mailto:${widget.contact.contactEmail}'),
+                      onTap: () => _launchUrl(Uri.parse('mailto:${widget.contact.contactEmail}')),
                     ),
                     FigmaBox(height: 12),
                   ],
@@ -355,7 +372,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                     iconColor: const Color(0xFF8B5CF6),
                     label: 'Web Sitesi',
                     value: widget.contact.website,
-                    onTap: () => _launchURL(widget.contact.website),
+                    onTap: () => _launchUrl(Uri.parse(widget.contact.website)),
                   ),
                   FigmaBox(height: 12),
                   // Firma Email
@@ -364,7 +381,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                     iconColor: const Color(0xFF60A5FA),
                     label: 'Firma Email',
                     value: widget.contact.email,
-                    onTap: () => _launchURL('mailto:${widget.contact.email}'),
+                    onTap: () => _launchUrl(Uri.parse('mailto:${widget.contact.email}')),
                   ),
                   FigmaBox(height: 12),
                   // Firma Telefon
@@ -373,18 +390,12 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                     iconColor: const Color(0xFF34D399),
                     label: 'Firma Telefon',
                     value: widget.contact.phone,
-                    onTap: () => _launchURL('tel:${widget.contact.phone}'),
+                    onTap: () => _launchUrl(Uri.parse('tel:${widget.contact.phone}')),
                   ),
                   FigmaBox(height: 12),
                   // Ülke
                   if (widget.contact.country.isNotEmpty) ...[
-                    _buildContactInfoItem(
-                      icon: Icons.flag,
-                      iconColor: const Color(0xFFF97316),
-                      label: 'Ülke',
-                      value: widget.contact.country,
-                      onTap: () {},
-                    ),
+                    _buildContactInfoItem(icon: Icons.flag, iconColor: const Color(0xFFF97316), label: 'Ülke', value: widget.contact.country, onTap: () {}),
                     FigmaBox(height: 12),
                   ],
                   // Adres
@@ -458,24 +469,21 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
   }
 
   Widget _buildNotesActivity() {
-    final combinedActivities = [...widget.contact.activities, ..._localNotes];
+    /*     final combinedActivities = [...widget.contact.activities, ..._localNotes];
     final bool needsExpansion = combinedActivities.length > 4;
-
+ */
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.baseWhite.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: (_isNotesExpanded && needsExpansion) ? const Color(0xFF60A5FA).withValues(alpha: 0.3) : AppColors.baseWhite.withValues(alpha: 0.1),
-          width: 1.5,
-        ),
+        border: Border.all(color: _isNotesExpanded ? const Color(0xFF60A5FA).withValues(alpha: 0.3) : AppColors.baseWhite.withValues(alpha: 0.1), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: needsExpansion
+            onTap: _isNotesExpanded
                 ? () {
                     setState(() {
                       _isNotesExpanded = !_isNotesExpanded;
@@ -491,9 +499,9 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                   decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF3B82F6)),
                 ),
                 const SizedBox(width: 12),
-                Text('Notes & Activity', style: AppFonts.baseBold.copyWith(fontSize: 16, color: AppColors.baseWhite)),
+                Text('Notlarım', style: AppFonts.baseBold.copyWith(fontSize: 16, color: AppColors.baseWhite)),
                 const Spacer(),
-                if (needsExpansion)
+                if (_isNotesExpanded)
                   AnimatedRotation(
                     duration: const Duration(milliseconds: 300),
                     turns: _isNotesExpanded ? 0.5 : 0,
@@ -553,9 +561,9 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
           // Activities List (Conditionally Expandable)
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 300),
-            crossFadeState: (!needsExpansion || _isNotesExpanded) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            crossFadeState: (_isNotesExpanded) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
             firstChild: Column(
-              children: combinedActivities.reversed.take(4).map((activity) {
+              children: _localNotes.reversed.take(4).map((activity) {
                 final bool isLocal = _localNotes.contains(activity);
                 final Widget item = _buildActivityItem(activity);
                 if (isLocal) {
@@ -565,7 +573,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
               }).toList(),
             ),
             secondChild: Column(
-              children: combinedActivities.reversed.map((activity) {
+              children: _localNotes.reversed.map((activity) {
                 final bool isLocal = _localNotes.contains(activity);
                 final Widget item = _buildActivityItem(activity);
                 if (isLocal) {
@@ -725,7 +733,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
             FigmaBox(height: 12),
           ],
           // Etiketler
-          if (widget.contact.tags.isNotEmpty)
+          /* if (widget.contact.tags.isNotEmpty)
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -741,44 +749,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                   child: Text(widget.contact.tags[index], style: AppFonts.baseBold.copyWith(fontSize: 12, color: widget.contact.tagColors[index])),
                 ),
               ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProfessionalDetails() {
-    return FigmaContainer(
-      padding: appSizer.paddingAll(20),
-      decoration: BoxDecoration(
-        color: AppColors.baseWhite.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.1), width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Professional Details', style: AppFonts.baseBold.copyWith(fontSize: 16, color: AppColors.baseWhite)),
-          FigmaBox(height: 16),
-          Row(
-            children: [
-              Icon(Icons.badge_outlined, color: AppColors.baseWhite.withValues(alpha: 0.5), size: 18),
-              const SizedBox(width: 8),
-              Text('Title', style: AppFonts.baseRegular.copyWith(fontSize: 13, color: AppColors.baseWhite.withValues(alpha: 0.6))),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(widget.contact.position, style: AppFonts.baseSemibold.copyWith(fontSize: 14, color: AppColors.baseWhite)),
-          FigmaBox(height: 12),
-          Row(
-            children: [
-              Icon(Icons.business, color: AppColors.baseWhite.withValues(alpha: 0.5), size: 18),
-              const SizedBox(width: 8),
-              Text('Company', style: AppFonts.baseRegular.copyWith(fontSize: 13, color: AppColors.baseWhite.withValues(alpha: 0.6))),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(widget.contact.company, style: AppFonts.baseSemibold.copyWith(fontSize: 14, color: AppColors.baseWhite)),
+            ), */
         ],
       ),
     );
@@ -789,9 +760,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: () {
-              // Share card
-            },
+            onTap: onPressWhatsapp,
             child: FigmaContainer(
               height: 56,
               decoration: BoxDecoration(
@@ -813,9 +782,7 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
         const SizedBox(width: 12),
         Expanded(
           child: GestureDetector(
-            onTap: () {
-              // Save to phone
-            },
+            onTap: () => _makePhoneCall(widget.contact.contactPhone),
             child: FigmaContainer(
               height: 56,
               decoration: BoxDecoration(
@@ -838,51 +805,23 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
     );
   }
 
-  Future<void> _launchURL(String url) async {
-    final uri = Uri.parse(url);
+  Future<void> onPressWhatsapp() async {
+    final link = WhatsAppUnilink(phoneNumber: widget.contact.contactPhone, text: "");
+    await launchUrl(Uri.parse('$link'));
+  }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    }
+  }
+
+  Future<void> _launchUrl(Uri uri) async {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
-}
-
-// Contact Detail Model
-class ContactDetailModel {
-  final String name;          // Firma Adı / Ünvan
-  final String company;       // Firma Adı
-  final String position;      // Ünvan
-  final String contactPerson; // İlgili Kişi Adı Soyadı
-  final String contactPhone;  // İlgili Kişi Telefon
-  final String contactEmail;  // İlgili Kişi Mail
-  final String phone;         // Firma Telefon
-  final String email;         // Firma Email
-  final String website;       // Web Sitesi
-  final String location;      // Adres
-  final String country;       // Ülke
-  final String sector;        // Hizmet/Sektör
-  final List<String> tags;
-  final List<Color> tagColors;
-  final List<String> businessCardImages;
-  final List<ActivityModel> activities;
-
-  ContactDetailModel({
-    required this.name,
-    required this.company,
-    required this.position,
-    this.contactPerson = '',
-    this.contactPhone = '',
-    this.contactEmail = '',
-    required this.phone,
-    required this.email,
-    required this.website,
-    required this.location,
-    this.country = '',
-    required this.sector,
-    required this.tags,
-    required this.tagColors,
-    required this.businessCardImages,
-    required this.activities,
-  });
 }
 
 // Activity Model
@@ -898,4 +837,20 @@ class ActivityModel {
 
   @override
   int get hashCode => date.hashCode ^ description.hashCode;
+}
+
+extension ContactsDataDetailFields on ContactsData {
+  String get name => nameSurname.isNotEmpty ? nameSurname.first : '';
+
+  String get company => companyName;
+
+  String get position => unvan.isNotEmpty ? unvan.first : '';
+
+  String get contactPerson => nameSurname.length > 1 ? nameSurname.skip(1).join(', ') : '';
+
+  String get contactPhone => phoneList.isNotEmpty ? phoneList.first : '';
+
+  String get contactEmail => emailList.isNotEmpty ? emailList.first : '';
+
+  String get location => address;
 }

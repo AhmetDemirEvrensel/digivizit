@@ -1,19 +1,21 @@
 import 'dart:io';
 
+import 'package:digivizit/core/models/appointment/appointment_response.dart'
+    as appointment_model;
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
-import 'package:digivizit/features/auth/login/view/login_view.dart';
-import 'package:digivizit/features/home/view/contact_detail_view.dart';
-import 'package:digivizit/features/home/view/contacts_view.dart'
-    hide ActivityModel;
-import 'package:digivizit/features/home/view/home_view.dart';
-import 'package:digivizit/features/main_navigation/view/main_navigation_view.dart';
-import 'package:digivizit/features/splash/view/splash_view.dart';
-import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:digivizit/core/navigation/navigation_args.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
+import 'package:digivizit/features/auth/login/view/login_view.dart';
+import 'package:digivizit/features/home/view/contact_detail_view.dart';
+import 'package:digivizit/features/home/view/contacts_view.dart';
+import 'package:digivizit/features/home/view/home_view.dart';
+import 'package:digivizit/features/main_navigation/view/main_navigation_view.dart';
+import 'package:digivizit/features/meeting_requests/view/meeting_requests_view.dart';
+import 'package:digivizit/features/splash/view/splash_view.dart';
+import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class NavigationRoute {
   Route<dynamic> generateRoute(RouteSettings routeSettings) {
@@ -78,25 +80,18 @@ class NavigationRoute {
 
       case NavigationEnums.contactDetail:
         return _buildRoute(
-          widget: ContactDetailView(
-            contact: ContactDetailModel(
-              name: 'name',
-              company: 'company',
-              position: 'position',
-              phone: 'phone',
-              email: 'email',
-              website: 'website',
-              location: 'location',
-              sector: 'sector',
-              tags: ['Flutter', 'Dart', 'Mobile Development'],
-              tagColors: [Colors.blue, Colors.green, Colors.orange],
-              businessCardImages: [''],
-              activities: [
-                ActivityModel(date: 'date', description: 'description'),
-              ],
-            ),
-          ),
+          widget: ContactDetailView(contact: navArgs?.data as ContactsData),
           screenEnum: NavigationEnums.contactDetail,
+          navArgs: navArgs,
+        );
+
+      case NavigationEnums.meetingRequest:
+        return _buildRoute(
+          widget: MeetingRequestsView(
+            appointmentsResponse:
+                navArgs?.data as appointment_model.AppointmentResponse,
+          ),
+          screenEnum: NavigationEnums.meetingRequest,
           navArgs: navArgs,
         );
 

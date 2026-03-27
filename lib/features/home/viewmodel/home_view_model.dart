@@ -1,11 +1,11 @@
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
-import 'package:digivizit/core/utils/color_extractor.dart';
-import 'package:flutter/material.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/navigation/navigation_extension.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
+import 'package:digivizit/core/utils/color_extractor.dart';
 import 'package:digivizit/shared/components/bottom_sheet/custom_bottom_sheet_view.dart';
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
 part 'home_view_model.g.dart';
@@ -22,7 +22,7 @@ abstract class HomeViewModelBase with Store {
   Datum? get personel {
     final response = getPersonelInfoResponse;
     if (response == null || response.data.isEmpty) {
-      return null;
+      return Datum(id: id, userId: userId, title: title, email: email, phone: phone, extensionNumber: extensionNumber, qr: qr, qrCodeUrl: qrCodeUrl, instagramUrl: instagramUrl, linkedinUrl: linkedinUrl, appointmentStatus: appointmentStatus, date: date, status: status, slug: slug, createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt, firmNameId: firmNameId, departmentId: departmentId, officeAddressId: officeAddressId, titleEn: titleEn, department: department, departmentEn: departmentEn, photo: photo, qrPhoto: qrPhoto, firmName: firmName, officeAddress: officeAddress, media: media)
     }
 
     return response.data.first;
@@ -99,10 +99,16 @@ abstract class HomeViewModelBase with Store {
   }
 
   @action
-  Future<void> getContactsInfo() async {
-    final result = await AppSettings.instance.generalService.getContactsInfo();
+  Future<void> getContactsInfo(String email, String password) async {
+    final result = await AppSettings.instance.generalService.getContactsInfo(
+      email: email,
+      password: password,
+    );
     if (result.isSuccess) {
       getContactsResponse = result.data;
+      if (result.data != null) {
+        await AppSettings.instance.setContactsInfo(result.data!);
+      }
     } else {
       CustomBottomSheet.errorView(text: result.error!.message);
     }

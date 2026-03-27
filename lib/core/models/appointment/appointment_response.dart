@@ -2,8 +2,9 @@
 //
 //     final appointmentResponse = appointmentResponseFromJson(jsonString);
 
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
+
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'appointment_response.freezed.dart';
 part 'appointment_response.g.dart';
@@ -14,176 +15,119 @@ String appointmentResponseToJson(AppointmentResponse data) => json.encode(data.t
 
 @freezed
 abstract class AppointmentResponse with _$AppointmentResponse {
-    const factory AppointmentResponse({
-        @JsonKey(name: "success")
-        required bool success,
-        @JsonKey(name: "message")
-        required String message,
-        @JsonKey(name: "data")
-        required List<Datum> data,
-    }) = _AppointmentResponse;
+  const factory AppointmentResponse({
+    @JsonKey(name: "success") bool? success,
+    @JsonKey(name: "message") String? message,
+    @JsonKey(name: "data") List<Datum>? data,
+  }) = _AppointmentResponse;
 
-    factory AppointmentResponse.fromJson(Map<String, dynamic> json) => _$AppointmentResponseFromJson(json);
+  factory AppointmentResponse.fromJson(Map<String, dynamic> json) => _$AppointmentResponseFromJson(json);
 }
 
 @freezed
 abstract class Datum with _$Datum {
-    const factory Datum({
-        @JsonKey(name: "id")
-        required int id,
-        @JsonKey(name: "employee_id")
-        required int employeeId,
-        @JsonKey(name: "full_name")
-        required String fullName,
-        @JsonKey(name: "company")
-        required String company,
-        @JsonKey(name: "subject")
-        required String subject,
-        @JsonKey(name: "note")
-        required String note,
-        @JsonKey(name: "preferred_date")
-        required String preferredDate,
-        @JsonKey(name: "status")
-        required String status,
-        @JsonKey(name: "created_at")
-        required String createdAt,
-        @JsonKey(name: "updated_at")
-        required DateTime updatedAt,
-        @JsonKey(name: "deleted_at")
-        required dynamic deletedAt,
-        @JsonKey(name: "employee")
-        required Employee employee,
-    }) = _Datum;
+  const factory Datum({
+    @JsonKey(name: "id") int? id,
+    @JsonKey(name: "employee_id") int? employeeId,
+    @JsonKey(name: "full_name") String? fullName,
+    @JsonKey(name: "company") String? company,
+    @JsonKey(name: "subject") String? subject,
+    @JsonKey(name: "note") String? note,
+    @JsonKey(name: "preferred_date") String? preferredDate,
+    @JsonKey(name: "status") String? status,
+    @JsonKey(name: "created_at") String? createdAt,
+    @JsonKey(name: "updated_at") DateTime? updatedAt,
+    @JsonKey(name: "deleted_at") dynamic deletedAt,
+    @JsonKey(name: "employee") Employee? employee,
+  }) = _Datum;
 
-    factory Datum.fromJson(Map<String, dynamic> json) => _$DatumFromJson(json);
+  factory Datum.fromJson(Map<String, dynamic> json) => _$DatumFromJson(json);
 }
 
 @freezed
 abstract class Employee with _$Employee {
-    const factory Employee({
-        @JsonKey(name: "id")
-        required int id,
-        @JsonKey(name: "user")
-        required int user,
-        @JsonKey(name: "name")
-        required String name,
-        @JsonKey(name: "surname")
-        required String surname,
-        @JsonKey(name: "title")
-        required String title,
-        @JsonKey(name: "email")
-        required String email,
-        @JsonKey(name: "phone")
-        required String phone,
-        @JsonKey(name: "extension_number")
-        required dynamic extensionNumber,
-        @JsonKey(name: "qr")
-        required int qr,
-        @JsonKey(name: "qr_code_url")
-        required String qrCodeUrl,
-        @JsonKey(name: "instagram_url")
-        required String instagramUrl,
-        @JsonKey(name: "linkedin_url")
-        required String linkedinUrl,
-        @JsonKey(name: "appointment_status")
-        required String appointmentStatus,
-        @JsonKey(name: "date")
-        required DateTime date,
-        @JsonKey(name: "status")
-        required String status,
-        @JsonKey(name: "slug")
-        required String slug,
-        @JsonKey(name: "created_at")
-        required DateTime createdAt,
-        @JsonKey(name: "updated_at")
-        required DateTime updatedAt,
-        @JsonKey(name: "deleted_at")
-        required dynamic deletedAt,
-        @JsonKey(name: "firm_name_id")
-        required int firmNameId,
-        @JsonKey(name: "department_id")
-        required dynamic departmentId,
-        @JsonKey(name: "office_address_id")
-        required int officeAddressId,
-        @JsonKey(name: "title_en")
-        required String titleEn,
-        @JsonKey(name: "department")
-        required dynamic department,
-        @JsonKey(name: "department_en")
-        required String departmentEn,
-        @JsonKey(name: "photo")
-        required Photo photo,
-        @JsonKey(name: "qr_photo")
-        required Photo qrPhoto,
-        @JsonKey(name: "media")
-        required List<Photo> media,
-    }) = _Employee;
+  const factory Employee({
+    @JsonKey(name: "id") int? id,
+    @JsonKey(name: "user_id") int? userId,
+    @JsonKey(name: "title") String? title,
+    @JsonKey(name: "email") String? email,
+    @JsonKey(name: "phone") String? phone,
+    @JsonKey(name: "extension_number") String? extensionNumber,
+    @JsonKey(name: "qr") int? qr,
+    @JsonKey(name: "qr_code_url") String? qrCodeUrl,
+    @JsonKey(name: "instagram_url") dynamic instagramUrl,
+    @JsonKey(name: "linkedin_url") dynamic linkedinUrl,
+    @JsonKey(name: "appointment_status") String? appointmentStatus,
+    @JsonKey(name: "date") DateTime? date,
+    @JsonKey(name: "status") String? status,
+    @JsonKey(name: "slug") String? slug,
+    @JsonKey(name: "created_at") DateTime? createdAt,
+    @JsonKey(name: "updated_at") DateTime? updatedAt,
+    @JsonKey(name: "deleted_at") dynamic deletedAt,
+    @JsonKey(name: "firm_name_id") int? firmNameId,
+    @JsonKey(name: "department_id") int? departmentId,
+    @JsonKey(name: "office_address_id") int? officeAddressId,
+    @JsonKey(name: "title_en") String? titleEn,
+    @JsonKey(name: "department") Department? department,
+    @JsonKey(name: "department_en") dynamic departmentEn,
+    @JsonKey(name: "photo") Photo? photo,
+    @JsonKey(name: "qr_photo") Photo? qrPhoto,
+    @JsonKey(name: "media") List<Photo>? media,
+  }) = _Employee;
 
-    factory Employee.fromJson(Map<String, dynamic> json) => _$EmployeeFromJson(json);
+  factory Employee.fromJson(Map<String, dynamic> json) => _$EmployeeFromJson(json);
+}
+
+@freezed
+abstract class Department with _$Department {
+  const factory Department({
+    @JsonKey(name: "id") int? id,
+    @JsonKey(name: "name") String? name,
+    @JsonKey(name: "name_en") String? nameEn,
+    @JsonKey(name: "created_at") DateTime? createdAt,
+    @JsonKey(name: "updated_at") DateTime? updatedAt,
+    @JsonKey(name: "deleted_at") dynamic deletedAt,
+    @JsonKey(name: "banner_background") Photo? bannerBackground,
+    @JsonKey(name: "media") List<Photo>? media,
+  }) = _Department;
+
+  factory Department.fromJson(Map<String, dynamic> json) => _$DepartmentFromJson(json);
 }
 
 @freezed
 abstract class Photo with _$Photo {
-    const factory Photo({
-        @JsonKey(name: "id")
-        required int id,
-        @JsonKey(name: "model_type")
-        required String modelType,
-        @JsonKey(name: "model_id")
-        required int modelId,
-        @JsonKey(name: "uuid")
-        required String uuid,
-        @JsonKey(name: "collection_name")
-        required String collectionName,
-        @JsonKey(name: "name")
-        required String name,
-        @JsonKey(name: "file_name")
-        required String fileName,
-        @JsonKey(name: "mime_type")
-        required String mimeType,
-        @JsonKey(name: "disk")
-        required String disk,
-        @JsonKey(name: "conversions_disk")
-        required String conversionsDisk,
-        @JsonKey(name: "size")
-        required int size,
-        @JsonKey(name: "manipulations")
-        required List<dynamic> manipulations,
-        @JsonKey(name: "custom_properties")
-        required List<dynamic> customProperties,
-        @JsonKey(name: "generated_conversions")
-        required GeneratedConversions generatedConversions,
-        @JsonKey(name: "responsive_images")
-        required List<dynamic> responsiveImages,
-        @JsonKey(name: "order_column")
-        required int orderColumn,
-        @JsonKey(name: "created_at")
-        required DateTime createdAt,
-        @JsonKey(name: "updated_at")
-        required DateTime updatedAt,
-        @JsonKey(name: "url")
-        String? url,
-        @JsonKey(name: "thumbnail")
-        String? thumbnail,
-        @JsonKey(name: "preview")
-        String? preview,
-        @JsonKey(name: "original_url")
-        required String originalUrl,
-        @JsonKey(name: "preview_url")
-        required String previewUrl,
-    }) = _Photo;
+  const factory Photo({
+    @JsonKey(name: "id") int? id,
+    @JsonKey(name: "model_type") String? modelType,
+    @JsonKey(name: "model_id") int? modelId,
+    @JsonKey(name: "uuid") String? uuid,
+    @JsonKey(name: "collection_name") String? collectionName,
+    @JsonKey(name: "name") String? name,
+    @JsonKey(name: "file_name") String? fileName,
+    @JsonKey(name: "mime_type") String? mimeType,
+    @JsonKey(name: "disk") String? disk,
+    @JsonKey(name: "conversions_disk") String? conversionsDisk,
+    @JsonKey(name: "size") int? size,
+    @JsonKey(name: "manipulations") List<dynamic>? manipulations,
+    @JsonKey(name: "custom_properties") List<dynamic>? customProperties,
+    @JsonKey(name: "generated_conversions") GeneratedConversions? generatedConversions,
+    @JsonKey(name: "responsive_images") List<dynamic>? responsiveImages,
+    @JsonKey(name: "order_column") int? orderColumn,
+    @JsonKey(name: "created_at") DateTime? createdAt,
+    @JsonKey(name: "updated_at") DateTime? updatedAt,
+    @JsonKey(name: "original_url") String? originalUrl,
+    @JsonKey(name: "preview_url") String? previewUrl,
+    @JsonKey(name: "url") String? url,
+    @JsonKey(name: "thumbnail") String? thumbnail,
+    @JsonKey(name: "preview") String? preview,
+  }) = _Photo;
 
-    factory Photo.fromJson(Map<String, dynamic> json) => _$PhotoFromJson(json);
+  factory Photo.fromJson(Map<String, dynamic> json) => _$PhotoFromJson(json);
 }
 
 @freezed
 abstract class GeneratedConversions with _$GeneratedConversions {
-    const factory GeneratedConversions({
-        @JsonKey(name: "thumb")
-        required bool thumb,
-        @JsonKey(name: "preview")
-        required bool preview,
-    }) = _GeneratedConversions;
+  const factory GeneratedConversions({@JsonKey(name: "thumb") bool? thumb, @JsonKey(name: "preview") bool? preview}) = _GeneratedConversions;
 
-    factory GeneratedConversions.fromJson(Map<String, dynamic> json) => _$GeneratedConversionsFromJson(json);
+  factory GeneratedConversions.fromJson(Map<String, dynamic> json) => _$GeneratedConversionsFromJson(json);
 }

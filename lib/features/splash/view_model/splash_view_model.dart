@@ -1,6 +1,8 @@
+import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/navigation/navigation_extension.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
+import 'package:digivizit/core/utils/shared_preferences_manager.dart';
 
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
@@ -51,8 +53,37 @@ abstract class SplashViewModelBase with Store {
 
     Future.delayed(navigationDelay, () async {
       final savedPersonelInfo = AppSettings.instance.personelInfo;
+      ContactsResponse? savedContactsInfo = AppSettings.instance.contactsInfo;
+
+      if (AppSettings.instance.hasPersistedSession &&
+          savedPersonelInfo != null &&
+          savedContactsInfo == null) {
+        final savedEmail = await AppSettings.instance.sharedPreferencesManager
+            .getLocalDb<String>(SharedKeys.email);
+        final savedPassword = await AppSettings
+            .instance
+            .sharedPreferencesManager
+            .getLocalDb<String>(SharedKeys.password);
+
+        if ((savedEmail?.trim().isNotEmpty ?? false) &&
+            (savedPassword?.isNotEmpty ?? false)) {
+          final contactsResult = await AppSettings.instance.generalService
+              .getContactsInfo(
+                email: savedEmail!.trim(),
+                password: savedPassword!,
+              );
+
+          if (contactsResult.isSuccess && contactsResult.data != null) {
+            savedContactsInfo = contactsResult.data;
+            await AppSettings.instance.setContactsInfo(savedContactsInfo!);
+          }
+        }
+      }
+
       final hasSession =
-          AppSettings.instance.hasPersistedSession && savedPersonelInfo != null;
+          AppSettings.instance.hasPersistedSession &&
+          savedPersonelInfo != null &&
+          savedContactsInfo != null;
 
       final targetPage = hasSession
           ? NavigationEnums.mainNavigation
@@ -60,6 +91,7 @@ abstract class SplashViewModelBase with Store {
 
       await targetPage.navigateToPageReplacement(
         data: hasSession ? savedPersonelInfo : null,
+        data2: hasSession ? savedContactsInfo : null,
       );
     });
   }

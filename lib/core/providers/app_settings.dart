@@ -6,6 +6,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/enums/app_languages.dart';
 import 'package:digivizit/core/models/auth/login_response.dart';
+import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/providers/async_process_manager.dart';
@@ -35,6 +36,7 @@ class AppSettings extends GetxController {
   String? userName;
   String? userEmail;
   GetPersonelInfoResponse? personelInfo;
+  ContactsResponse? contactsInfo;
   bool rememberMe = false;
 
   // late PackageInfo _info;
@@ -117,6 +119,8 @@ class AppSettings extends GetxController {
     );
     final savedPersonelInfo = await _sharedPreferencesManager
         .getLocalDb<String>(SharedKeys.personelInfo);
+    final savedContactsInfo = await _sharedPreferencesManager
+        .getLocalDb<String>(SharedKeys.contactsInfo);
 
     if (savedPersonelInfo?.trim().isNotEmpty ?? false) {
       try {
@@ -134,6 +138,22 @@ class AppSettings extends GetxController {
       }
     }
 
+    if (savedContactsInfo?.trim().isNotEmpty ?? false) {
+      try {
+        contactsInfo = contactsResponseFromJson(savedContactsInfo!);
+      } catch (error, stackTrace) {
+        logWarning(
+          'Saved contacts info could not be parsed and will be cleared.',
+        );
+        logDebug(error.toString());
+        logTrace(stackTrace.toString());
+        contactsInfo = null;
+        await _sharedPreferencesManager.removeItemFromLocalDb(
+          SharedKeys.contactsInfo,
+        );
+      }
+    }
+
     await _cleanupStaleAuthState();
   }
 
@@ -141,20 +161,28 @@ class AppSettings extends GetxController {
     if (!hasActiveToken) {
       apiToken = null;
       userName = null;
+      contactsInfo = null;
       await _sharedPreferencesManager.removeItemFromLocalDb(
         SharedKeys.apiToken,
       );
       await _sharedPreferencesManager.removeItemFromLocalDb(
         SharedKeys.userName,
       );
+      await _sharedPreferencesManager.removeItemFromLocalDb(
+        SharedKeys.contactsInfo,
+      );
     }
 
     if (!rememberMe) {
       userEmail = null;
+      contactsInfo = null;
       await _sharedPreferencesManager.saveLocalDb(SharedKeys.rememberMe, false);
       await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.email);
       await _sharedPreferencesManager.removeItemFromLocalDb(
         SharedKeys.password,
+      );
+      await _sharedPreferencesManager.removeItemFromLocalDb(
+        SharedKeys.contactsInfo,
       );
     }
   }
@@ -206,6 +234,7 @@ class AppSettings extends GetxController {
     userName = null;
     userEmail = null;
     personelInfo = null;
+    contactsInfo = null;
     rememberMe = false;
 
     await _sharedPreferencesManager.saveLocalDb(SharedKeys.rememberMe, false);
@@ -216,6 +245,9 @@ class AppSettings extends GetxController {
     await _sharedPreferencesManager.removeItemFromLocalDb(
       SharedKeys.personelInfo,
     );
+    await _sharedPreferencesManager.removeItemFromLocalDb(
+      SharedKeys.contactsInfo,
+    );
   }
 
   Future<void> setPersonelInfo(GetPersonelInfoResponse value) async {
@@ -223,6 +255,14 @@ class AppSettings extends GetxController {
     await _sharedPreferencesManager.saveLocalDb(
       SharedKeys.personelInfo,
       getPersonelInfoResponseToJson(value),
+    );
+  }
+
+  Future<void> setContactsInfo(ContactsResponse value) async {
+    contactsInfo = value;
+    await _sharedPreferencesManager.saveLocalDb(
+      SharedKeys.contactsInfo,
+      contactsResponseToJson(value),
     );
   }
 

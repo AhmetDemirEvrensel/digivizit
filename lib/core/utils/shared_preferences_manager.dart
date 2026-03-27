@@ -6,6 +6,7 @@ enum SharedKeys {
   onboardingCompleted,
   unitPriceCache,
   contactNotes,
+  contactsInfo,
   email,
   apiToken,
   rememberMe,

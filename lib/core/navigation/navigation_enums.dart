@@ -4,12 +4,13 @@ enum NavigationEnums {
 
   // Auth
   login,
-  
+
   // Cardvizit
   home,
   mainNavigation,
   cardsList,
   contactDetail,
+  meetingRequest,
   /* settings, */
 }
 
