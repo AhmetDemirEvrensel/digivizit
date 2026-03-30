@@ -88,6 +88,7 @@ class _ContactsViewState extends State<ContactsView>
     return BaseDesign(
       topColor: _topColor,
       bottomColor: _bottomColor,
+      isScrollable: false,
       children: [
         FadeTransition(
           opacity: _fadeAnimation,
@@ -396,9 +397,7 @@ class _ContactsViewState extends State<ContactsView>
             _buildActionButton(
               icon: Icons.save_alt,
               color: Color(0xFF10B981),
-              onTap: () {
-                // Telefon arama
-              },
+              onTap: () {},
             ),
           ],
         ),

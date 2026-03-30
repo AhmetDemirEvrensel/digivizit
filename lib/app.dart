@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
       splitScreenMode: true,
       child: GetMaterialApp(
         key: _navigatorKey,
-        title: 'Petech Mobile PRO',
+        title: 'Hepta',
         navigatorObservers: [GlobalInitializer.routeObserver],
         builder: (context, child) {
           return MediaQuery(

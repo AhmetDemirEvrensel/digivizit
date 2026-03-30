@@ -32,7 +32,9 @@ class CustomButtonWithIcon extends StatelessWidget {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             fixedSize: Size.fromHeight(80.pxv),
-            backgroundColor: isPro ? backgroundColor : AppColors.greyText.withValues(alpha: 0.70),
+            backgroundColor: isPro
+                ? backgroundColor
+                : AppColors.greyText.withValues(alpha: 0.70),
             padding: EdgeInsets.only(left: 10, right: 30),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadiusGeometry.circular(16),
@@ -43,7 +45,13 @@ class CustomButtonWithIcon extends StatelessWidget {
           child: Row(
             spacing: 10,
             children: [
-              HexagonWidget.icon(icon: icon, size: 50, fillColor: AppColors.buttonBgColor, borderColor: AppColors.borderColor, iconColor: AppColors.baseWhite),
+              HexagonWidget.icon(
+                icon: icon,
+                size: 50,
+                fillColor: AppColors.buttonBgColor,
+                borderColor: AppColors.borderColor,
+                iconColor: AppColors.baseWhite,
+              ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +68,10 @@ class CustomButtonWithIcon extends StatelessWidget {
                 decoration: ShapeDecoration(
                   color: Colors.white.withValues(alpha: 0.20),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.15, color: Colors.white.withValues(alpha: 0.30)),
+                    side: BorderSide(
+                      width: 1.15,
+                      color: Colors.white.withValues(alpha: 0.30),
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -69,7 +80,6 @@ class CustomButtonWithIcon extends StatelessWidget {
             ],
           ),
         ),
-        Positioned(top: -6.pxv, right: -6.pxh, child: Image.asset(ImagePaths.pro, width: 70)),
       ],
     );
   }

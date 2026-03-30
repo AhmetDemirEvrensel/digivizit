@@ -357,6 +357,75 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
     }
   }
 
+  _MeetingTimeState _meetingTimeState(DateTime? appointmentDateTime) {
+    if (appointmentDateTime == null) {
+      return _MeetingTimeState.unknown;
+    }
+
+    final now = DateTime.now();
+    final today = _dateOnly(now);
+    final meetingDay = _dateOnly(appointmentDateTime);
+
+    if (meetingDay.isBefore(today)) {
+      return _MeetingTimeState.past;
+    }
+
+    if (meetingDay.isAfter(today)) {
+      return _MeetingTimeState.upcoming;
+    }
+
+    if (appointmentDateTime.isBefore(now)) {
+      return _MeetingTimeState.past;
+    }
+
+    return _MeetingTimeState.today;
+  }
+
+  _MeetingVisualTone _meetingVisualTone(DateTime? appointmentDateTime) {
+    switch (_meetingTimeState(appointmentDateTime)) {
+      case _MeetingTimeState.past:
+        return const _MeetingVisualTone(
+          label: 'Gecmis',
+          icon: Icons.history_toggle_off_rounded,
+          accentColor: Color(0xFFFF7B72),
+          cardColor: Color(0xFF332428),
+          panelColor: Color(0xFF442A31),
+          borderColor: Color(0x66FF7B72),
+          softColor: Color(0x29FF7B72),
+        );
+      case _MeetingTimeState.today:
+        return const _MeetingVisualTone(
+          label: 'Bugun',
+          icon: Icons.flash_on_rounded,
+          accentColor: Color(0xFF64D2FF),
+          cardColor: Color(0xFF202F3A),
+          panelColor: Color(0xFF233D4A),
+          borderColor: Color(0x6664D2FF),
+          softColor: Color(0x2964D2FF),
+        );
+      case _MeetingTimeState.upcoming:
+        return const _MeetingVisualTone(
+          label: 'Planli',
+          icon: Icons.schedule_rounded,
+          accentColor: Color(0xFFFFC857),
+          cardColor: Color(0xFF342C1F),
+          panelColor: Color(0xFF413421),
+          borderColor: Color(0x66FFC857),
+          softColor: Color(0x29FFC857),
+        );
+      case _MeetingTimeState.unknown:
+        return const _MeetingVisualTone(
+          label: 'Belirsiz',
+          icon: Icons.help_outline_rounded,
+          accentColor: Color(0xFF8E8E93),
+          cardColor: Color(0xFF2C2C2E),
+          panelColor: Color(0xFF343437),
+          borderColor: Color(0x338E8E93),
+          softColor: Color(0x1F8E8E93),
+        );
+    }
+  }
+
   String _initials(String value) {
     final parts = value
         .trim()
@@ -612,6 +681,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
         ? appointment.subject!.trim()
         : 'Gorusme Talebi';
     final department = appointment.employee?.department?.name?.trim() ?? '';
+    final timeTone = _meetingVisualTone(appointmentDateTime);
     final statusText = _statusLabel(appointment.status);
     final statusColor = _statusColor(appointment.status);
 
@@ -627,47 +697,71 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF2C2C2E),
-          border: Border(
-            bottom: BorderSide(
-              color: Colors.white.withValues(alpha: 0.1),
-              width: 0.5,
+          color: timeTone.cardColor,
+          border: Border.all(color: timeTone.borderColor, width: 1),
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: timeTone.softColor,
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
+          ],
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              timeTone.cardColor,
+              Color.lerp(timeTone.cardColor, Colors.black, 0.18)!,
+            ],
           ),
         ),
+        margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 56,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _formatTime(appointmentDateTime),
-                      style: AppFonts.baseRegular.copyWith(
-                        fontSize: 14,
-                        color: Colors.grey,
+                width: 78,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: timeTone.panelColor,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: timeTone.borderColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _formatTime(appointmentDateTime),
+                        style: AppFonts.baseBold.copyWith(
+                          fontSize: 17,
+                          color: timeTone.accentColor,
+                        ),
                       ),
-                    ),
-                    Text(
-                      _formatDate(appointmentDateTime),
-                      style: AppFonts.baseRegular.copyWith(
-                        fontSize: 11,
-                        color: Colors.grey.withValues(alpha: 0.6),
+                      const SizedBox(height: 6),
+                      Text(
+                        _formatDate(appointmentDateTime),
+                        style: AppFonts.baseRegular.copyWith(
+                          fontSize: 11,
+                          color: Colors.white.withValues(alpha: 0.7),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
               Container(
                 width: 3,
-                height: 56,
+                height: 72,
                 decoration: BoxDecoration(
-                  color: statusColor,
+                  color: timeTone.accentColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -683,15 +777,16 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                           width: 32,
                           height: 32,
                           decoration: BoxDecoration(
-                            color: statusColor.withValues(alpha: 0.18),
+                            color: timeTone.panelColor,
                             shape: BoxShape.circle,
+                            border: Border.all(color: timeTone.borderColor),
                           ),
                           alignment: Alignment.center,
                           child: Text(
                             _initials(requesterName),
                             style: AppFonts.baseBold.copyWith(
                               fontSize: 12,
-                              color: Colors.white,
+                              color: timeTone.accentColor,
                             ),
                           ),
                         ),
@@ -720,7 +815,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                                 company,
                                 style: AppFonts.baseRegular.copyWith(
                                   fontSize: 12,
-                                  color: Colors.grey,
+                                  color: Colors.white.withValues(alpha: 0.58),
                                 ),
                               ),
                             ],
@@ -728,43 +823,31 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                         ),
                       ],
                     ),
-                    if (department.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _buildMetaChip(
+                          label: timeTone.label,
+                          color: timeTone.accentColor,
+                          backgroundColor: timeTone.panelColor,
+                          icon: timeTone.icon,
                         ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          department,
-                          style: AppFonts.baseRegular.copyWith(
-                            fontSize: 11,
-                            color: Colors.white.withValues(alpha: 0.75),
-                          ),
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: statusColor.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        statusText,
-                        style: AppFonts.baseBold.copyWith(
-                          fontSize: 11,
+                        _buildMetaChip(
+                          label: statusText,
                           color: statusColor,
+                          backgroundColor: statusColor.withValues(alpha: 0.18),
                         ),
-                      ),
+                        if (department.isNotEmpty)
+                          _buildMetaChip(
+                            label: department,
+                            color: Colors.white.withValues(alpha: 0.88),
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.08,
+                            ),
+                          ),
+                      ],
                     ),
                   ],
                 ),
@@ -772,6 +855,34 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildMetaChip({
+    required String label,
+    required Color color,
+    required Color backgroundColor,
+    IconData? icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 13, color: color),
+            const SizedBox(width: 6),
+          ],
+          Text(
+            label,
+            style: AppFonts.baseSemibold.copyWith(fontSize: 11, color: color),
+          ),
+        ],
       ),
     );
   }
@@ -787,4 +898,26 @@ class _AppointmentCalendarEntry {
   final appointment_model.Datum appointment;
   final DateTime dateTime;
   final int dayKey;
+}
+
+enum _MeetingTimeState { past, today, upcoming, unknown }
+
+class _MeetingVisualTone {
+  const _MeetingVisualTone({
+    required this.label,
+    required this.icon,
+    required this.accentColor,
+    required this.cardColor,
+    required this.panelColor,
+    required this.borderColor,
+    required this.softColor,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color accentColor;
+  final Color cardColor;
+  final Color panelColor;
+  final Color borderColor;
+  final Color softColor;
 }

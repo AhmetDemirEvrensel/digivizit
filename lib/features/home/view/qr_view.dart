@@ -13,7 +13,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class QrView extends StatefulWidget {
-  const QrView({super.key});
+  final Future<void> Function()? onContactsChanged;
+
+  const QrView({super.key, this.onContactsChanged});
 
   @override
   State<QrView> createState() => _QrViewState();
@@ -28,7 +30,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
 
   File? _selectedImage;
   OcrResponse? _ocrResponse;
-  String _selectedEngine = 'gemini';
+  final String _selectedEngine = 'gemini';
   bool _isPickingImage = false;
   bool _isUploading = false;
   Color _topColor = const Color(0xFF0F3B57);
@@ -101,7 +103,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                 ),
                 FigmaBox(height: 10),
                 Text(
-                  'Kartvizitin fotoğrafını çekin veya galeriden yükleyin. Seçtiğiniz görsel OCR servisine gönderilir ve bulunan bilgiler aşağıda listelenir.',
+                  'Kartvizitin fotoğrafını çekin veya galeriden yükleyin. Eklediğiniz görsel otomatik olarak bağlantılarım sayfasına kaydedilecektir.',
                   style: AppFonts.baseRegular.copyWith(
                     color: AppColors.baseWhite.withValues(alpha: 0.78),
                   ),
@@ -131,7 +133,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
           Text('Görsel Seçimi', style: AppFonts.lgBold),
           FigmaBox(height: 8),
           Text(
-            'Varsayılan OCR motoru olarak gemini kullanılacaktır.',
+            'Kartvizit görselini seçmek için aşağıdaki seçeneklerden birini kullanabilirsiniz.',
             style: AppFonts.baseRegular.copyWith(
               color: AppColors.baseWhite.withValues(alpha: 0.7),
             ),
@@ -180,7 +182,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                     )
                   : const Icon(Icons.cloud_upload_outlined),
               label: Text(
-                _isUploading ? 'Yükleniyor...' : 'OCR İsteğini Gönder',
+                _isUploading ? 'Yükleniyor...' : 'Kartviziti Tara',
                 style: AppFonts.base2Bold.copyWith(
                   color: const Color(0xFF042F2E),
                 ),
@@ -482,6 +484,10 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
     });
 
     if (result.isSuccess) {
+      try {
+        await widget.onContactsChanged?.call();
+      } catch (_) {}
+
       showCustomSnackbarOverlay(
         message: 'OCR istegi basariyla tamamlandi.',
         status: SnackbarStatusEnum.success,

@@ -35,6 +35,7 @@ class AppSettings extends GetxController {
   String? apiToken;
   String? userName;
   String? userEmail;
+  String? sessionPassword;
   GetPersonelInfoResponse? personelInfo;
   ContactsResponse? contactsInfo;
   bool rememberMe = false;
@@ -114,6 +115,9 @@ class AppSettings extends GetxController {
     userEmail = await _sharedPreferencesManager.getLocalDb<String>(
       SharedKeys.email,
     );
+    sessionPassword = await _sharedPreferencesManager.getLocalDb<String>(
+      SharedKeys.password,
+    );
     apiToken = await _sharedPreferencesManager.getLocalDb<String>(
       SharedKeys.apiToken,
     );
@@ -161,6 +165,7 @@ class AppSettings extends GetxController {
     if (!hasActiveToken) {
       apiToken = null;
       userName = null;
+      sessionPassword = null;
       contactsInfo = null;
       await _sharedPreferencesManager.removeItemFromLocalDb(
         SharedKeys.apiToken,
@@ -175,6 +180,7 @@ class AppSettings extends GetxController {
 
     if (!rememberMe) {
       userEmail = null;
+      sessionPassword = null;
       contactsInfo = null;
       await _sharedPreferencesManager.saveLocalDb(SharedKeys.rememberMe, false);
       await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.email);
@@ -198,6 +204,7 @@ class AppSettings extends GetxController {
 
     userName = userDisplayName;
     userEmail = email;
+    sessionPassword = password;
     apiToken = loginData.token;
     rememberMe = rememberUser;
 
@@ -233,6 +240,7 @@ class AppSettings extends GetxController {
     apiToken = null;
     userName = null;
     userEmail = null;
+    sessionPassword = null;
     personelInfo = null;
     contactsInfo = null;
     rememberMe = false;
@@ -264,6 +272,40 @@ class AppSettings extends GetxController {
       SharedKeys.contactsInfo,
       contactsResponseToJson(value),
     );
+  }
+
+  Future<String?> getCurrentUserEmail() async {
+    final currentEmail = userEmail?.trim();
+    if (currentEmail != null && currentEmail.isNotEmpty) {
+      return currentEmail;
+    }
+
+    final savedEmail = await _sharedPreferencesManager.getLocalDb<String>(
+      SharedKeys.email,
+    );
+    if (savedEmail?.trim().isNotEmpty ?? false) {
+      userEmail = savedEmail!.trim();
+      return userEmail;
+    }
+
+    return null;
+  }
+
+  Future<String?> getCurrentPassword() async {
+    final activePassword = sessionPassword;
+    if (activePassword?.isNotEmpty ?? false) {
+      return activePassword;
+    }
+
+    final savedPassword = await _sharedPreferencesManager.getLocalDb<String>(
+      SharedKeys.password,
+    );
+    if (savedPassword?.isNotEmpty ?? false) {
+      sessionPassword = savedPassword;
+      return sessionPassword;
+    }
+
+    return null;
   }
 
   Future<void> logout() async {

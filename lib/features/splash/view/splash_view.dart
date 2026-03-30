@@ -1,16 +1,13 @@
 import 'dart:ui';
 
 import 'package:digivizit/core/constants/app_colors.dart';
+import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
-import 'package:digivizit/core/constants/icon_paths.dart';
 import 'package:digivizit/core/constants/image_paths.dart';
-import 'package:digivizit/core/extensions/integer.dart';
 import 'package:digivizit/core/utils/app_sizer.dart';
-import 'package:digivizit/features/auth/index.dart';
 import 'package:digivizit/features/splash/view_model/splash_view_model.dart';
-import 'package:digivizit/shared/components/containers/figma_box.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -22,10 +19,12 @@ class SplashView extends StatefulWidget {
 class _SplashViewState extends State<SplashView>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> _iconScaleAnimation;
+  late final Animation<double> _logoScaleAnimation;
   late final Animation<double> _blurAnimation;
+  late final Animation<double> _contentOpacityAnimation;
+  late final Animation<Offset> _contentSlideAnimation;
+
   final model = SplashViewModel();
-  bool _textAnimationStarted = false;
 
   @override
   void initState() {
@@ -35,18 +34,26 @@ class _SplashViewState extends State<SplashView>
       vsync: this,
     );
 
-    // Animasyonları view_model'den oluştur
-    _iconScaleAnimation = model.createIconScaleAnimation(_controller);
+    _logoScaleAnimation = model.createIconScaleAnimation(_controller);
     _blurAnimation = model.createBlurAnimation(_controller);
+    _contentOpacityAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.08, 1, curve: Curves.easeOut),
+    );
+    _contentSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.12, 1, curve: Curves.easeOutCubic),
+          ),
+        );
 
-    // Animasyon bittiğinde login sayfasına git
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         model.onAnimationCompleted(mounted);
       }
     });
 
-    // Splash başlatma
     model.init().then((_) {
       if (mounted) {
         _controller.forward();
@@ -63,144 +70,272 @@ class _SplashViewState extends State<SplashView>
   @override
   Widget build(BuildContext context) {
     appSizer = AppSizer.to;
+
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFF07111E),
       body: Observer(
         builder: (_) {
-          return SizedBox.expand(
-            child: Stack(
-              fit: StackFit.passthrough,
-              children: [
-                // Arka plan resmi + Blur efekti
-                AnimatedBuilder(
-                  animation: _blurAnimation,
-                  builder: (context, child) {
-                    return ImageFiltered(
-                      imageFilter: ImageFilter.blur(
-                        sigmaX: _blurAnimation.value,
-                        sigmaY: _blurAnimation.value,
-                        tileMode: TileMode.decal,
-                      ),
-                      child: Image.asset(
-                        ImagePaths.authSplashBg,
-                        fit: BoxFit.fill,
-                        width: double.infinity,
-                        height: double.infinity,
-                      ),
-                    );
-                  },
-                ),
-
-                // Icon ve Text - Ön planda
-                SafeArea(
-                  child: Center(
-                    child: model.showContent
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Icon - sadece scale animasyonu
-                              ScaleTransition(
-                                scale: _iconScaleAnimation,
-                                child: Image.asset(
-                                  IconPaths.appIcon2,
-                                  width: 300.pxh,
-                                ),
-                              ),
-                              20.spacerV,
-                            ],
-                          )
-                        : const SizedBox.shrink(),
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF06101C),
+                      Color(0xFF0D1E31),
+                      Color(0xFF081520),
+                    ],
                   ),
                 ),
-
-                // Alt kısım: Asis Logo ve Şirket Adı - Ön planda
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 40,
+              ),
+              _buildAmbientOrb(
+                alignment: Alignment.topLeft,
+                color: AppColors.primary500.withValues(alpha: 0.26),
+                size: 260,
+                offset: const Offset(-70, -80),
+              ),
+              _buildAmbientOrb(
+                alignment: Alignment.topRight,
+                color: AppColors.tertiary400.withValues(alpha: 0.18),
+                size: 220,
+                offset: const Offset(80, -30),
+              ),
+              _buildAmbientOrb(
+                alignment: Alignment.bottomCenter,
+                color: AppColors.info500.withValues(alpha: 0.14),
+                size: 320,
+                offset: const Offset(0, 140),
+              ),
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28,
+                    vertical: 28,
+                  ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Asis Logo - Animasyonlu
+                      const Spacer(),
                       if (model.showContent)
-                        TweenAnimationBuilder<double>(
-                          duration: const Duration(milliseconds: 800),
-                          tween: Tween(begin: 0.0, end: 1.0),
-                          builder: (context, value, child) {
-                            return Opacity(
-                              opacity: value,
-                              child: Transform.translate(
-                                offset: Offset(0, 15 * (1 - value)),
-                                child: Image.asset(
-                                  ImagePaths.asisLogo,
-                                  width: 65.pxh,
-                                  fit: BoxFit.contain,
+                        FadeTransition(
+                          opacity: _contentOpacityAnimation,
+                          child: SlideTransition(
+                            position: _contentSlideAnimation,
+                            child: Column(
+                              children: [
+                                _buildTagChip(),
+                                const SizedBox(height: 18),
+                                ScaleTransition(
+                                  scale: _logoScaleAnimation,
+                                  child: _buildLogoPanel(),
+                                ),
+                                const SizedBox(height: 24),
+                                Text(
+                                  'Kartvizit deneyimi hazırlanıyor',
+                                  textAlign: TextAlign.center,
+                                  style: AppFonts.xlSemibold.copyWith(
+                                    color: AppColors.baseWhite,
+                                    letterSpacing: -0.4,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'Bağlantılarınızı, QR paylaşımınızı ve dijital kartvizitinizi tek akışta yönetin.',
+                                  textAlign: TextAlign.center,
+                                  style: AppFonts.baseRegular.copyWith(
+                                    color: AppColors.baseWhite.withValues(
+                                      alpha: 0.74,
+                                    ),
+                                    height: 1.55,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      const Spacer(),
+                      if (model.showContent)
+                        FadeTransition(
+                          opacity: _contentOpacityAnimation,
+                          child: Column(
+                            children: [
+                              _buildLoadingBar(),
+                              const SizedBox(height: 14),
+                              Text(
+                                'Sistem hazırlanıyor',
+                                style: AppFonts.smSemibold.copyWith(
+                                  color: AppColors.baseWhite.withValues(
+                                    alpha: 0.62,
+                                  ),
+                                  letterSpacing: 0.3,
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      const FigmaBox(height: 12),
-                      // Şirket Adı - İki satır animasyonlu
-                      if (model.showContent)
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _buildAnimatedText('Asis Otomasyon ve Akaryakıt'),
-                            _buildAnimatedText('Sistemleri A.Ş.'),
-                          ],
+                            ],
+                          ),
                         ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
     );
   }
 
-  Widget _buildAnimatedText(String text) {
-    // Text animasyonu başladığında blur'u tetikle
-    if (!_textAnimationStarted) {
-      _textAnimationStarted = true;
-    }
+  Widget _buildAmbientOrb({
+    required Alignment alignment,
+    required Color color,
+    required double size,
+    Offset offset = Offset.zero,
+  }) {
+    return Align(
+      alignment: alignment,
+      child: Transform.translate(
+        offset: offset,
+        child: ImageFiltered(
+          imageFilter: ImageFilter.blur(
+            sigmaX: 36 + (_blurAnimation.value * 6),
+            sigmaY: 36 + (_blurAnimation.value * 6),
+          ),
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+        ),
+      ),
+    );
+  }
 
-    final textLength = text.length;
-    return Wrap(
-      alignment: WrapAlignment.center,
-      children: List.generate(textLength, (index) {
-        final delay = (index / textLength) * 0.7;
-        final endTime = delay + 0.2;
+  Widget _buildTagChip() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.baseWhite.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.12)),
+      ),
+      child: Text(
+        'HEPTA DIGITAL BUSINESS CARD',
+        style: AppFonts.smBold.copyWith(
+          color: AppColors.baseWhite.withValues(alpha: 0.78),
+          letterSpacing: 1.1,
+        ),
+      ),
+    );
+  }
 
-        return TweenAnimationBuilder<double>(
-          duration: const Duration(milliseconds: 2500),
-          tween: Tween(begin: 0.0, end: 1.0),
-          builder: (context, value, child) {
-            final progress = ((value - delay) / (endTime - delay)).clamp(
-              0.0,
-              1.0,
-            );
-
-            return Opacity(
-              opacity: progress,
-              child: Transform.translate(
-                offset: Offset(0, 8 * (1 - progress)),
-                child: Text(
-                  text[index],
-                  style: appSizer.style(
-                    color: AppColors.baseWhite,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    height: 1.30,
+  Widget _buildLogoPanel() {
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints(maxWidth: 320),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(34),
+        border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.16)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.baseWhite.withValues(alpha: 0.14),
+            AppColors.baseWhite.withValues(alpha: 0.08),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary500.withValues(alpha: 0.18),
+            blurRadius: 34,
+            offset: const Offset(0, 20),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
+            decoration: BoxDecoration(
+              color: AppColors.baseWhite,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Image.asset(
+              ImagePaths.logo,
+              fit: BoxFit.contain,
+              height: 72,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(999),
+                    color: AppColors.baseWhite.withValues(alpha: 0.08),
                   ),
                 ),
               ),
-            );
-          },
-        );
-      }),
+              const SizedBox(width: 8),
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.tertiary300,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.tertiary300.withValues(alpha: 0.45),
+                      blurRadius: 12,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(999),
+                    color: AppColors.baseWhite.withValues(alpha: 0.08),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingBar() {
+    return Container(
+      width: 146,
+      height: 6,
+      decoration: BoxDecoration(
+        color: AppColors.baseWhite.withValues(alpha: 0.09),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: FractionallySizedBox(
+          widthFactor: 0.28 + (_controller.value * 0.62),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(999),
+              gradient: const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [AppColors.primary400, AppColors.tertiary300],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

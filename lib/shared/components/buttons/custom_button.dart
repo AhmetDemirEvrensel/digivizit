@@ -154,7 +154,10 @@ class CustomButton extends StatelessWidget {
     };
   }
 
-  Widget _buildBaseButton({required Widget child, EdgeInsetsGeometry? padding}) {
+  Widget _buildBaseButton({
+    required Widget child,
+    EdgeInsetsGeometry? padding,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -163,12 +166,25 @@ class CustomButton extends StatelessWidget {
         decoration: ShapeDecoration(
           color: backgroundColor ?? Colors.white.withValues(alpha: 0.20),
           shape: RoundedRectangleBorder(
-            side: BorderSide(width: 1.15, color: borderColor ?? Colors.white.withValues(alpha: 0.30)),
+            side: BorderSide(
+              width: 1.15,
+              color: borderColor ?? Colors.white.withValues(alpha: 0.30),
+            ),
             borderRadius: BorderRadius.circular(borderRadius!),
           ),
-          shadows: const [BoxShadow(color: Color(0x33000000), blurRadius: 30, offset: Offset(0, 10), spreadRadius: 0)],
+          shadows: const [
+            BoxShadow(
+              color: Color(0x33000000),
+              blurRadius: 30,
+              offset: Offset(0, 10),
+              spreadRadius: 0,
+            ),
+          ],
         ),
-        child: Padding(padding: padding ?? appSizer.paddingSymmetric(horizontal: 24), child: child),
+        child: Padding(
+          padding: padding ?? appSizer.paddingSymmetric(horizontal: 24),
+          child: child,
+        ),
       ),
     );
   }
@@ -179,8 +195,16 @@ class CustomButton extends StatelessWidget {
         mainAxisAlignment: _getMainAxisAlignment(),
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (text != null) Text(text!, textAlign: TextAlign.center, style: style ?? AppFonts.lgSemibold.withColor(textColor!)),
-          if (icon != null && isIcon == true) ...[const SizedBox(width: 10), Icon(icon, color: textColor, size: 20.pxh)],
+          if (text != null)
+            Text(
+              text!,
+              textAlign: TextAlign.center,
+              style: style ?? AppFonts.lgSemibold.withColor(textColor!),
+            ),
+          if (icon != null && isIcon == true) ...[
+            const SizedBox(width: 10),
+            Icon(icon, color: textColor, size: 20.pxh),
+          ],
         ],
       ),
     );
@@ -189,10 +213,20 @@ class CustomButton extends StatelessWidget {
   Widget _buildIconButton() {
     return _buildBaseButton(
       child: Row(
-        mainAxisAlignment: isCenter ?? false ? MainAxisAlignment.center : MainAxisAlignment.start,
+        mainAxisAlignment: isCenter ?? false
+            ? MainAxisAlignment.center
+            : MainAxisAlignment.start,
         children: [
-          if (icon != null) ...[Icon(icon, color: textColor, size: 30.pxh), const SizedBox(width: 10)],
-          if (text != null) Text(text!, textAlign: TextAlign.center, style: style ?? AppFonts.lgSemibold.withColor(textColor!)),
+          if (icon != null) ...[
+            Icon(icon, color: textColor, size: 30.pxh),
+            const SizedBox(width: 10),
+          ],
+          if (text != null)
+            Text(
+              text!,
+              textAlign: TextAlign.center,
+              style: style ?? AppFonts.lgSemibold.withColor(textColor!),
+            ),
           isCenter ?? false ? const SizedBox() : const Spacer(),
           isCenter ?? false ? const SizedBox() : ArrowButton(),
         ],
@@ -210,14 +244,30 @@ class CustomButton extends StatelessWidget {
           child: Row(
             spacing: 12,
             children: [
-              HexagonWidget.icon(icon: icon!, size: 50, fillColor: AppColors.buttonBgColor, borderColor: AppColors.borderColor, iconColor: AppColors.baseWhite),
+              HexagonWidget.icon(
+                icon: icon!,
+                size: 50,
+                fillColor: AppColors.buttonBgColor,
+                borderColor: AppColors.borderColor,
+                iconColor: AppColors.baseWhite,
+              ),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title!, style: AppFonts.lgBold.withColor(textColor ?? Colors.white)),
-                    Text(subtitle!, style: AppFonts.baseRegular.withColor((textColor ?? Colors.white).withValues(alpha: 0.7))),
+                    Text(
+                      title!,
+                      style: AppFonts.lgBold.withColor(
+                        textColor ?? Colors.white,
+                      ),
+                    ),
+                    Text(
+                      subtitle!,
+                      style: AppFonts.baseRegular.withColor(
+                        (textColor ?? Colors.white).withValues(alpha: 0.7),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -228,7 +278,10 @@ class CustomButton extends StatelessWidget {
                 decoration: ShapeDecoration(
                   color: Colors.white.withValues(alpha: 0.20),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.15, color: Colors.white.withValues(alpha: 0.30)),
+                    side: BorderSide(
+                      width: 1.15,
+                      color: Colors.white.withValues(alpha: 0.30),
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -237,7 +290,6 @@ class CustomButton extends StatelessWidget {
             ],
           ),
         ),
-        if (isPro ?? false) Positioned(top: -10, right: -10, child: Image.asset(ImagePaths.pro, width: 70)),
       ],
     );
   }

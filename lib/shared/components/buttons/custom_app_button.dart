@@ -261,7 +261,9 @@ class CustomAppButton extends StatelessWidget {
       showArrow: showArrow,
       showShadow: showShadow,
       showProBadge: showProBadge,
-      contentAlignment: isCenter ? ContentAlignment.center : ContentAlignment.left,
+      contentAlignment: isCenter
+          ? ContentAlignment.center
+          : ContentAlignment.left,
       child: child,
     );
   }
@@ -352,20 +354,39 @@ class CustomAppButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: useFixedHeight ? buttonHeight : null,
-        constraints: useFixedHeight ? null : BoxConstraints(minHeight: buttonHeight),
+        constraints: useFixedHeight
+            ? null
+            : BoxConstraints(minHeight: buttonHeight),
         margin: outsidePadding,
         decoration: ShapeDecoration(
           color: gradient != null ? null : bgColor,
           gradient: gradient,
           shape: RoundedRectangleBorder(
             side: hasBorder
-                ? BorderSide(width: 1.15, color: borderColor ?? AppColors.baseWhite.withValues(alpha: 0.30))
+                ? BorderSide(
+                    width: 1.15,
+                    color:
+                        borderColor ??
+                        AppColors.baseWhite.withValues(alpha: 0.30),
+                  )
                 : BorderSide(color: Colors.transparent),
             borderRadius: BorderRadius.circular(borderRadius),
           ),
-          shadows: hasShadow ? const [BoxShadow(color: Color(0x33000000), blurRadius: 30, offset: Offset(0, 10), spreadRadius: 0)] : null,
+          shadows: hasShadow
+              ? const [
+                  BoxShadow(
+                    color: Color(0x33000000),
+                    blurRadius: 30,
+                    offset: Offset(0, 10),
+                    spreadRadius: 0,
+                  ),
+                ]
+              : null,
         ),
-        child: Padding(padding: padding ?? appSizer.paddingSymmetric(horizontal: 24), child: child),
+        child: Padding(
+          padding: padding ?? appSizer.paddingSymmetric(horizontal: 24),
+          child: child,
+        ),
       ),
     );
   }
@@ -385,21 +406,35 @@ class CustomAppButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             children: [
               if (leadingIconPath != null) ...[
-                Image.asset(leadingIconPath!, color: colors.icnColor, width: iconSize ?? 20.pxh, height: iconSize ?? 20.pxh),
+                Image.asset(
+                  leadingIconPath!,
+                  color: colors.icnColor,
+                  width: iconSize ?? 20.pxh,
+                  height: iconSize ?? 20.pxh,
+                ),
                 SizedBox(width: iconSpacing),
               ],
               Expanded(
-                child: Text(text, textAlign: TextAlign.center, style: _getTextStyle(colors.txtColor)),
+                child: Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: _getTextStyle(colors.txtColor),
+                ),
               ),
               if (iconPath != null) ...[
                 SizedBox(width: iconSpacing),
-                Image.asset(iconPath!, color: colors.icnColor, width: iconSize ?? 20.pxh, height: iconSize ?? 20.pxh),
+                Image.asset(
+                  iconPath!,
+                  color: colors.icnColor,
+                  width: iconSize ?? 20.pxh,
+                  height: iconSize ?? 20.pxh,
+                ),
               ],
               if (showArrow) ...[SizedBox(width: iconSpacing), ArrowButton()],
             ],
           ),
     );
-    return _wrapWithProBadge(buttonWidget);
+    return buttonWidget;
   }
 
   Widget _buildArrowButton() {
@@ -414,28 +449,52 @@ class CustomAppButton extends StatelessWidget {
       child:
           child ??
           Row(
-            mainAxisAlignment: contentAlignment == ContentAlignment.center ? MainAxisAlignment.center : MainAxisAlignment.start,
+            mainAxisAlignment: contentAlignment == ContentAlignment.center
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.start,
             children: [
               if (leadingIconPath != null) ...[
-                Image.asset(leadingIconPath!, color: colors.icnColor, width: iconSize ?? 20.pxh, height: iconSize ?? 20.pxh),
+                Image.asset(
+                  leadingIconPath!,
+                  color: colors.icnColor,
+                  width: iconSize ?? 20.pxh,
+                  height: iconSize ?? 20.pxh,
+                ),
                 SizedBox(width: iconSpacing),
               ],
-              if (leadingIcon != null) ...[Icon(leadingIcon, color: colors.icnColor, size: iconSize ?? 20.pxh), SizedBox(width: iconSpacing)],
+              if (leadingIcon != null) ...[
+                Icon(
+                  leadingIcon,
+                  color: colors.icnColor,
+                  size: iconSize ?? 20.pxh,
+                ),
+                SizedBox(width: iconSpacing),
+              ],
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: contentAlignment == ContentAlignment.center ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      contentAlignment == ContentAlignment.center
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.start,
                   children: [
                     Text(text, style: _getTextStyle(colors.txtColor)),
-                    if (subtitle != null) Text(subtitle!, style: AppFonts.base2Regular.withColor(colors.txtColor.withValues(alpha: 0.7))),
+                    if (subtitle != null)
+                      Text(
+                        subtitle!,
+                        style: AppFonts.base2Regular.withColor(
+                          colors.txtColor.withValues(alpha: 0.7),
+                        ),
+                      ),
                   ],
                 ),
               ),
-              if (showArrow && contentAlignment != ContentAlignment.center) ArrowButton(),
+              if (showArrow && contentAlignment != ContentAlignment.center)
+                ArrowButton(),
             ],
           ),
     );
-    return _wrapWithProBadge(buttonWidget);
+    return buttonWidget;
   }
 
   Widget _buildHexagonButton() {
@@ -451,7 +510,9 @@ class CustomAppButton extends StatelessWidget {
           hasBorder: colors.hasBorder,
           hasShadow: showShadow && styleType != ButtonStyleType.text,
           useFixedHeight: false,
-          padding: contentPadding ?? EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+          padding:
+              contentPadding ??
+              EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           child:
               child ??
               Row(
@@ -478,8 +539,17 @@ class CustomAppButton extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(text, style: AppFonts.lgBold.withColor(colors.txtColor)),
-                        if (subtitle != null) Text(subtitle!, style: AppFonts.base2Regular.withColor(colors.txtColor.withValues(alpha: 0.7))),
+                        Text(
+                          text,
+                          style: AppFonts.lgBold.withColor(colors.txtColor),
+                        ),
+                        if (subtitle != null)
+                          Text(
+                            subtitle!,
+                            style: AppFonts.base2Regular.withColor(
+                              colors.txtColor.withValues(alpha: 0.7),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -493,7 +563,10 @@ class CustomAppButton extends StatelessWidget {
                         decoration: ShapeDecoration(
                           color: Colors.white.withValues(alpha: 0.20),
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(width: 1.15, color: Colors.white.withValues(alpha: 0.30)),
+                            side: BorderSide(
+                              width: 1.15,
+                              color: Colors.white.withValues(alpha: 0.30),
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
@@ -503,7 +576,6 @@ class CustomAppButton extends StatelessWidget {
                 ],
               ),
         ),
-        if (showProBadge) Positioned(top: -8, right: -10, child: Image.asset(ImagePaths.pro, width: 70)),
       ],
     );
   }
@@ -519,11 +591,14 @@ class CustomAppButton extends StatelessWidget {
     }
   }
 
-  ({Color bgColor, Color txtColor, Color icnColor, bool hasBorder}) _getStyleColors() {
+  ({Color bgColor, Color txtColor, Color icnColor, bool hasBorder})
+  _getStyleColors() {
     switch (styleType) {
       case ButtonStyleType.filled:
         return (
-          bgColor: backgroundColor ?? (!isActive ? AppColors.neutral500 : AppColors.primary500),
+          bgColor:
+              backgroundColor ??
+              (!isActive ? AppColors.neutral500 : AppColors.primary500),
           txtColor: textColor ?? Colors.white,
           icnColor: iconColor ?? Colors.white,
           hasBorder: true,
@@ -538,19 +613,13 @@ class CustomAppButton extends StatelessWidget {
         );
 
       case ButtonStyleType.text:
-        return (bgColor: Colors.transparent, txtColor: textColor ?? AppColors.baseWhite, icnColor: iconColor ?? AppColors.baseWhite, hasBorder: true);
+        return (
+          bgColor: Colors.transparent,
+          txtColor: textColor ?? AppColors.baseWhite,
+          icnColor: iconColor ?? AppColors.baseWhite,
+          hasBorder: true,
+        );
     }
-  }
-
-  Widget _wrapWithProBadge(Widget button) {
-    if (!showProBadge) return button;
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        button,
-        Positioned(top: -8.pxv, right: -10.pxh, child: Image.asset(ImagePaths.pro, width: 70)),
-      ],
-    );
   }
 
   TextStyle _getTextStyle(Color txtColor) {

@@ -43,6 +43,103 @@ abstract class HomeViewModelBase with Store {
     return '';
   }
 
+  String? get qrPhotoUrl {
+    final currentPersonel = personel;
+
+    if (currentPersonel == null) {
+      return null;
+    }
+
+    final candidates = [
+      currentPersonel.qrPhoto.originalUrl.trim(),
+      currentPersonel.qrPhoto.url?.trim() ?? '',
+      currentPersonel.qrPhoto.previewUrl.trim(),
+      currentPersonel.qrCodeUrl.trim(),
+    ];
+
+    for (final candidate in candidates) {
+      if (candidate.isNotEmpty) {
+        return candidate;
+      }
+    }
+
+    return null;
+  }
+
+  String? get qrShareLink {
+    final currentPersonel = personel;
+    if (currentPersonel == null) {
+      return null;
+    }
+
+    final qrCodeUrl = currentPersonel.qrCodeUrl.trim();
+    if (qrCodeUrl.isNotEmpty) {
+      return qrCodeUrl;
+    }
+
+    return null;
+  }
+
+  String? get firmLogoUrl {
+    final currentPersonel = personel;
+    if (currentPersonel == null) {
+      return null;
+    }
+
+    final candidates = [
+      currentPersonel.firmName.logo.url?.trim() ?? '',
+      currentPersonel.firmName.logo.originalUrl.trim(),
+      currentPersonel.firmName.logo.previewUrl.trim(),
+    ];
+
+    for (final candidate in candidates) {
+      if (candidate.isNotEmpty) {
+        return candidate;
+      }
+    }
+
+    return null;
+  }
+
+  String? get qrPhotoFileName {
+    final currentPersonel = personel;
+    if (currentPersonel == null) {
+      return null;
+    }
+
+    final fileName = currentPersonel.qrPhoto.fileName.trim();
+    if (fileName.isNotEmpty) {
+      return fileName;
+    }
+
+    final imageUrl = qrPhotoUrl;
+    if (imageUrl != null) {
+      final uri = Uri.tryParse(imageUrl);
+      final lastSegment = uri?.pathSegments.isNotEmpty == true
+          ? uri!.pathSegments.last.trim()
+          : '';
+      if (lastSegment.isNotEmpty) {
+        return lastSegment;
+      }
+    }
+
+    return 'employee_qr.png';
+  }
+
+  String? get qrPhotoMimeType {
+    final currentPersonel = personel;
+    if (currentPersonel == null) {
+      return null;
+    }
+
+    final mimeType = currentPersonel.qrPhoto.mimeType.trim();
+    if (mimeType.isNotEmpty) {
+      return mimeType;
+    }
+
+    return null;
+  }
+
   void setInitialPersonelInfo(GetPersonelInfoResponse value) {
     getPersonelInfoResponse = value;
   }
@@ -118,6 +215,44 @@ abstract class HomeViewModelBase with Store {
     } else {
       CustomBottomSheet.errorView(text: result.error!.message);
     }
+  }
+
+  Future<ContactsResponse?> refreshContactsInfo({
+    bool showLoader = false,
+  }) async {
+    final email = await AppSettings.instance.getCurrentUserEmail();
+    final password = await AppSettings.instance.getCurrentPassword();
+
+    if ((email?.trim().isEmpty ?? true) || (password?.isEmpty ?? true)) {
+      return AppSettings.instance.contactsInfo ?? getContactsResponse;
+    }
+
+    final result = await AppSettings.instance.generalService.getContactsInfo(
+      email: email!.trim(),
+      password: password!,
+      showLoader: showLoader,
+    );
+
+    if (result.isSuccess && result.data != null) {
+      getContactsResponse = result.data;
+      await AppSettings.instance.setContactsInfo(result.data!);
+      return result.data;
+    }
+
+    if (result.isFailure && result.error?.code == "6401") {
+      CustomBottomSheet.errorView(
+        title: 'Oturumunuz Sonlandı',
+        text: result.error?.message ?? "Oturumunuz sonlandı.",
+        onButtonPressed: () => NavigationEnums.login.navigateToPageClear(),
+      );
+      return null;
+    }
+
+    if (showLoader && result.error != null) {
+      CustomBottomSheet.errorView(text: result.error!.message);
+    }
+
+    return AppSettings.instance.contactsInfo ?? getContactsResponse;
   }
 
   Future<Result<OcrResponse>> getOcrData({

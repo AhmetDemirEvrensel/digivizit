@@ -83,32 +83,21 @@ class BaseDesign extends StatelessWidget {
           body: Stack(
             children: [
               // Background - Gradient or Image
-              if (backgroundWidget != null || backgroundImagePath != null)
-                Positioned.fill(
-                  child:
-                      backgroundWidget ??
-                      Image.asset(
-                        backgroundImagePath ?? ImagePaths.appBackground,
-                        fit: backgroundFit,
-                      ),
-                )
-              else
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          topColor ??
-                              AppColors.primary500.withValues(alpha: 0.8),
-                          bottomColor ??
-                              AppColors.primary500.withValues(alpha: 0.8),
-                        ],
-                      ),
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        topColor ?? AppColors.primary500.withValues(alpha: 0.8),
+                        bottomColor ??
+                            AppColors.primary500.withValues(alpha: 0.8),
+                      ],
                     ),
                   ),
                 ),
+              ),
               Column(
                 children: [
                   // pinnedHeader true ise header scrollable alanın dışında

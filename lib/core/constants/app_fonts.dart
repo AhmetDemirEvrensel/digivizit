@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
 
-/// AppFonts - Typography system for PetechMobile Pro
 ///
 /// Usage:
 /// - Default style: `style: AppFonts.smBold` (getter)
