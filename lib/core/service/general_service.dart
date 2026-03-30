@@ -97,7 +97,7 @@ class GeneralService implements BaseRepository {
           if (model.success == false) {
             result = Result.failure(
               Failure(
-                message: model.message?.toString() ?? 'İstasyon Seçilemedi.',
+                message: model.message,
                 code: model.data.toString(),
                 raw: model,
               ),
@@ -115,8 +115,8 @@ class GeneralService implements BaseRepository {
           }
           result = Result.failure(
             Failure(
-              message: errorModel?.message?.toString() ?? failure.message,
-              code: errorModel?.data?.toString() ?? failure.code,
+              message: errorModel?.message ?? failure.message,
+              code: errorModel?.data.toString() ?? failure.code,
               raw: errorModel ?? failure.raw,
             ),
           );
@@ -254,26 +254,35 @@ class GeneralService implements BaseRepository {
 
   @override
   Future<Result<OcrResponse>> getOcrData({
-    required File imagePath,
+    required File imageFile,
     required String engine,
     bool showLoader = true,
   }) async {
     try {
+      if (!imageFile.existsSync()) {
+        return Result.failure(
+          Failure(message: 'Yuklenecek gorsel bulunamadi.'),
+        );
+      }
+
       Result<OcrResponse>? result;
       await AsyncProcessController.init.run(() async {
         try {
-          final response = await dio.get(
+          final formData = FormData.fromMap({
+            "engine": engine,
+            "image_file": await MultipartFile.fromFile(
+              imageFile.path,
+              filename: imageFile.path.split('/').last,
+            ),
+          });
+
+          final response = await dio.post(
             GeneralPathEnum.getOcrData.path,
+            data: formData,
             options: Options(
+              contentType: Headers.multipartFormDataContentType,
               headers: {
                 "Authorization": "Bearer ${AppSettings.instance.apiToken}",
-                "Body": FormData.fromMap({
-                  "image_file": MultipartFile.fromFileSync(
-                    imagePath.path,
-                    filename: imagePath.path.split('/').last,
-                  ),
-                  "engine": "gemini",
-                }),
               },
             ),
           );
@@ -290,7 +299,7 @@ class GeneralService implements BaseRepository {
           if (model.success == false) {
             result = Result.failure(
               Failure(
-                message: model.message?.toString() ?? 'İstasyon Seçilemedi.',
+                message: model.message?.toString() ?? 'OCR verisi alinamadi.',
                 code: model.data.toString(),
                 raw: model,
               ),

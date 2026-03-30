@@ -18,6 +18,12 @@ class MeetingRequestsView extends StatefulWidget {
 class _MeetingRequestsViewState extends State<MeetingRequestsView> {
   static const List<String> _weekDays = ['P', 'S', 'C', 'P', 'C', 'C', 'P'];
   static const int _initialMonthPage = 1200;
+  static const double _weekDayCellHeight = 84;
+  static const double _monthRowSpacing = 8;
+  static const double _monthColumnSpacing = 8;
+  static const double _monthDayCellHeight = 48;
+  static const double _monthDayCircleSize = 38;
+  static const double _meetingMarkerSize = 6;
 
   final DateTime _baseMonth = DateTime(
     DateTime.now().year,
@@ -27,6 +33,8 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
   late final PageController _monthPageController;
   late DateTime selectedDate;
   late DateTime _visibleMonth;
+  late Map<int, List<_AppointmentCalendarEntry>> _appointmentsByDayKey;
+  late Set<int> _meetingDayKeys;
   bool _isMonthExpanded = false;
 
   List<appointment_model.Datum> get _appointments =>
@@ -37,9 +45,18 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
     super.initState();
     selectedDate = _dateOnly(DateTime.now());
     _visibleMonth = DateTime(selectedDate.year, selectedDate.month);
+    _rebuildAppointmentCache();
     _monthPageController = PageController(
       initialPage: _pageForMonth(_visibleMonth),
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant MeetingRequestsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.appointmentsResponse != widget.appointmentsResponse) {
+      _rebuildAppointmentCache();
+    }
   }
 
   @override
@@ -51,17 +68,8 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
   @override
   Widget build(BuildContext context) {
     final filteredAppointments =
-        _appointments.where((appointment) {
-          final appointmentDate = _appointmentDate(appointment);
-          return appointmentDate != null &&
-              _isSameDay(appointmentDate, selectedDate);
-        }).toList()..sort((a, b) {
-          final first =
-              _appointmentDateTime(a) ?? DateTime.fromMillisecondsSinceEpoch(0);
-          final second =
-              _appointmentDateTime(b) ?? DateTime.fromMillisecondsSinceEpoch(0);
-          return first.compareTo(second);
-        });
+        _appointmentsByDayKey[_dayKey(selectedDate)] ??
+        const <_AppointmentCalendarEntry>[];
 
     return Scaffold(
       backgroundColor: const Color(0xFF1C1C1E),
@@ -91,7 +99,9 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                       itemCount: filteredAppointments.length,
                       itemBuilder: (context, index) {
                         return _buildMeetingRequestCard(
-                          filteredAppointments[index],
+                          filteredAppointments[index].appointment,
+                          appointmentDateTime:
+                              filteredAppointments[index].dateTime,
                         );
                       },
                     ),
@@ -228,14 +238,17 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
   DateTime _dateOnly(DateTime date) =>
       DateTime(date.year, date.month, date.day);
 
+  int _dayKey(DateTime date) =>
+      (date.year * 10000) + (date.month * 100) + date.day;
+
   DateTime _startOfWeek(DateTime date) =>
       _dateOnly(date).subtract(Duration(days: date.weekday - 1));
 
   bool _isSameDay(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;
 
-  DateTime? _appointmentDateTime(appointment_model.Datum appointment) {
-    final raw = appointment.preferredDate?.trim();
+  DateTime? _parseAppointmentDateTime(String? rawValue) {
+    final raw = rawValue?.trim();
     if (raw == null || raw.isEmpty) return null;
 
     final parsed =
@@ -262,16 +275,37 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
     return null;
   }
 
-  DateTime? _appointmentDate(appointment_model.Datum appointment) {
-    final parsed = _appointmentDateTime(appointment);
-    return parsed == null ? null : _dateOnly(parsed);
+  bool _hasMeeting(DateTime day) {
+    return _meetingDayKeys.contains(_dayKey(day));
   }
 
-  bool _hasMeeting(DateTime day) {
-    return _appointments.any((appointment) {
-      final appointmentDate = _appointmentDate(appointment);
-      return appointmentDate != null && _isSameDay(appointmentDate, day);
-    });
+  void _rebuildAppointmentCache() {
+    final indexedAppointments = <int, List<_AppointmentCalendarEntry>>{};
+
+    for (final appointment in _appointments) {
+      final dateTime = _parseAppointmentDateTime(appointment.preferredDate);
+      if (dateTime == null) continue;
+
+      final normalizedDate = _dateOnly(dateTime);
+      final dayKey = _dayKey(normalizedDate);
+
+      indexedAppointments
+          .putIfAbsent(dayKey, () => [])
+          .add(
+            _AppointmentCalendarEntry(
+              appointment: appointment,
+              dateTime: dateTime,
+              dayKey: dayKey,
+            ),
+          );
+    }
+
+    for (final entries in indexedAppointments.values) {
+      entries.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    }
+
+    _appointmentsByDayKey = indexedAppointments;
+    _meetingDayKeys = indexedAppointments.keys.toSet();
   }
 
   DateTime _monthForPage(int page) {
@@ -340,64 +374,74 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
 
     return Row(
       key: const ValueKey('week-view'),
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(7, (index) {
         final day = startOfWeek.add(Duration(days: index));
         final isToday = _isSameDay(day, today);
         final isSelected = _isSameDay(day, selectedDate);
         final hasMeeting = _hasMeeting(day);
 
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              selectedDate = day;
-              _visibleMonth = DateTime(day.year, day.month);
-            });
-          },
-          child: Column(
-            children: [
-              Text(
-                _weekDays[index],
-                style: AppFonts.baseRegular.copyWith(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? const Color(0xFF0A84FF)
-                      : (isToday
-                            ? Colors.white.withValues(alpha: 0.08)
-                            : (hasMeeting ? Colors.red : Colors.transparent)),
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: Center(
-                  child: Text(
-                    '${day.day}',
-                    style: AppFonts.baseBold.copyWith(
-                      fontSize: 16,
-                      color: (isSelected || isToday || hasMeeting)
-                          ? Colors.white
-                          : Colors.grey,
+        return Expanded(
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedDate = day;
+                _visibleMonth = DateTime(day.year, day.month);
+              });
+            },
+            child: SizedBox(
+              height: _weekDayCellHeight,
+              child: Column(
+                children: [
+                  Text(
+                    _weekDays[index],
+                    style: AppFonts.baseRegular.copyWith(
+                      fontSize: 12,
+                      color: Colors.grey,
                     ),
                   ),
-                ),
-              ),
-              if (hasMeeting && !isSelected)
-                Container(
-                  margin: const EdgeInsets.only(top: 4),
-                  width: 4,
-                  height: 4,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
+                  const SizedBox(height: 8),
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFF0A84FF)
+                          : (isToday
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : (hasMeeting
+                                      ? Colors.red
+                                      : Colors.transparent)),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${day.day}',
+                        style: AppFonts.baseBold.copyWith(
+                          fontSize: 16,
+                          color: (isSelected || isToday || hasMeeting)
+                              ? Colors.white
+                              : Colors.grey,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-            ],
+                  const SizedBox(height: 4),
+                  SizedBox(
+                    height: _meetingMarkerSize,
+                    child: hasMeeting && !isSelected
+                        ? Container(
+                            width: _meetingMarkerSize,
+                            height: _meetingMarkerSize,
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                          )
+                        : null,
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       }),
@@ -428,9 +472,10 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 292,
+          height: (_monthDayCellHeight * 6) + (_monthRowSpacing * 5),
           child: PageView.builder(
             controller: _monthPageController,
+            physics: const BouncingScrollPhysics(),
             onPageChanged: (page) {
               setState(() {
                 _visibleMonth = _monthForPage(page);
@@ -453,79 +498,110 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
     );
     final today = _dateOnly(DateTime.now());
 
-    return GridView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.zero,
-      itemCount: 42,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 8,
-      ),
-      itemBuilder: (context, index) {
-        final day = firstVisibleDay.add(Duration(days: index));
-        final isCurrentMonth = day.month == month.month;
-        final isSelected = _isSameDay(day, selectedDate);
-        final isToday = _isSameDay(day, today);
-        final hasMeeting = _hasMeeting(day);
+    return Column(
+      children: List.generate(6, (rowIndex) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: rowIndex == 5 ? 0 : _monthRowSpacing,
+          ),
+          child: Row(
+            children: List.generate(7, (columnIndex) {
+              final index = (rowIndex * 7) + columnIndex;
+              final day = firstVisibleDay.add(Duration(days: index));
 
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              selectedDate = day;
-              _visibleMonth = DateTime(day.year, day.month);
-              _isMonthExpanded = false;
-            });
-
-            if (_monthPageController.hasClients) {
-              _monthPageController.jumpToPage(_pageForMonth(_visibleMonth));
-            }
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? const Color(0xFF0A84FF)
-                      : (isToday
-                            ? Colors.white.withValues(alpha: 0.08)
-                            : Colors.transparent),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    '${day.day}',
-                    style: AppFonts.baseBold.copyWith(
-                      fontSize: 14,
-                      color: isCurrentMonth
-                          ? Colors.white
-                          : Colors.grey.withValues(alpha: 0.4),
-                    ),
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    right: columnIndex == 6 ? 0 : _monthColumnSpacing,
+                  ),
+                  child: _buildMonthDayCell(
+                    day: day,
+                    month: month,
+                    today: today,
                   ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              if (hasMeeting)
-                Container(
-                  width: 4,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: isSelected ? Colors.white : Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-            ],
+              );
+            }),
           ),
         );
-      },
+      }),
     );
   }
 
-  Widget _buildMeetingRequestCard(appointment_model.Datum appointment) {
-    final appointmentDateTime = _appointmentDateTime(appointment);
+  Widget _buildMonthDayCell({
+    required DateTime day,
+    required DateTime month,
+    required DateTime today,
+  }) {
+    final isCurrentMonth = day.month == month.month;
+    final isSelected = _isSameDay(day, selectedDate);
+    final isToday = _isSameDay(day, today);
+    final hasMeeting = _hasMeeting(day);
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedDate = day;
+          _visibleMonth = DateTime(day.year, day.month);
+          _isMonthExpanded = false;
+        });
+
+        if (_monthPageController.hasClients) {
+          _monthPageController.jumpToPage(_pageForMonth(_visibleMonth));
+        }
+      },
+      child: SizedBox(
+        height: _monthDayCellHeight,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: _monthDayCircleSize,
+              height: _monthDayCircleSize,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? const Color(0xFF0A84FF)
+                    : (isToday
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : Colors.transparent),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  '${day.day}',
+                  style: AppFonts.baseBold.copyWith(
+                    fontSize: 14,
+                    color: isCurrentMonth
+                        ? Colors.white
+                        : Colors.grey.withValues(alpha: 0.4),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            SizedBox(
+              height: _meetingMarkerSize,
+              child: hasMeeting
+                  ? Container(
+                      width: _meetingMarkerSize,
+                      height: _meetingMarkerSize,
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.white : Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                    )
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMeetingRequestCard(
+    appointment_model.Datum appointment, {
+    DateTime? appointmentDateTime,
+  }) {
     final requesterName = appointment.fullName?.trim().isNotEmpty == true
         ? appointment.fullName!.trim()
         : 'Isimsiz Talep';
@@ -699,4 +775,16 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
       ),
     );
   }
+}
+
+class _AppointmentCalendarEntry {
+  const _AppointmentCalendarEntry({
+    required this.appointment,
+    required this.dateTime,
+    required this.dayKey,
+  });
+
+  final appointment_model.Datum appointment;
+  final DateTime dateTime;
+  final int dayKey;
 }

@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:digivizit/core/common/result.dart';
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
+import 'package:digivizit/core/models/ocr/ocr_response.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/navigation/navigation_extension.dart';
@@ -18,6 +22,8 @@ abstract class HomeViewModelBase with Store {
 
   @observable
   ContactsResponse? getContactsResponse;
+
+  OcrResponse? ocrResponse;
 
   Datum? get personel {
     final response = getPersonelInfoResponse;
@@ -112,5 +118,32 @@ abstract class HomeViewModelBase with Store {
     } else {
       CustomBottomSheet.errorView(text: result.error!.message);
     }
+  }
+
+  Future<Result<OcrResponse>> getOcrData({
+    required File imageFile,
+    required String engine,
+  }) async {
+    final result = await AppSettings.instance.generalService.getOcrData(
+      imageFile: imageFile,
+      engine: engine,
+    );
+
+    if (result.isSuccess && result.data != null) {
+      ocrResponse = result.data;
+      return result;
+    }
+
+    if (result.isFailure && result.error?.code == "6401") {
+      CustomBottomSheet.errorView(
+        title: 'Oturumunuz Sonlandı',
+        text: result.error?.message ?? "Oturumunuz sonlandı.",
+        onButtonPressed: () => NavigationEnums.login.navigateToPageClear(),
+      );
+    } else if (result.error != null) {
+      CustomBottomSheet.errorView(text: result.error!.message);
+    }
+
+    return result;
   }
 }

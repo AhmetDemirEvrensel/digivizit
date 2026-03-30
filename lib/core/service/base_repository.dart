@@ -20,7 +20,10 @@ abstract interface class BaseRepository {
     required String password,
   });
   Future<Result<AppointmentResponse>> getAppointments();
-  Future<Result<OcrResponse>> getOcrData({required File imagePath,required String engine});
+  Future<Result<OcrResponse>> getOcrData({
+    required File imageFile,
+    required String engine,
+  });
 
   /* // ----------- Station Registration ----------- //
   Future<Result<StationRegistrationResponse>> stationRegistration({

@@ -5,7 +5,7 @@ enum GeneralPathEnum {
   getPersonelInfo,
   getContactsInfo,
   getAppointments,
-  getOcrData
+  getOcrData,
   /*   
   stationRegistration,
   stationDelete,
@@ -55,7 +55,7 @@ extension GeneralPathEnumExt on GeneralPathEnum {
       case GeneralPathEnum.getAppointments:
         return 'v1/appointment-requests';
       case GeneralPathEnum.getOcrData:
-        return 'v1/business-cards/process-ocr?';
+        return 'v1/business-cards/process-ocr';
       /* 
       case GeneralPathEnum.stationRegistration:
         return '38e1ba807fbb7bff18a49699a4147521';
