@@ -26,7 +26,8 @@ class ContactDetailView extends StatefulWidget {
   State<ContactDetailView> createState() => _ContactDetailViewState();
 }
 
-class _ContactDetailViewState extends State<ContactDetailView> with SingleTickerProviderStateMixin {
+class _ContactDetailViewState extends State<ContactDetailView>
+    with SingleTickerProviderStateMixin {
   final HomeViewModel _homeViewModel = HomeViewModel();
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -42,41 +43,62 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     final savedPersonelInfo = AppSettings.instance.personelInfo;
     if (savedPersonelInfo != null) {
       _homeViewModel.setInitialPersonelInfo(savedPersonelInfo);
     }
 
-    _homeViewModel.loadBackgroundColors(topFallback: _topColor, bottomFallback: _bottomColor).then((gradientColors) {
-      if (!mounted) return;
+    _homeViewModel
+        .loadBackgroundColors(
+          topFallback: _topColor,
+          bottomFallback: _bottomColor,
+        )
+        .then((gradientColors) {
+          if (!mounted) return;
 
-      setState(() {
-        _topColor = gradientColors.topColor;
-        _bottomColor = gradientColors.bottomColor;
-      });
-    });
+          setState(() {
+            _topColor = gradientColors.topColor;
+            _bottomColor = gradientColors.bottomColor;
+          });
+        });
 
     _animationController.forward();
     _loadLocalNotes();
   }
 
   Future<void> _loadLocalNotes() async {
-    final String? notesJson = AppSettings.instance.sharedPreferencesManager.getString(SharedKeys.contactNotes);
+    final String? notesJson = AppSettings.instance.sharedPreferencesManager
+        .getString(SharedKeys.contactNotes);
     if (notesJson != null) {
       final Map<String, dynamic> allNotes = jsonDecode(notesJson);
       final List<dynamic>? contactNotes = allNotes[_contactNotesKey];
       if (contactNotes != null) {
         setState(() {
-          _localNotes = contactNotes.map((e) => ActivityModel(date: e['date'], description: e['description'])).toList();
+          _localNotes = contactNotes
+              .map(
+                (e) => ActivityModel(
+                  date: e['date'],
+                  description: e['description'],
+                ),
+              )
+              .toList();
         });
       }
     }
@@ -88,7 +110,8 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
     final String date = DateFormat('dd.MM.yyyy HH:mm').format(DateTime.now());
     final newLocalNote = ActivityModel(date: date, description: note);
 
-    final String? notesJson = AppSettings.instance.sharedPreferencesManager.getString(SharedKeys.contactNotes);
+    final String? notesJson = AppSettings.instance.sharedPreferencesManager
+        .getString(SharedKeys.contactNotes);
     Map<String, dynamic> allNotes = {};
     if (notesJson != null) {
       allNotes = jsonDecode(notesJson);
@@ -98,7 +121,10 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
     contactNotes.add({'date': date, 'description': note});
     allNotes[_contactNotesKey] = contactNotes;
 
-    await AppSettings.instance.sharedPreferencesManager.saveString(SharedKeys.contactNotes, jsonEncode(allNotes));
+    await AppSettings.instance.sharedPreferencesManager.saveString(
+      SharedKeys.contactNotes,
+      jsonEncode(allNotes),
+    );
 
     setState(() {
       _localNotes.add(newLocalNote);
@@ -107,16 +133,22 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
   }
 
   Future<void> _deleteLocalNote(ActivityModel note) async {
-    final String? notesJson = AppSettings.instance.sharedPreferencesManager.getString(SharedKeys.contactNotes);
+    final String? notesJson = AppSettings.instance.sharedPreferencesManager
+        .getString(SharedKeys.contactNotes);
     if (notesJson == null) return;
 
     final Map<String, dynamic> allNotes = jsonDecode(notesJson);
     final List<dynamic> contactNotes = allNotes[_contactNotesKey] ?? [];
 
-    contactNotes.removeWhere((e) => e['date'] == note.date && e['description'] == note.description);
+    contactNotes.removeWhere(
+      (e) => e['date'] == note.date && e['description'] == note.description,
+    );
     allNotes[_contactNotesKey] = contactNotes;
 
-    await AppSettings.instance.sharedPreferencesManager.saveString(SharedKeys.contactNotes, jsonEncode(allNotes));
+    await AppSettings.instance.sharedPreferencesManager.saveString(
+      SharedKeys.contactNotes,
+      jsonEncode(allNotes),
+    );
 
     setState(() {
       _localNotes.remove(note);
@@ -155,9 +187,16 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                         decoration: BoxDecoration(
                           color: AppColors.baseWhite.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.2), width: 1),
+                          border: Border.all(
+                            color: AppColors.baseWhite.withValues(alpha: 0.2),
+                            width: 1,
+                          ),
                         ),
-                        child: Icon(Icons.arrow_back_ios_new, color: AppColors.baseWhite, size: 18),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          color: AppColors.baseWhite,
+                          size: 18,
+                        ),
                       ),
                     ),
                   ],
@@ -165,9 +204,22 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                 FigmaBox(height: 24),
 
                 // İsim ve Şirket
-                Text(widget.contact.name, style: AppFonts.baseBold.copyWith(fontSize: 28, color: AppColors.baseWhite, letterSpacing: -0.5)),
+                Text(
+                  widget.contact.name,
+                  style: AppFonts.baseBold.copyWith(
+                    fontSize: 28,
+                    color: AppColors.baseWhite,
+                    letterSpacing: -0.5,
+                  ),
+                ),
                 FigmaBox(height: 8),
-                Text(widget.contact.company, style: AppFonts.baseRegular.copyWith(fontSize: 16, color: AppColors.baseWhite.withValues(alpha: 0.7))),
+                Text(
+                  widget.contact.company,
+                  style: AppFonts.baseRegular.copyWith(
+                    fontSize: 16,
+                    color: AppColors.baseWhite.withValues(alpha: 0.7),
+                  ),
+                ),
                 FigmaBox(height: 16),
                 // Scanned Business Card
                 /*  _buildBusinessCardSection(),
@@ -266,6 +318,12 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
   } */
 
   Widget _buildContactInformation() {
+    final sector = widget.contact.sectorValue;
+    final website = widget.contact.websiteValue;
+    final companyEmail = widget.contact.emailValue;
+    final companyPhone = widget.contact.phoneValue;
+    final country = widget.contact.countryValue;
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -280,7 +338,9 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
           color: AppColors.baseWhite.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: _isContactInfoExpanded ? const Color(0xFF60A5FA).withValues(alpha: 0.3) : AppColors.baseWhite.withValues(alpha: 0.1),
+            color: _isContactInfoExpanded
+                ? const Color(0xFF60A5FA).withValues(alpha: 0.3)
+                : AppColors.baseWhite.withValues(alpha: 0.1),
             width: 1.5,
           ),
         ),
@@ -292,21 +352,36 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                 FigmaContainer(
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF60A5FA)),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFF60A5FA),
+                  ),
                 ),
                 const SizedBox(width: 12),
-                Text('Bağlantı Bilgileri', style: AppFonts.baseBold.copyWith(fontSize: 18, color: AppColors.baseWhite)),
+                Text(
+                  'Bağlantı Bilgileri',
+                  style: AppFonts.baseBold.copyWith(
+                    fontSize: 18,
+                    color: AppColors.baseWhite,
+                  ),
+                ),
                 const Spacer(),
                 AnimatedRotation(
                   duration: const Duration(milliseconds: 300),
                   turns: _isContactInfoExpanded ? 0.5 : 0,
-                  child: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF60A5FA), size: 28),
+                  child: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Color(0xFF60A5FA),
+                    size: 28,
+                  ),
                 ),
               ],
             ),
             AnimatedCrossFade(
               duration: const Duration(milliseconds: 300),
-              crossFadeState: _isContactInfoExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+              crossFadeState: _isContactInfoExpanded
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
               firstChild: const SizedBox(),
               secondChild: Column(
                 children: [
@@ -316,63 +391,76 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                     icon: Icons.business_center,
                     iconColor: const Color(0xFFF59E0B),
                     label: 'Firma Adı / Ünvan',
-                    value: widget.contact.company.isNotEmpty
-                        ? '${widget.contact.company}${widget.contact.position.isNotEmpty ? ' · ${widget.contact.position}' : ''}'
-                        : widget.contact.position,
+                    value: widget.contact.companySummary,
                     onTap: () {},
                   ),
                   FigmaBox(height: 12),
                   // İlgili Kişi Adı Soyadı
-                  if (widget.contact.contactPerson.isNotEmpty) ...[
-                    _buildContactInfoItem(
-                      icon: Icons.person,
-                      iconColor: const Color(0xFF06B6D4),
-                      label: 'İlgili Kişi Adı Soyadı',
-                      value: widget.contact.contactPerson,
-                      onTap: () {},
-                    ),
-                    FigmaBox(height: 12),
-                  ],
+                  _buildContactInfoItem(
+                    icon: Icons.person,
+                    iconColor: const Color(0xFF06B6D4),
+                    label: 'İlgili Kişi Adı Soyadı',
+                    value: widget.contact.contactPerson,
+                    onTap: () {},
+                  ),
+                  FigmaBox(height: 12),
                   // İlgili Kişi Telefon
-                  if (widget.contact.contactPhone.isNotEmpty) ...[
-                    _buildContactInfoItem(
-                      icon: Icons.phone_in_talk,
-                      iconColor: const Color(0xFF10B981),
-                      label: 'İlgili Kişi Telefon',
-                      value: widget.contact.contactPhone,
-                      onTap: () => _launchUrl(Uri.parse('tel:${widget.contact.contactPhone}')),
-                    ),
-                    FigmaBox(height: 12),
-                  ],
+                  _buildContactInfoItem(
+                    icon: Icons.phone_in_talk,
+                    iconColor: const Color(0xFF10B981),
+                    label: 'İlgili Kişi Telefon',
+                    value: widget.contact.contactPhone,
+                    onTap: () {
+                      final contactPhone = widget.contact.contactPhoneValue;
+                      if (contactPhone == null) {
+                        _showMissingFieldMessage(widget.contact.contactPhone);
+                        return;
+                      }
+
+                      _launchUrl(Uri.parse('tel:$contactPhone'));
+                    },
+                  ),
+                  FigmaBox(height: 12),
                   // İlgili Kişi Mail
-                  if (widget.contact.contactEmail.isNotEmpty) ...[
-                    _buildContactInfoItem(
-                      icon: Icons.mark_email_read,
-                      iconColor: const Color(0xFF3B82F6),
-                      label: 'İlgili Kişi Mail',
-                      value: widget.contact.contactEmail,
-                      onTap: () => _launchUrl(Uri.parse('mailto:${widget.contact.contactEmail}')),
-                    ),
-                    FigmaBox(height: 12),
-                  ],
+                  _buildContactInfoItem(
+                    icon: Icons.mark_email_read,
+                    iconColor: const Color(0xFF3B82F6),
+                    label: 'İlgili Kişi Mail',
+                    value: widget.contact.contactEmail,
+                    onTap: () {
+                      final contactEmail = widget.contact.contactEmailValue;
+                      if (contactEmail == null) {
+                        _showMissingFieldMessage(widget.contact.contactEmail);
+                        return;
+                      }
+
+                      _launchUrl(Uri.parse('mailto:$contactEmail'));
+                    },
+                  ),
+                  FigmaBox(height: 12),
                   // Hizmet / Sektör
-                  if (widget.contact.sector.isNotEmpty) ...[
-                    _buildContactInfoItem(
-                      icon: Icons.category,
-                      iconColor: const Color(0xFFA855F7),
-                      label: 'Hizmet / Sektör',
-                      value: widget.contact.sector,
-                      onTap: () {},
-                    ),
-                    FigmaBox(height: 12),
-                  ],
+                  _buildContactInfoItem(
+                    icon: Icons.category,
+                    iconColor: const Color(0xFFA855F7),
+                    label: 'Hizmet / Sektör',
+                    value: sector ?? 'Sektor bulunamadi',
+                    onTap: () {},
+                  ),
+                  FigmaBox(height: 12),
                   // Web Sitesi
                   _buildContactInfoItem(
                     icon: Icons.language,
                     iconColor: const Color(0xFF8B5CF6),
                     label: 'Web Sitesi',
-                    value: widget.contact.website,
-                    onTap: () => _launchUrl(Uri.parse(widget.contact.website)),
+                    value: website ?? 'Web sitesi bulunamadi',
+                    onTap: () {
+                      if (website == null) {
+                        _showMissingFieldMessage('Web sitesi bulunamadi');
+                        return;
+                      }
+
+                      _launchUrl(Uri.parse(website));
+                    },
                   ),
                   FigmaBox(height: 12),
                   // Firma Email
@@ -380,8 +468,15 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                     icon: Icons.email,
                     iconColor: const Color(0xFF60A5FA),
                     label: 'Firma Email',
-                    value: widget.contact.email,
-                    onTap: () => _launchUrl(Uri.parse('mailto:${widget.contact.email}')),
+                    value: companyEmail ?? 'Firma e-postasi bulunamadi',
+                    onTap: () {
+                      if (companyEmail == null) {
+                        _showMissingFieldMessage('Firma e-postasi bulunamadi');
+                        return;
+                      }
+
+                      _launchUrl(Uri.parse('mailto:$companyEmail'));
+                    },
                   ),
                   FigmaBox(height: 12),
                   // Firma Telefon
@@ -389,15 +484,26 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                     icon: Icons.phone,
                     iconColor: const Color(0xFF34D399),
                     label: 'Firma Telefon',
-                    value: widget.contact.phone,
-                    onTap: () => _launchUrl(Uri.parse('tel:${widget.contact.phone}')),
+                    value: companyPhone ?? 'Firma telefonu bulunamadi',
+                    onTap: () {
+                      if (companyPhone == null) {
+                        _showMissingFieldMessage('Firma telefonu bulunamadi');
+                        return;
+                      }
+
+                      _launchUrl(Uri.parse('tel:$companyPhone'));
+                    },
                   ),
                   FigmaBox(height: 12),
                   // Ülke
-                  if (widget.contact.country.isNotEmpty) ...[
-                    _buildContactInfoItem(icon: Icons.flag, iconColor: const Color(0xFFF97316), label: 'Ülke', value: widget.contact.country, onTap: () {}),
-                    FigmaBox(height: 12),
-                  ],
+                  _buildContactInfoItem(
+                    icon: Icons.flag,
+                    iconColor: const Color(0xFFF97316),
+                    label: 'Ülke',
+                    value: country ?? 'Ulke bilgisi bulunamadi',
+                    onTap: () {},
+                  ),
+                  FigmaBox(height: 12),
                   // Adres
                   _buildContactInfoItem(
                     icon: Icons.location_on,
@@ -431,10 +537,15 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
         decoration: BoxDecoration(
           color: AppColors.baseWhite.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.1), width: 1),
+          border: Border.all(
+            color: AppColors.baseWhite.withValues(alpha: 0.1),
+            width: 1,
+          ),
         ),
         child: Row(
-          crossAxisAlignment: isMultiline ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+          crossAxisAlignment: isMultiline
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.center,
           children: [
             Container(
               width: 40,
@@ -442,7 +553,10 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
               decoration: BoxDecoration(
                 color: iconColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: iconColor.withValues(alpha: 0.3), width: 1),
+                border: Border.all(
+                  color: iconColor.withValues(alpha: 0.3),
+                  width: 1,
+                ),
               ),
               child: Icon(icon, color: iconColor, size: 20),
             ),
@@ -451,11 +565,20 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: AppFonts.baseRegular.copyWith(fontSize: 12, color: AppColors.baseWhite.withValues(alpha: 0.6))),
+                  Text(
+                    label,
+                    style: AppFonts.baseRegular.copyWith(
+                      fontSize: 12,
+                      color: AppColors.baseWhite.withValues(alpha: 0.6),
+                    ),
+                  ),
                   const SizedBox(height: 2),
                   Text(
                     value,
-                    style: AppFonts.baseSemibold.copyWith(fontSize: 14, color: AppColors.baseWhite),
+                    style: AppFonts.baseSemibold.copyWith(
+                      fontSize: 14,
+                      color: AppColors.baseWhite,
+                    ),
                     maxLines: isMultiline ? 2 : 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -477,7 +600,12 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
       decoration: BoxDecoration(
         color: AppColors.baseWhite.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _isNotesExpanded ? const Color(0xFF60A5FA).withValues(alpha: 0.3) : AppColors.baseWhite.withValues(alpha: 0.1), width: 1.5),
+        border: Border.all(
+          color: _isNotesExpanded
+              ? const Color(0xFF60A5FA).withValues(alpha: 0.3)
+              : AppColors.baseWhite.withValues(alpha: 0.1),
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -496,16 +624,29 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                 FigmaContainer(
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF3B82F6)),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFF3B82F6),
+                  ),
                 ),
                 const SizedBox(width: 12),
-                Text('Notlarım', style: AppFonts.baseBold.copyWith(fontSize: 16, color: AppColors.baseWhite)),
+                Text(
+                  'Notlarım',
+                  style: AppFonts.baseBold.copyWith(
+                    fontSize: 16,
+                    color: AppColors.baseWhite,
+                  ),
+                ),
                 const Spacer(),
                 if (_isNotesExpanded)
                   AnimatedRotation(
                     duration: const Duration(milliseconds: 300),
                     turns: _isNotesExpanded ? 0.5 : 0,
-                    child: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF3B82F6), size: 24),
+                    child: const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Color(0xFF3B82F6),
+                      size: 24,
+                    ),
                   ),
               ],
             ),
@@ -518,24 +659,40 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
               Expanded(
                 child: TextField(
                   controller: _noteController,
-                  style: AppFonts.baseRegular.copyWith(color: AppColors.baseWhite, fontSize: 14),
+                  style: AppFonts.baseRegular.copyWith(
+                    color: AppColors.baseWhite,
+                    fontSize: 14,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Add a note...',
-                    hintStyle: AppFonts.baseRegular.copyWith(color: AppColors.baseWhite.withValues(alpha: 0.4), fontSize: 14),
+                    hintStyle: AppFonts.baseRegular.copyWith(
+                      color: AppColors.baseWhite.withValues(alpha: 0.4),
+                      fontSize: 14,
+                    ),
                     filled: true,
                     fillColor: AppColors.baseWhite.withValues(alpha: 0.05),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppColors.baseWhite.withValues(alpha: 0.1)),
+                      borderSide: BorderSide(
+                        color: AppColors.baseWhite.withValues(alpha: 0.1),
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppColors.baseWhite.withValues(alpha: 0.1)),
+                      borderSide: BorderSide(
+                        color: AppColors.baseWhite.withValues(alpha: 0.1),
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 1.5),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF3B82F6),
+                        width: 1.5,
+                      ),
                     ),
                   ),
                 ),
@@ -549,9 +706,19 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
                   decoration: BoxDecoration(
                     color: const Color(0xFF3B82F6),
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [BoxShadow(color: const Color(0xFF3B82F6).withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 4))],
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  child: const Icon(Icons.add, color: AppColors.baseWhite, size: 24),
+                  child: const Icon(
+                    Icons.add,
+                    color: AppColors.baseWhite,
+                    size: 24,
+                  ),
                 ),
               ),
             ],
@@ -561,7 +728,9 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
           // Activities List (Conditionally Expandable)
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 300),
-            crossFadeState: (_isNotesExpanded) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            crossFadeState: (_isNotesExpanded)
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
             firstChild: Column(
               children: _localNotes.reversed.take(4).map((activity) {
                 final bool isLocal = _localNotes.contains(activity);
@@ -630,7 +799,10 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
       },
       background: Container(
         margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(color: AppColors.negative700.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: AppColors.negative700.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(12),
+        ),
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         child: const Icon(Icons.delete_outline, color: AppColors.negative700),
@@ -646,7 +818,10 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
       decoration: BoxDecoration(
         color: AppColors.baseWhite.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.1), width: 1),
+        border: Border.all(
+          color: AppColors.baseWhite.withValues(alpha: 0.1),
+          width: 1,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -657,7 +832,10 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
             decoration: BoxDecoration(
               color: Color(0xFF3B82F6).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Color(0xFF3B82F6).withValues(alpha: 0.3), width: 1),
+              border: Border.all(
+                color: Color(0xFF3B82F6).withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
             child: Icon(Icons.event_note, color: Color(0xFF3B82F6), size: 16),
           ),
@@ -668,13 +846,29 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
               children: [
                 Row(
                   children: [
-                    Icon(Icons.calendar_today, size: 12, color: AppColors.baseWhite.withValues(alpha: 0.5)),
+                    Icon(
+                      Icons.calendar_today,
+                      size: 12,
+                      color: AppColors.baseWhite.withValues(alpha: 0.5),
+                    ),
                     const SizedBox(width: 4),
-                    Text(activity.date, style: AppFonts.baseRegular.copyWith(fontSize: 12, color: AppColors.baseWhite.withValues(alpha: 0.5))),
+                    Text(
+                      activity.date,
+                      style: AppFonts.baseRegular.copyWith(
+                        fontSize: 12,
+                        color: AppColors.baseWhite.withValues(alpha: 0.5),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(activity.description, style: AppFonts.baseRegular.copyWith(fontSize: 13, color: AppColors.baseWhite.withValues(alpha: 0.9))),
+                Text(
+                  activity.description,
+                  style: AppFonts.baseRegular.copyWith(
+                    fontSize: 13,
+                    color: AppColors.baseWhite.withValues(alpha: 0.9),
+                  ),
+                ),
               ],
             ),
           ),
@@ -684,12 +878,17 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
   }
 
   Widget _buildTagsSection() {
+    final sector = widget.contact.sectorValue;
+
     return FigmaContainer(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.baseWhite.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.1), width: 1),
+        border: Border.all(
+          color: AppColors.baseWhite.withValues(alpha: 0.1),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -699,39 +898,62 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
               FigmaContainer(
                 width: 8,
                 height: 8,
-                decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFA855F7)),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFFA855F7),
+                ),
               ),
               const SizedBox(width: 12),
-              Text('Etiketler & Sektör', style: AppFonts.baseBold.copyWith(fontSize: 16, color: AppColors.baseWhite)),
+              Text(
+                'Etiketler & Sektör',
+                style: AppFonts.baseBold.copyWith(
+                  fontSize: 16,
+                  color: AppColors.baseWhite,
+                ),
+              ),
             ],
           ),
           FigmaBox(height: 16),
           // Sektör chip'i
-          if (widget.contact.sector.isNotEmpty) ...[
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                FigmaContainer(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFA855F7).withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: const Color(0xFFA855F7).withValues(alpha: 0.4), width: 1),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.category, color: Color(0xFFA855F7), size: 14),
-                      const SizedBox(width: 6),
-                      Text(widget.contact.sector, style: AppFonts.baseBold.copyWith(fontSize: 12, color: const Color(0xFFA855F7))),
-                    ],
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              FigmaContainer(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFA855F7).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: const Color(0xFFA855F7).withValues(alpha: 0.4),
+                    width: 1,
                   ),
                 ),
-              ],
-            ),
-            FigmaBox(height: 12),
-          ],
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.category,
+                      color: Color(0xFFA855F7),
+                      size: 14,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      sector ?? 'Sektor bulunamadi',
+                      style: AppFonts.baseBold.copyWith(
+                        fontSize: 12,
+                        color: const Color(0xFFA855F7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          FigmaBox(height: 12),
           // Etiketler
           /* if (widget.contact.tags.isNotEmpty)
             Wrap(
@@ -766,14 +988,23 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
               decoration: BoxDecoration(
                 color: AppColors.positive500,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.positive500.withValues(alpha: 0.2), width: 1.5),
+                border: Border.all(
+                  color: AppColors.positive500.withValues(alpha: 0.2),
+                  width: 1.5,
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.call, color: AppColors.baseWhite, size: 20),
                   const SizedBox(width: 8),
-                  Text('WhatsApp', style: AppFonts.baseSemibold.copyWith(fontSize: 15, color: AppColors.baseWhite)),
+                  Text(
+                    'WhatsApp',
+                    style: AppFonts.baseSemibold.copyWith(
+                      fontSize: 15,
+                      color: AppColors.baseWhite,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -786,16 +1017,34 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
             child: FigmaContainer(
               height: 56,
               decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [Color(0xFF3B82F6), Color(0xFF2563EB)]),
+                gradient: LinearGradient(
+                  colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+                ),
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: Color(0xFF3B82F6).withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 8))],
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0xFF3B82F6).withValues(alpha: 0.4),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.phone_callback_sharp, color: AppColors.baseWhite, size: 20),
+                  Icon(
+                    Icons.phone_callback_sharp,
+                    color: AppColors.baseWhite,
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
-                  Text('Ara', style: AppFonts.baseBold.copyWith(fontSize: 15, color: AppColors.baseWhite)),
+                  Text(
+                    'Ara',
+                    style: AppFonts.baseBold.copyWith(
+                      fontSize: 15,
+                      color: AppColors.baseWhite,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -806,7 +1055,13 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
   }
 
   Future<void> onPressWhatsapp() async {
-    final link = WhatsAppUnilink(phoneNumber: widget.contact.contactPhone, text: "");
+    final contactPhone = widget.contact.contactPhoneValue;
+    if (contactPhone == null) {
+      _showMissingFieldMessage('Telefon bulunamadi');
+      return;
+    }
+
+    final link = WhatsAppUnilink(phoneNumber: contactPhone, text: "");
     await launchUrl(Uri.parse('$link'));
   }
 
@@ -814,13 +1069,23 @@ class _ContactDetailViewState extends State<ContactDetailView> with SingleTicker
     final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
     if (await canLaunchUrl(launchUri)) {
       await launchUrl(launchUri);
+      return;
     }
+
+    _showMissingFieldMessage('Telefon aramasi baslatilamadi');
   }
 
   Future<void> _launchUrl(Uri uri) async {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
+      return;
     }
+
+    _showMissingFieldMessage('Baglanti acilamadi');
+  }
+
+  void _showMissingFieldMessage(String message) {
+    CustomBottomSheet.errorView(text: message);
   }
 }
 
@@ -833,24 +1098,12 @@ class ActivityModel {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is ActivityModel && runtimeType == other.runtimeType && date == other.date && description == other.description;
+      identical(this, other) ||
+      other is ActivityModel &&
+          runtimeType == other.runtimeType &&
+          date == other.date &&
+          description == other.description;
 
   @override
   int get hashCode => date.hashCode ^ description.hashCode;
-}
-
-extension ContactsDataDetailFields on ContactsData {
-  String get name => nameSurname.isNotEmpty ? nameSurname.first : '';
-
-  String get company => companyName;
-
-  String get position => unvan.isNotEmpty ? unvan.first : '';
-
-  String get contactPerson => nameSurname.length > 1 ? nameSurname.skip(1).join(', ') : '';
-
-  String get contactPhone => phoneList.isNotEmpty ? phoneList.first : '';
-
-  String get contactEmail => emailList.isNotEmpty ? emailList.first : '';
-
-  String get location => address;
 }

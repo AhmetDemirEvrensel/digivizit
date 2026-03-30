@@ -68,30 +68,19 @@ class _ContactsViewState extends State<ContactsView>
 
   @override
   Widget build(BuildContext context) {
-    final contacts = widget.contactsResponse.data;
+    final contacts = widget.contactsResponse.data ?? const <ContactsData>[];
     final filters = _buildSectorFilters(contacts);
     final normalizedQuery = _searchQuery.trim().toLowerCase();
     final filteredContacts = contacts.where((contact) {
       final matchesFilter =
-          _selectedFilter == 'All' || contact.sector.trim() == _selectedFilter;
+          _selectedFilter == 'All' || contact.sectorValue == _selectedFilter;
       if (!matchesFilter) return false;
 
       if (normalizedQuery.isEmpty) {
         return true;
       }
 
-      final searchableValues = [
-        contact.companyName,
-        contact.email,
-        contact.phone,
-        contact.website,
-        contact.address,
-        contact.sector,
-        ...contact.nameSurname,
-        ...contact.unvan,
-      ];
-
-      return searchableValues.any(
+      return contact.searchableValues.any(
         (value) => value.toLowerCase().contains(normalizedQuery),
       );
     }).toList();
@@ -125,17 +114,31 @@ class _ContactsViewState extends State<ContactsView>
               // Filtre Butonları
               _buildFilterButtons(filters),
               FigmaBox(height: 20),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.7,
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  itemCount: filteredContacts.length,
-                  itemBuilder: (context, index) {
-                    final contact = filteredContacts[index];
-                    return _buildContactCard(contact);
-                  },
+              if (filteredContacts.isEmpty)
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.45,
+                  child: Center(
+                    child: Text(
+                      'Baglanti bulunamadi',
+                      style: AppFonts.baseSemibold.copyWith(
+                        fontSize: 15,
+                        color: AppColors.baseWhite.withValues(alpha: 0.72),
+                      ),
+                    ),
+                  ),
+                )
+              else
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: filteredContacts.length,
+                    itemBuilder: (context, index) {
+                      final contact = filteredContacts[index];
+                      return _buildContactCard(contact);
+                    },
+                  ),
                 ),
-              ),
 
               /* // Kişi Listesi
               ..._filteredContacts
@@ -203,7 +206,8 @@ class _ContactsViewState extends State<ContactsView>
     final seenSectors = <String>{};
 
     for (final contact in contacts) {
-      final sector = contact.sector.trim();
+      final sector = contact.sectorValue;
+      if (sector == null) continue;
       if (sector.isEmpty) continue;
 
       final normalizedSector = sector.toLowerCase();
@@ -279,10 +283,8 @@ class _ContactsViewState extends State<ContactsView>
   }
 
   Widget _buildContactCard(ContactsData contact) {
-    final name = contact.nameSurname.isNotEmpty
-        ? contact.nameSurname.first
-        : '';
-    final position = contact.unvan.isNotEmpty ? contact.unvan.first : '';
+    final name = contact.name;
+    final position = contact.position;
 
     return GestureDetector(
       onTap: () {
@@ -351,7 +353,7 @@ class _ContactsViewState extends State<ContactsView>
                   const SizedBox(height: 4),
                   // Şirket
                   Text(
-                    contact.companyName,
+                    contact.company,
                     style: AppFonts.baseRegular.copyWith(
                       fontSize: 13,
                       color: AppColors.baseWhite.withValues(alpha: 0.7),

@@ -22,7 +22,7 @@ abstract class HomeViewModelBase with Store {
   Datum? get personel {
     final response = getPersonelInfoResponse;
     if (response == null || response.data.isEmpty) {
-      return Datum(id: id, userId: userId, title: title, email: email, phone: phone, extensionNumber: extensionNumber, qr: qr, qrCodeUrl: qrCodeUrl, instagramUrl: instagramUrl, linkedinUrl: linkedinUrl, appointmentStatus: appointmentStatus, date: date, status: status, slug: slug, createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt, firmNameId: firmNameId, departmentId: departmentId, officeAddressId: officeAddressId, titleEn: titleEn, department: department, departmentEn: departmentEn, photo: photo, qrPhoto: qrPhoto, firmName: firmName, officeAddress: officeAddress, media: media)
+      return null;
     }
 
     return response.data.first;

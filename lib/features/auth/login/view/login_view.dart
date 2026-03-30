@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
+import 'package:digivizit/core/constants/image_paths.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/auth/login/view_model/login_view_model.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
@@ -61,221 +64,328 @@ class _LoginViewState extends State<LoginView>
   Widget build(BuildContext context) {
     return BaseDesign(
       pinnedHeader: false,
+      topColor: const Color(0xFF0A1835),
+      bottomColor: const Color(0xFF07111F),
+      backgroundWidget: _buildBackground(),
       children: [
         FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildHeroSection(),
+                    FigmaBox(height: 28),
+                    Observer(
+                      builder: (_) {
+                        return ReactiveForm(
+                          formGroup: model.form,
+                          child: _buildLoginCard(),
+                        );
+                      },
+                    ),
+                    FigmaBox(height: 40),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBackground() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF11254A), Color(0xFF0C1830), Color(0xFF060C18)],
+            ),
+          ),
+        ),
+        Positioned(
+          top: -120,
+          right: -60,
+          child: _buildGlow(
+            size: 280,
+            color: AppColors.primary400.withValues(alpha: 0.24),
+          ),
+        ),
+        Positioned(
+          top: 140,
+          left: -90,
+          child: _buildGlow(
+            size: 220,
+            color: AppColors.tertiary400.withValues(alpha: 0.16),
+          ),
+        ),
+        Positioned(
+          bottom: -120,
+          right: 20,
+          child: _buildGlow(
+            size: 260,
+            color: AppColors.primary700.withValues(alpha: 0.22),
+          ),
+        ),
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.baseWhite.withValues(alpha: 0.04),
+                  Colors.transparent,
+                  AppColors.baseBlack.withValues(alpha: 0.24),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGlow({required double size, required Color color}) {
+    return IgnorePointer(
+      child: ImageFiltered(
+        imageFilter: ImageFilter.blur(sigmaX: 64, sigmaY: 64),
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroSection() {
+    return Column(
+      children: [
+        FigmaContainer(
+          width: 180,
+          height: 76,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: AppColors.baseWhite.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: AppColors.baseWhite.withValues(alpha: 0.18),
+              width: 1.15,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.baseBlack.withValues(alpha: 0.12),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Image.asset(ImagePaths.logo, height: 100, fit: BoxFit.cover),
+        ),
+        FigmaBox(height: 18),
+        Text(
+          'Hos Geldiniz',
+          textAlign: TextAlign.center,
+          style: AppFonts.xl3Bold.copyWith(
+            color: AppColors.baseWhite,
+            height: 1.1,
+            letterSpacing: -0.6,
+          ),
+        ),
+        FigmaBox(height: 8),
+        Text(
+          'Devam etmek icin giris yapin',
+          textAlign: TextAlign.center,
+          style: AppFonts.lgRegular.withColor(
+            AppColors.baseWhite.withValues(alpha: 0.74),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoginCard() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(32),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.baseWhite.withValues(alpha: 0.14),
+                AppColors.baseWhite.withValues(alpha: 0.06),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(
+              color: AppColors.baseWhite.withValues(alpha: 0.16),
+              width: 1.15,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.baseBlack.withValues(alpha: 0.14),
+                blurRadius: 32,
+                offset: const Offset(0, 14),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildCardHeader(),
+              FigmaBox(height: 20),
+              FigmaContainer(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: AppColors.secondary900.withValues(alpha: 0.30),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: AppColors.baseWhite.withValues(alpha: 0.08),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextField.regular(
+                      formControlName: 'email',
+                      label: 'Email',
+                      hintText: 'ornek@exponot.com',
+                      keyboardType: TextInputType.emailAddress,
+                      prefixIcon: Icons.alternate_email_rounded,
+                    ),
+                    FigmaBox(height: 18),
+                    CustomTextField.password(
+                      formControlName: 'password',
+                      labelColor: AppColors.baseWhite,
+                    ),
+                    FigmaBox(height: 18),
+                    _buildRememberMeAndForgetPassword(),
+                    FigmaBox(height: 24),
+                    CustomAppButton.text(
+                      onTap: () => model.login(),
+                      text: 'Giris Yap',
+                      leadingIcon: Icons.login_rounded,
+                      gradient: const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [Color(0xFF60A5FA), Color(0xFF2563EB)],
+                      ),
+                      textColor: AppColors.baseWhite,
+                      iconColor: AppColors.baseWhite,
+                      buttonHeight: 62,
+                      borderRadius: 20,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 22,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCardHeader() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: AppColors.primary400.withValues(alpha: 0.16),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: const Icon(
+            Icons.lock_person_rounded,
+            color: AppColors.primary300,
+            size: 24,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Giris',
+                style: AppFonts.xlBold.copyWith(
+                  color: AppColors.baseWhite,
+                  height: 1.1,
+                  letterSpacing: -0.4,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Email ve sifre ile devam edin',
+                style: AppFonts.baseRegular.withColor(
+                  AppColors.baseWhite.withValues(alpha: 0.64),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRememberMeAndForgetPassword() {
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: model.toggleRememberMe,
+            behavior: HitTestBehavior.translucent,
             child: Observer(
               builder: (_) {
-                return ReactiveForm(
-                  formGroup: model.form,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildAuthHeader(),
-                      FigmaBox(height: 30),
-                      CustomTextField.regular(
-                        formControlName: 'email',
-                        label: 'Email Adresi',
-                        hintText: 'Email adresinizi girin',
+                return Row(
+                  children: [
+                    AnimatedHexagonCheckbox(
+                      onChanged: model.toggleRememberMe,
+                      cornerRadius: 2,
+                      isChecked: model.rememberMe,
+                      checkedColor: AppColors.baseWhite,
+                      checkColor: AppColors.primary500,
+                      borderColor: AppColors.baseWhite,
+                      size: 26,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Beni Hatirla',
+                        style: AppFonts.baseRegular.withColor(
+                          AppColors.baseWhite.withValues(alpha: 0.84),
+                        ),
                       ),
-                      FigmaBox(height: 24),
-                      CustomTextField.password(formControlName: 'password'),
-                      FigmaBox(height: 24),
-                      // Beni Hatırla ve Şifremi Unuttum
-                      buildRememberMeandForgetPassword(),
-                      FigmaBox(height: 40),
-                      // Giriş Butonu
-                      CustomAppButton(
-                        onTap: () => model.login(),
-                        text: "Giriş Yap",
-                        backgroundColor: AppColors.baseWhite,
-                        textColor: AppColors.primary600,
-                      ),
-                      FigmaBox(height: 32),
-                      // Divider veya Alternatif Giriş
-                      buildDivider(),
-                      FigmaBox(height: 32),
-                      // Kayıt Ol Bölümü
-                      buildRegisterSection(),
-                      FigmaBox(height: 40),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               },
             ),
           ),
         ),
-      ],
-    );
-  }
-
-  Center buildRegisterSection() {
-    return Center(
-      child: FigmaContainer(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        decoration: BoxDecoration(
-          color: AppColors.baseWhite.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.baseWhite.withValues(alpha: 0.2),
-            width: 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Hesabınız yok mu? ",
-              style: AppFonts.baseRegular.copyWith(
-                fontSize: 15,
-                color: AppColors.baseWhite.withValues(alpha: 0.85),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                // Kayıt sayfasına yönlendir
-              },
-              child: Text(
-                "Kayıt Ol",
-                style: AppFonts.baseBold.copyWith(
-                  fontSize: 15,
-                  color: AppColors.baseWhite,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.baseWhite,
-                  decorationThickness: 2,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Row buildDivider() {
-    return Row(
-      children: [
-        Expanded(
-          child: Divider(
-            color: AppColors.baseWhite.withValues(alpha: 0.3),
-            thickness: 1,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            "veya",
-            style: AppFonts.baseRegular.copyWith(
-              fontSize: 14,
-              color: AppColors.baseWhite.withValues(alpha: 0.7),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Divider(
-            color: AppColors.baseWhite.withValues(alpha: 0.3),
-            thickness: 1,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Center buildAuthHeader() {
-    return Center(
-      child: Column(
-        children: [
-          FigmaContainer(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.baseWhite.withValues(alpha: 0.25),
-                  AppColors.baseWhite.withValues(alpha: 0.10),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(
-                color: AppColors.baseWhite.withValues(alpha: 0.3),
-                width: 2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.baseBlack.withValues(alpha: 0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.account_circle_outlined,
-              size: 50,
-              color: AppColors.baseWhite,
-            ),
-          ),
-          FigmaBox(height: 16),
-          // Başlık
-          Text(
-            "Hoş Geldiniz",
-            style: AppFonts.baseBold.copyWith(
-              fontSize: 36,
-              color: AppColors.baseWhite,
-              height: 1.2,
-              letterSpacing: -0.5,
-            ),
-          ),
-          FigmaBox(height: 16),
-          // Alt Başlık
-          Text(
-            "Hesabınıza giriş yapın",
-            style: AppFonts.baseRegular.copyWith(
-              fontSize: 16,
-              color: AppColors.baseWhite.withValues(alpha: 0.85),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildRememberMeandForgetPassword() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        GestureDetector(
-          onTap: model.toggleRememberMe,
-          behavior: HitTestBehavior.translucent,
-          child: Observer(
-            builder: (_) {
-              return Row(
-                spacing: 5,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AnimatedHexagonCheckbox(
-                    onChanged: model.toggleRememberMe,
-                    cornerRadius: 2,
-                    isChecked: model.rememberMe,
-                    checkedColor: AppColors.baseWhite,
-                    checkColor: AppColors.primary500,
-                    borderColor: AppColors.baseWhite,
-                    size: 26,
-                  ),
-                  Text("Beni Hatırla", style: AppFonts.baseRegular),
-                ],
-              );
-            },
-          ),
-        ),
         GestureDetector(
           onTap: () {},
           child: Text(
-            "Şifremi Unuttum?",
-            style: AppFonts.baseBold.withColor(AppColors.baseWhite),
+            'Sifremi Unuttum?',
+            style: AppFonts.baseBold.withColor(AppColors.primary200),
           ),
         ),
       ],
@@ -283,6 +393,11 @@ class _LoginViewState extends State<LoginView>
   }
 
   void showBottomSheet() {
+    final sheetContext = AppSettings.instance.context;
+    if (sheetContext == null) {
+      return;
+    }
+
     CustomBottomSheet.customView(
       viewTopBar: true,
       backgroundColor: AppColors.primary500.withValues(alpha: 0.15),
@@ -290,16 +405,16 @@ class _LoginViewState extends State<LoginView>
       hexagonIcon: Icons.done_rounded,
       hexagonColor: AppColors.tertiary500,
       text:
-          "Kayıt başarılı bir şekilde gerçekleştirildi. Sistemden onay geldikten sonra giriş yapabilirsiniz.",
+          'Kayıt başarılı bir şekilde gerçekleştirildi. Sistemden onay geldikten sonra giriş yapabilirsiniz.',
       height: 519,
       borderRadius: 50,
-      context: AppSettings.instance.context!,
+      context: sheetContext,
       buttons: [
         ButtonProperties(
           onPressed: () {
-            Navigator.pop(AppSettings.instance.context!);
+            Navigator.pop(sheetContext);
           },
-          text: "Tamam",
+          text: 'Tamam',
           color: AppColors.tertiary500,
         ),
       ],

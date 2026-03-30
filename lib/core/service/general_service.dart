@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:digivizit/core/common/result.dart';
 import 'package:digivizit/core/models/appointment/appointment_response.dart';
 import 'package:digivizit/core/models/auth/login_response.dart';
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
+import 'package:digivizit/core/models/ocr/ocr_response.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/core/providers/async_process_manager.dart';
@@ -14,16 +17,28 @@ class GeneralService implements BaseRepository {
 
   GeneralService({required this.dio});
   @override
-  Future<Result<LoginResponse>> login({required String email, required String password, bool showLoader = true}) async {
+  Future<Result<LoginResponse>> login({
+    required String email,
+    required String password,
+    bool showLoader = true,
+  }) async {
     try {
       Result<LoginResponse>? result;
       final data = {"email": email, "password": password};
 
       await AsyncProcessController.init.run(() async {
         try {
-          final response = await dio.post(GeneralPathEnum.login.path, data: data);
+          final response = await dio.post(
+            GeneralPathEnum.login.path,
+            data: data,
+          );
           if (response.data is! Map<String, dynamic>) {
-            result = Result.failure(Failure(message: response.statusMessage ?? 'Sunucu hatası', raw: response.data));
+            result = Result.failure(
+              Failure(
+                message: response.statusMessage ?? 'Sunucu hatası',
+                raw: response.data,
+              ),
+            );
             return;
           }
           final model = LoginResponse.fromJson(response.data);
@@ -36,7 +51,12 @@ class GeneralService implements BaseRepository {
               errorModel = LoginResponse.fromJson(e.response!.data);
             } catch (_) {}
           }
-          result = Result.failure(Failure(message: errorModel?.message ?? failure.message, raw: errorModel ?? failure.raw));
+          result = Result.failure(
+            Failure(
+              message: errorModel?.message ?? failure.message,
+              raw: errorModel ?? failure.raw,
+            ),
+          );
         }
       }, showLoader: showLoader);
 
@@ -49,22 +69,39 @@ class GeneralService implements BaseRepository {
   }
 
   @override
-  Future<Result<GetPersonelInfoResponse>> getPersonelInfo({bool showLoader = true}) async {
+  Future<Result<GetPersonelInfoResponse>> getPersonelInfo({
+    bool showLoader = true,
+  }) async {
     try {
       Result<GetPersonelInfoResponse>? result;
       await AsyncProcessController.init.run(() async {
         try {
           final response = await dio.get(
             GeneralPathEnum.getPersonelInfo.path,
-            options: Options(headers: {"Authorization": "Bearer ${AppSettings.instance.apiToken}"}),
+            options: Options(
+              headers: {
+                "Authorization": "Bearer ${AppSettings.instance.apiToken}",
+              },
+            ),
           );
           if (response.data is! Map<String, dynamic>) {
-            result = Result.failure(Failure(message: response.statusMessage ?? 'Sunucu hatası', raw: response.data));
+            result = Result.failure(
+              Failure(
+                message: response.statusMessage ?? 'Sunucu hatası',
+                raw: response.data,
+              ),
+            );
             return;
           }
           final model = GetPersonelInfoResponse.fromJson(response.data);
           if (model.success == false) {
-            result = Result.failure(Failure(message: model.message?.toString() ?? 'İstasyon Seçilemedi.', code: model.data.toString(), raw: model));
+            result = Result.failure(
+              Failure(
+                message: model.message?.toString() ?? 'İstasyon Seçilemedi.',
+                code: model.data.toString(),
+                raw: model,
+              ),
+            );
             return;
           }
           result = Result.success(model);
@@ -94,19 +131,37 @@ class GeneralService implements BaseRepository {
   }
 
   @override
-  Future<Result<ContactsResponse>> getContactsInfo({required String email, required String password, bool showLoader = true}) async {
+  Future<Result<ContactsResponse>> getContactsInfo({
+    required String email,
+    required String password,
+    bool showLoader = true,
+  }) async {
     try {
       Result<ContactsResponse>? result;
       await AsyncProcessController.init.run(() async {
         try {
-          final response = await dio.get(GeneralPathEnum.getContactsInfo.path, data: {"email": email, "password": password});
+          final response = await dio.get(
+            GeneralPathEnum.getContactsInfo.path,
+            data: {"email": email, "password": password},
+          );
           if (response.data is! Map<String, dynamic>) {
-            result = Result.failure(Failure(message: response.statusMessage ?? 'Sunucu hatası', raw: response.data));
+            result = Result.failure(
+              Failure(
+                message: response.statusMessage ?? 'Sunucu hatası',
+                raw: response.data,
+              ),
+            );
             return;
           }
           final model = ContactsResponse.fromJson(response.data);
           if (model.success == false) {
-            result = Result.failure(Failure(message: model.message?.toString() ?? 'İstasyon Seçilemedi.', code: model.data.toString(), raw: model));
+            result = Result.failure(
+              Failure(
+                message: model.message?.toString() ?? 'İstasyon Seçilemedi.',
+                code: model.data.toString(),
+                raw: model,
+              ),
+            );
             return;
           }
           result = Result.success(model);
@@ -136,22 +191,39 @@ class GeneralService implements BaseRepository {
   }
 
   @override
-  Future<Result<AppointmentResponse>> getAppointments({bool showLoader = true}) async {
+  Future<Result<AppointmentResponse>> getAppointments({
+    bool showLoader = true,
+  }) async {
     try {
       Result<AppointmentResponse>? result;
       await AsyncProcessController.init.run(() async {
         try {
           final response = await dio.get(
             GeneralPathEnum.getAppointments.path,
-            options: Options(headers: {"Authorization": "Bearer ${AppSettings.instance.apiToken}"}),
+            options: Options(
+              headers: {
+                "Authorization": "Bearer ${AppSettings.instance.apiToken}",
+              },
+            ),
           );
           if (response.data is! Map<String, dynamic>) {
-            result = Result.failure(Failure(message: response.statusMessage ?? 'Sunucu hatası', raw: response.data));
+            result = Result.failure(
+              Failure(
+                message: response.statusMessage ?? 'Sunucu hatası',
+                raw: response.data,
+              ),
+            );
             return;
           }
           final model = AppointmentResponse.fromJson(response.data);
           if (model.success == false) {
-            result = Result.failure(Failure(message: model.message?.toString() ?? 'İstasyon Seçilemedi.', code: model.data.toString(), raw: model));
+            result = Result.failure(
+              Failure(
+                message: model.message?.toString() ?? 'İstasyon Seçilemedi.',
+                code: model.data.toString(),
+                raw: model,
+              ),
+            );
             return;
           }
           result = Result.success(model);
@@ -161,6 +233,77 @@ class GeneralService implements BaseRepository {
           if (e.response?.data is Map<String, dynamic>) {
             try {
               errorModel = AppointmentResponse.fromJson(e.response!.data);
+            } catch (_) {}
+          }
+          result = Result.failure(
+            Failure(
+              message: errorModel?.message?.toString() ?? failure.message,
+              code: errorModel?.data?.toString() ?? failure.code,
+              raw: errorModel ?? failure.raw,
+            ),
+          );
+        }
+      }, showLoader: showLoader);
+      return result ?? Result.failure(await getAppropriateFailure());
+    } on DioException catch (e) {
+      return Result.failure(failureFromDio(e));
+    } catch (e) {
+      return Result.failure(Failure(message: 'Bilinmeyen hata: $e'));
+    }
+  }
+
+  @override
+  Future<Result<OcrResponse>> getOcrData({
+    required File imagePath,
+    required String engine,
+    bool showLoader = true,
+  }) async {
+    try {
+      Result<OcrResponse>? result;
+      await AsyncProcessController.init.run(() async {
+        try {
+          final response = await dio.get(
+            GeneralPathEnum.getOcrData.path,
+            options: Options(
+              headers: {
+                "Authorization": "Bearer ${AppSettings.instance.apiToken}",
+                "Body": FormData.fromMap({
+                  "image_file": MultipartFile.fromFileSync(
+                    imagePath.path,
+                    filename: imagePath.path.split('/').last,
+                  ),
+                  "engine": "gemini",
+                }),
+              },
+            ),
+          );
+          if (response.data is! Map<String, dynamic>) {
+            result = Result.failure(
+              Failure(
+                message: response.statusMessage ?? 'Sunucu hatası',
+                raw: response.data,
+              ),
+            );
+            return;
+          }
+          final model = OcrResponse.fromJson(response.data);
+          if (model.success == false) {
+            result = Result.failure(
+              Failure(
+                message: model.message?.toString() ?? 'İstasyon Seçilemedi.',
+                code: model.data.toString(),
+                raw: model,
+              ),
+            );
+            return;
+          }
+          result = Result.success(model);
+        } on DioException catch (e) {
+          final failure = failureFromDio(e);
+          OcrResponse? errorModel;
+          if (e.response?.data is Map<String, dynamic>) {
+            try {
+              errorModel = OcrResponse.fromJson(e.response!.data);
             } catch (_) {}
           }
           result = Result.failure(

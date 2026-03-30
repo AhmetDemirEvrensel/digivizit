@@ -28,8 +28,10 @@ abstract class LoginViewModelBase with Store {
   @action
   Future<void> loadSavedCredentials() async {
     rememberMe = AppSettings.instance.rememberMe;
-    final savedEmail = await AppSettings.instance.sharedPreferencesManager.getLocalDb<String>(SharedKeys.email);
-    final savedPassword = await AppSettings.instance.sharedPreferencesManager.getLocalDb<String>(SharedKeys.password);
+    final savedEmail = await AppSettings.instance.sharedPreferencesManager
+        .getLocalDb<String>(SharedKeys.email);
+    final savedPassword = await AppSettings.instance.sharedPreferencesManager
+        .getLocalDb<String>(SharedKeys.password);
 
     if (savedEmail.isNotNullOrNoEmpty) {
       emailController.value = savedEmail;
@@ -50,27 +52,40 @@ abstract class LoginViewModelBase with Store {
     if (passwordController.valid && emailController.valid) {
       final email = (emailController.value as String? ?? '').trim();
       final password = (passwordController.value as String? ?? '');
-      final result = await AppSettings.instance.generalService.login(email: email, password: password);
-      if (result.isSuccess) {
-        await AppSettings.instance.setUserFromLogin(result.data!, email: email, password: password, rememberUser: rememberMe);
+      final result = await AppSettings.instance.generalService.login(
+        email: email,
+        password: password,
+      );
+      final loginData = result.data;
+      if (result.isSuccess && loginData != null) {
+        await AppSettings.instance.setUserFromLogin(
+          loginData,
+          email: email,
+          password: password,
+          rememberUser: rememberMe,
+        );
 
         final homeViewModel = HomeViewModel();
-        /* await homeViewModel.getPersonelInfo(); */
+        await homeViewModel.getPersonelInfo();
         await homeViewModel.getContactsInfo(email, password);
         final personelInfo = homeViewModel.getPersonelInfoResponse;
         final contactsInfo = homeViewModel.getContactsResponse;
 
-        if (personelInfo != null && contactsInfo != null) {
-          await NavigationEnums.mainNavigation.navigateToPageReplacement(data: personelInfo, data2: contactsInfo);
-        } else {
-          CustomBottomSheet.errorView(text: 'Kullanıcı bilgileri alınırken bir hata oluştu. Lütfen tekrar deneyin.');
-        }
+        await NavigationEnums.mainNavigation.navigateToPageReplacement(
+          data: personelInfo,
+          data2: contactsInfo,
+        );
       } else {
-        CustomBottomSheet.errorView(text: result.error!.message);
+        CustomBottomSheet.errorView(
+          text: result.error?.message ?? 'Giris bilgileri bulunamadi',
+        );
       }
     } else {
       form.markAllAsTouched();
-      CustomBottomSheet.errorView(text: 'Lütfen tüm alanları eksiksiz doldurun', title: 'Sistem Hatası');
+      CustomBottomSheet.errorView(
+        text: 'Lütfen tüm alanları eksiksiz doldurun',
+        title: 'Sistem Hatası',
+      );
     }
   }
 }

@@ -1,16 +1,26 @@
+import 'dart:io';
+
 import 'package:digivizit/core/common/result.dart';
 import 'package:digivizit/core/models/appointment/appointment_response.dart';
 import 'package:digivizit/core/models/auth/login_response.dart';
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
+import 'package:digivizit/core/models/ocr/ocr_response.dart';
 import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
 
 abstract interface class BaseRepository {
   // ----------- Auth & User ----------- //
-  Future<Result<LoginResponse>> login({required String email, required String password});
+  Future<Result<LoginResponse>> login({
+    required String email,
+    required String password,
+  });
 
   Future<Result<GetPersonelInfoResponse>> getPersonelInfo();
-  Future<Result<ContactsResponse>> getContactsInfo({required String email, required String password});
+  Future<Result<ContactsResponse>> getContactsInfo({
+    required String email,
+    required String password,
+  });
   Future<Result<AppointmentResponse>> getAppointments();
+  Future<Result<OcrResponse>> getOcrData({required File imagePath,required String engine});
 
   /* // ----------- Station Registration ----------- //
   Future<Result<StationRegistrationResponse>> stationRegistration({

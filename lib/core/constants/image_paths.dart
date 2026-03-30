@@ -10,6 +10,7 @@ class ImagePaths {
   static String drawerBackground = "drawer_background".toImagePng;
   static String pro = "pro".toImagePng;
   static String proBackground = "pro_background".toImagePng;
+  static String logo = "hepta-siyah-logo".toImagePng;
 
   // Onboarding Images
   static String phoneOnboarding = "phone_onboarding".toImagePng;
