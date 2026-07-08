@@ -1,9 +1,13 @@
 import 'dart:io';
 
 import 'package:digivizit/core/common/result.dart';
+import 'package:digivizit/core/models/business_cards/business_card_scan_response.dart';
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
-import 'package:digivizit/core/models/ocr/ocr_response.dart';
-import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
+import 'package:digivizit/core/models/auth/simple_response.dart';
+import 'package:digivizit/core/models/common/page_meta.dart';
+import 'package:digivizit/core/models/personel/card_response.dart';
+import 'package:digivizit/core/models/personel/profile_response.dart';
+import 'package:digivizit/core/models/personel/qr_response.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/navigation/navigation_extension.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
@@ -18,21 +22,23 @@ class HomeViewModel = HomeViewModelBase with _$HomeViewModel;
 
 abstract class HomeViewModelBase with Store {
   @observable
-  GetPersonelInfoResponse? getPersonelInfoResponse;
+  ProfileResponse? profileResponse;
 
   @observable
-  ContactsResponse? getContactsResponse;
+  BusinessCardListResponse? getContactsResponse;
 
-  OcrResponse? ocrResponse;
+  @observable
+  QrResponse? qrResponse;
 
-  Datum? get personel {
-    final response = getPersonelInfoResponse;
-    if (response == null || response.data.isEmpty) {
-      return null;
-    }
+  @observable
+  CardResponse? cardResponse;
 
-    return response.data.first;
-  }
+  BusinessCardScanResponse? scanResponse;
+
+  int _contactsPage = 1;
+  bool isLoadingMoreContacts = false;
+
+  ProfileData? get profile => profileResponse?.data;
 
   String get profileName {
     final loginName = AppSettings.instance.userName?.trim();
@@ -43,18 +49,14 @@ abstract class HomeViewModelBase with Store {
     return '';
   }
 
+  bool get hasMoreContacts =>
+      getContactsResponse?.data?.meta?.hasMore ?? false;
+
   String? get qrPhotoUrl {
-    final currentPersonel = personel;
-
-    if (currentPersonel == null) {
-      return null;
-    }
-
     final candidates = [
-      currentPersonel.qrPhoto.originalUrl.trim(),
-      currentPersonel.qrPhoto.url?.trim() ?? '',
-      currentPersonel.qrPhoto.previewUrl.trim(),
-      currentPersonel.qrCodeUrl.trim(),
+      qrResponse?.data?.qrPhotoUrl?.trim() ?? '',
+      qrResponse?.data?.qrPhotoPreview?.trim() ?? '',
+      qrResponse?.data?.qrCodeUrl?.trim() ?? '',
     ];
 
     for (final candidate in candidates) {
@@ -67,12 +69,12 @@ abstract class HomeViewModelBase with Store {
   }
 
   String? get qrShareLink {
-    final currentPersonel = personel;
-    if (currentPersonel == null) {
-      return null;
+    final cardUrl = cardResponse?.data?.cardUrl?.trim() ?? '';
+    if (cardUrl.isNotEmpty) {
+      return cardUrl;
     }
 
-    final qrCodeUrl = currentPersonel.qrCodeUrl.trim();
+    final qrCodeUrl = qrResponse?.data?.qrCodeUrl?.trim() ?? '';
     if (qrCodeUrl.isNotEmpty) {
       return qrCodeUrl;
     }
@@ -80,38 +82,7 @@ abstract class HomeViewModelBase with Store {
     return null;
   }
 
-  String? get firmLogoUrl {
-    final currentPersonel = personel;
-    if (currentPersonel == null) {
-      return null;
-    }
-
-    final candidates = [
-      currentPersonel.firmName.logo.url?.trim() ?? '',
-      currentPersonel.firmName.logo.originalUrl.trim(),
-      currentPersonel.firmName.logo.previewUrl.trim(),
-    ];
-
-    for (final candidate in candidates) {
-      if (candidate.isNotEmpty) {
-        return candidate;
-      }
-    }
-
-    return null;
-  }
-
   String? get qrPhotoFileName {
-    final currentPersonel = personel;
-    if (currentPersonel == null) {
-      return null;
-    }
-
-    final fileName = currentPersonel.qrPhoto.fileName.trim();
-    if (fileName.isNotEmpty) {
-      return fileName;
-    }
-
     final imageUrl = qrPhotoUrl;
     if (imageUrl != null) {
       final uri = Uri.tryParse(imageUrl);
@@ -126,22 +97,8 @@ abstract class HomeViewModelBase with Store {
     return 'employee_qr.png';
   }
 
-  String? get qrPhotoMimeType {
-    final currentPersonel = personel;
-    if (currentPersonel == null) {
-      return null;
-    }
-
-    final mimeType = currentPersonel.qrPhoto.mimeType.trim();
-    if (mimeType.isNotEmpty) {
-      return mimeType;
-    }
-
-    return null;
-  }
-
-  void setInitialPersonelInfo(GetPersonelInfoResponse value) {
-    getPersonelInfoResponse = value;
+  void setInitialProfile(ProfileResponse value) {
+    profileResponse = value;
   }
 
   Future<({Color topColor, Color bottomColor})> loadBackgroundColors({
@@ -161,35 +118,24 @@ abstract class HomeViewModelBase with Store {
   }
 
   String? _getFirmImageUrl() {
-    final currentPersonel = personel;
-    if (currentPersonel == null) {
-      return null;
-    }
-
-    final logoUrl = currentPersonel.firmName.logo.originalUrl.trim();
-    if (logoUrl.isNotEmpty) {
-      return logoUrl;
-    }
-
-    final backgroundUrl = currentPersonel.firmName.mainBackground.originalUrl
-        .trim();
-    if (backgroundUrl.isNotEmpty) {
-      return backgroundUrl;
+    final photoUrl = profile?.photoUrl?.trim();
+    if (photoUrl != null && photoUrl.isNotEmpty) {
+      return photoUrl;
     }
 
     return null;
   }
 
   @action
-  Future<void> getPersonelInfo() async {
-    final result = await AppSettings.instance.generalService.getPersonelInfo();
+  Future<void> getProfile() async {
+    final result = await AppSettings.instance.generalService.getProfile();
     if (result.isSuccess) {
-      getPersonelInfoResponse = result.data;
+      profileResponse = result.data;
       if (result.data != null) {
-        await AppSettings.instance.setPersonelInfo(result.data!);
+        await AppSettings.instance.setProfile(result.data!);
       }
     } else {
-      if (result.isFailure && result.error?.code == "6401") {
+      if (result.isFailure && result.error?.code == "401") {
         CustomBottomSheet.errorView(
           title: 'Oturumunuz Sonlandı',
           text: result.error?.message ?? "Oturumunuz sonlandı.",
@@ -201,11 +147,28 @@ abstract class HomeViewModelBase with Store {
     }
   }
 
+  /// QR/kart bilgisi sık değişmediği için yalnızca ilk açılışta çekilir.
+  Future<void> ensureQrAndCardLoaded() async {
+    if (qrResponse == null) {
+      final qrResult = await AppSettings.instance.generalService.getMyQr();
+      if (qrResult.isSuccess) {
+        qrResponse = qrResult.data;
+      }
+    }
+
+    if (cardResponse == null) {
+      final cardResult = await AppSettings.instance.generalService.getMyCard();
+      if (cardResult.isSuccess) {
+        cardResponse = cardResult.data;
+      }
+    }
+  }
+
   @action
-  Future<void> getContactsInfo(String email, String password) async {
-    final result = await AppSettings.instance.generalService.getContactsInfo(
-      email: email,
-      password: password,
+  Future<void> getContactsInfo() async {
+    _contactsPage = 1;
+    final result = await AppSettings.instance.generalService.getBusinessCards(
+      page: _contactsPage,
     );
     if (result.isSuccess) {
       getContactsResponse = result.data;
@@ -217,19 +180,45 @@ abstract class HomeViewModelBase with Store {
     }
   }
 
-  Future<ContactsResponse?> refreshContactsInfo({
+  @action
+  Future<void> loadMoreContacts() async {
+    if (isLoadingMoreContacts || !hasMoreContacts) {
+      return;
+    }
+
+    isLoadingMoreContacts = true;
+    final nextPage = _contactsPage + 1;
+    final result = await AppSettings.instance.generalService.getBusinessCards(
+      page: nextPage,
+      showLoader: false,
+    );
+
+    if (result.isSuccess && result.data?.data != null) {
+      final existingItems = getContactsResponse?.data?.items ?? const [];
+      final newItems = result.data!.data!.items ?? const [];
+      final merged = result.data!.copyWith(
+        data: result.data!.data!.copyWith(
+          items: [...existingItems, ...newItems],
+        ),
+      );
+      getContactsResponse = merged;
+      await AppSettings.instance.setContactsInfo(merged);
+      _contactsPage = nextPage;
+    }
+
+    isLoadingMoreContacts = false;
+  }
+
+  Future<BusinessCardListResponse?> refreshContactsInfo({
     bool showLoader = false,
   }) async {
-    final email = await AppSettings.instance.getCurrentUserEmail();
-    final password = await AppSettings.instance.getCurrentPassword();
-
-    if ((email?.trim().isEmpty ?? true) || (password?.isEmpty ?? true)) {
+    if (!AppSettings.instance.hasActiveToken) {
       return AppSettings.instance.contactsInfo ?? getContactsResponse;
     }
 
-    final result = await AppSettings.instance.generalService.getContactsInfo(
-      email: email!.trim(),
-      password: password!,
+    _contactsPage = 1;
+    final result = await AppSettings.instance.generalService.getBusinessCards(
+      page: _contactsPage,
       showLoader: showLoader,
     );
 
@@ -239,7 +228,7 @@ abstract class HomeViewModelBase with Store {
       return result.data;
     }
 
-    if (result.isFailure && result.error?.code == "6401") {
+    if (result.isFailure && result.error?.code == "401") {
       CustomBottomSheet.errorView(
         title: 'Oturumunuz Sonlandı',
         text: result.error?.message ?? "Oturumunuz sonlandı.",
@@ -255,21 +244,27 @@ abstract class HomeViewModelBase with Store {
     return AppSettings.instance.contactsInfo ?? getContactsResponse;
   }
 
-  Future<Result<OcrResponse>> getOcrData({
+  Future<Result<BusinessCardDetailResponse>> getBusinessCardDetail(
+    int id,
+  ) async {
+    return AppSettings.instance.generalService.getBusinessCard(id: id);
+  }
+
+  Future<Result<BusinessCardScanResponse>> scanBusinessCard({
     required File imageFile,
-    required String engine,
+    String? engine,
   }) async {
-    final result = await AppSettings.instance.generalService.getOcrData(
+    final result = await AppSettings.instance.generalService.scanBusinessCard(
       imageFile: imageFile,
       engine: engine,
     );
 
     if (result.isSuccess && result.data != null) {
-      ocrResponse = result.data;
+      scanResponse = result.data;
       return result;
     }
 
-    if (result.isFailure && result.error?.code == "6401") {
+    if (result.isFailure && result.error?.code == "401") {
       CustomBottomSheet.errorView(
         title: 'Oturumunuz Sonlandı',
         text: result.error?.message ?? "Oturumunuz sonlandı.",
@@ -280,5 +275,55 @@ abstract class HomeViewModelBase with Store {
     }
 
     return result;
+  }
+
+  Future<Result<BusinessCardDetailResponse>> createBusinessCard(
+    Map<String, dynamic> body,
+  ) async {
+    return AppSettings.instance.generalService.createBusinessCard(body: body);
+  }
+
+  Future<Result<BusinessCardDetailResponse>> updateBusinessCard(
+    int id,
+    Map<String, dynamic> body,
+  ) async {
+    return AppSettings.instance.generalService.updateBusinessCard(
+      id: id,
+      body: body,
+    );
+  }
+
+  Future<Result<SimpleResponse>> addBusinessCardNote(
+    int businessCardId,
+    String note,
+  ) async {
+    return AppSettings.instance.generalService.addBusinessCardNote(
+      businessCardId: businessCardId,
+      note: note,
+    );
+  }
+
+  Future<Result<SimpleResponse>> deleteBusinessCardNote(
+    int businessCardId,
+    int noteId,
+  ) async {
+    return AppSettings.instance.generalService.deleteBusinessCardNote(
+      businessCardId: businessCardId,
+      noteId: noteId,
+    );
+  }
+
+  Future<Result<SimpleResponse>> deleteBusinessCardMedia(
+    int businessCardId,
+    int mediaId,
+  ) async {
+    return AppSettings.instance.generalService.deleteBusinessCardMedia(
+      businessCardId: businessCardId,
+      mediaId: mediaId,
+    );
+  }
+
+  Future<Result<SimpleResponse>> deleteBusinessCard(int id) async {
+    return AppSettings.instance.generalService.deleteBusinessCard(id: id);
   }
 }

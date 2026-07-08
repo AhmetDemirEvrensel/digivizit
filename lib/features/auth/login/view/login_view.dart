@@ -382,13 +382,276 @@ class _LoginViewState extends State<LoginView>
           ),
         ),
         GestureDetector(
-          onTap: () {},
+          onTap: _showForgotPasswordSheet,
           child: Text(
             'Sifremi Unuttum?',
             style: AppFonts.baseBold.withColor(AppColors.primary200),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSheetField(
+    String label,
+    TextEditingController controller, {
+    TextInputType? keyboardType,
+    bool obscureText = false,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      style: AppFonts.baseRegular.copyWith(color: AppColors.baseWhite),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: AppFonts.baseRegular.copyWith(
+          color: AppColors.baseWhite.withValues(alpha: 0.6),
+        ),
+        filled: true,
+        fillColor: AppColors.baseWhite.withValues(alpha: 0.06),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: AppColors.baseWhite.withValues(alpha: 0.12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showForgotPasswordSheet() {
+    final emailController = TextEditingController();
+    bool isSubmitting = false;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF111827),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (sheetContext, setSheetState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 20,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Sifremi Unuttum',
+                    style: AppFonts.xlBold.copyWith(color: AppColors.baseWhite),
+                  ),
+                  FigmaBox(height: 8),
+                  Text(
+                    'Kayitli e-posta adresinizi girin, sifre sifirlama baglantisi gonderelim.',
+                    style: AppFonts.baseRegular.withColor(
+                      AppColors.baseWhite.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  FigmaBox(height: 16),
+                  _buildSheetField(
+                    'Email',
+                    emailController,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  FigmaBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomAppButton.text(
+                      onTap: isSubmitting
+                          ? null
+                          : () async {
+                              final email = emailController.text.trim();
+                              if (email.isEmpty) return;
+
+                              setSheetState(() => isSubmitting = true);
+                              final result = await AppSettings
+                                  .instance
+                                  .generalService
+                                  .forgotPassword(email: email);
+                              setSheetState(() => isSubmitting = false);
+
+                              if (!sheetContext.mounted) return;
+                              Navigator.of(sheetContext).pop();
+
+                              if (result.isSuccess) {
+                                _showResetPasswordSheet(prefilledEmail: email);
+                              } else {
+                                CustomBottomSheet.errorView(
+                                  text:
+                                      result.error?.message ??
+                                      'Sifre sifirlama linki gonderilemedi.',
+                                );
+                              }
+                            },
+                      text: isSubmitting ? 'Gonderiliyor...' : 'Gonder',
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF60A5FA), Color(0xFF2563EB)],
+                      ),
+                      textColor: AppColors.baseWhite,
+                      buttonHeight: 56,
+                      borderRadius: 18,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showResetPasswordSheet({String? prefilledEmail}) {
+    final emailController = TextEditingController(text: prefilledEmail ?? '');
+    final tokenController = TextEditingController();
+    final passwordController = TextEditingController();
+    final confirmController = TextEditingController();
+    bool isSubmitting = false;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF111827),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (sheetContext, setSheetState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 20,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Sifre Sifirla',
+                      style: AppFonts.xlBold.copyWith(
+                        color: AppColors.baseWhite,
+                      ),
+                    ),
+                    FigmaBox(height: 8),
+                    Text(
+                      'E-postaniza gelen kodu ve yeni sifrenizi girin.',
+                      style: AppFonts.baseRegular.withColor(
+                        AppColors.baseWhite.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    FigmaBox(height: 16),
+                    _buildSheetField(
+                      'Email',
+                      emailController,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    FigmaBox(height: 14),
+                    _buildSheetField('Kod', tokenController),
+                    FigmaBox(height: 14),
+                    _buildSheetField(
+                      'Yeni Sifre',
+                      passwordController,
+                      obscureText: true,
+                    ),
+                    FigmaBox(height: 14),
+                    _buildSheetField(
+                      'Yeni Sifre (Tekrar)',
+                      confirmController,
+                      obscureText: true,
+                    ),
+                    FigmaBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: CustomAppButton.text(
+                        onTap: isSubmitting
+                            ? null
+                            : () async {
+                                final email = emailController.text.trim();
+                                final token = tokenController.text.trim();
+                                final password = passwordController.text;
+                                final confirm = confirmController.text;
+
+                                if (email.isEmpty ||
+                                    token.isEmpty ||
+                                    password.isEmpty ||
+                                    password != confirm) {
+                                  CustomBottomSheet.errorView(
+                                    text:
+                                        'Lutfen tum alanlari eksiksiz ve sifreleri ayni girin.',
+                                  );
+                                  return;
+                                }
+
+                                setSheetState(() => isSubmitting = true);
+                                final result = await AppSettings
+                                    .instance
+                                    .generalService
+                                    .resetPassword(
+                                      token: token,
+                                      email: email,
+                                      password: password,
+                                      passwordConfirmation: confirm,
+                                    );
+                                setSheetState(() => isSubmitting = false);
+
+                                if (!sheetContext.mounted) return;
+                                Navigator.of(sheetContext).pop();
+
+                                if (!mounted) return;
+                                if (result.isSuccess) {
+                                  CustomBottomSheet.customView(
+                                    context: context,
+                                    viewTopBar: true,
+                                    title: 'Sifre Guncellendi',
+                                    hexagonIcon: Icons.done_rounded,
+                                    hexagonColor: AppColors.tertiary500,
+                                    text:
+                                        'Sifreniz basariyla guncellendi. Yeni sifrenizle giris yapabilirsiniz.',
+                                    buttons: [
+                                      ButtonProperties(
+                                        onPressed: () => Navigator.pop(context),
+                                        text: 'Tamam',
+                                        color: AppColors.tertiary500,
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  CustomBottomSheet.errorView(
+                                    text:
+                                        result.error?.message ??
+                                        'Sifre guncellenemedi.',
+                                  );
+                                }
+                              },
+                        text: isSubmitting ? 'Gonderiliyor...' : 'Sifreyi Guncelle',
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF60A5FA), Color(0xFF2563EB)],
+                        ),
+                        textColor: AppColors.baseWhite,
+                        buttonHeight: 56,
+                        borderRadius: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

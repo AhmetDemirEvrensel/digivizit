@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
-import 'package:digivizit/core/utils/shared_preferences_manager.dart';
 import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
 import 'package:digivizit/shared/components/bottom_sheet/custom_bottom_sheet_view.dart';
@@ -13,12 +10,11 @@ import 'package:digivizit/shared/components/buttons/button_properties.dart';
 import 'package:digivizit/shared/components/containers/figma_box.dart';
 import 'package:digivizit/shared/components/containers/figma_container.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
 class ContactDetailView extends StatefulWidget {
-  final ContactsData contact;
+  final BusinessCardListItem contact;
 
   const ContactDetailView({super.key, required this.contact});
 
@@ -35,10 +31,14 @@ class _ContactDetailViewState extends State<ContactDetailView>
   bool _isContactInfoExpanded = false;
   bool _isNotesExpanded = false;
   final TextEditingController _noteController = TextEditingController();
-  List<ActivityModel> _localNotes = [];
   Color _topColor = const Color(0xFFFFFFFF);
   Color _bottomColor = const Color(0xFFFFFFFF);
-  String get _contactNotesKey => 'contact_${widget.contact.id}';
+  BusinessCardDetailData? _detail;
+  bool _isLoadingDetail = true;
+  int _currentImageIndex = 0;
+  bool _cardWasChanged = false;
+
+  int get _cardId => widget.contact.id!;
 
   @override
   void initState() {
@@ -60,9 +60,9 @@ class _ContactDetailViewState extends State<ContactDetailView>
           ),
         );
 
-    final savedPersonelInfo = AppSettings.instance.personelInfo;
-    if (savedPersonelInfo != null) {
-      _homeViewModel.setInitialPersonelInfo(savedPersonelInfo);
+    final savedProfile = AppSettings.instance.profile;
+    if (savedProfile != null) {
+      _homeViewModel.setInitialProfile(savedProfile);
     }
 
     _homeViewModel
@@ -80,79 +80,266 @@ class _ContactDetailViewState extends State<ContactDetailView>
         });
 
     _animationController.forward();
-    _loadLocalNotes();
+    _loadDetail();
   }
 
-  Future<void> _loadLocalNotes() async {
-    final String? notesJson = AppSettings.instance.sharedPreferencesManager
-        .getString(SharedKeys.contactNotes);
-    if (notesJson != null) {
-      final Map<String, dynamic> allNotes = jsonDecode(notesJson);
-      final List<dynamic>? contactNotes = allNotes[_contactNotesKey];
-      if (contactNotes != null) {
-        setState(() {
-          _localNotes = contactNotes
-              .map(
-                (e) => ActivityModel(
-                  date: e['date'],
-                  description: e['description'],
-                ),
-              )
-              .toList();
-        });
-      }
+  Future<void> _loadDetail() async {
+    setState(() => _isLoadingDetail = true);
+    final result = await _homeViewModel.getBusinessCardDetail(_cardId);
+    if (!mounted) return;
+
+    if (result.isSuccess && result.data?.data != null) {
+      setState(() {
+        _detail = result.data!.data;
+        _isLoadingDetail = false;
+        _currentImageIndex = 0;
+      });
+    } else {
+      setState(() => _isLoadingDetail = false);
+      CustomBottomSheet.errorView(
+        text: result.error?.message ?? 'Kartvizit detayi alinamadi.',
+      );
     }
   }
 
-  Future<void> _saveLocalNote(String note) async {
-    if (note.isEmpty) return;
+  Future<void> _saveNote(String note) async {
+    final trimmed = note.trim();
+    if (trimmed.isEmpty) return;
 
-    final String date = DateFormat('dd.MM.yyyy HH:mm').format(DateTime.now());
-    final newLocalNote = ActivityModel(date: date, description: note);
+    final result = await _homeViewModel.addBusinessCardNote(_cardId, trimmed);
+    if (!mounted) return;
 
-    final String? notesJson = AppSettings.instance.sharedPreferencesManager
-        .getString(SharedKeys.contactNotes);
-    Map<String, dynamic> allNotes = {};
-    if (notesJson != null) {
-      allNotes = jsonDecode(notesJson);
-    }
-
-    final List<dynamic> contactNotes = allNotes[_contactNotesKey] ?? [];
-    contactNotes.add({'date': date, 'description': note});
-    allNotes[_contactNotesKey] = contactNotes;
-
-    await AppSettings.instance.sharedPreferencesManager.saveString(
-      SharedKeys.contactNotes,
-      jsonEncode(allNotes),
-    );
-
-    setState(() {
-      _localNotes.add(newLocalNote);
+    if (result.isSuccess) {
       _noteController.clear();
-    });
+      _cardWasChanged = true;
+      await _loadDetail();
+    } else {
+      CustomBottomSheet.errorView(
+        text: result.error?.message ?? 'Not eklenemedi.',
+      );
+    }
   }
 
-  Future<void> _deleteLocalNote(ActivityModel note) async {
-    final String? notesJson = AppSettings.instance.sharedPreferencesManager
-        .getString(SharedKeys.contactNotes);
-    if (notesJson == null) return;
+  Future<void> _deleteNote(BusinessCardNote note) async {
+    if (note.id == null) return;
 
-    final Map<String, dynamic> allNotes = jsonDecode(notesJson);
-    final List<dynamic> contactNotes = allNotes[_contactNotesKey] ?? [];
-
-    contactNotes.removeWhere(
-      (e) => e['date'] == note.date && e['description'] == note.description,
+    final result = await _homeViewModel.deleteBusinessCardNote(
+      _cardId,
+      note.id!,
     );
-    allNotes[_contactNotesKey] = contactNotes;
+    if (!mounted) return;
 
-    await AppSettings.instance.sharedPreferencesManager.saveString(
-      SharedKeys.contactNotes,
-      jsonEncode(allNotes),
+    if (result.isSuccess) {
+      _cardWasChanged = true;
+      await _loadDetail();
+    } else {
+      CustomBottomSheet.errorView(
+        text: result.error?.message ?? 'Not silinemedi.',
+      );
+    }
+  }
+
+  Future<void> _deleteMedia(BusinessCardImage image) async {
+    if (image.id == null) return;
+
+    final result = await _homeViewModel.deleteBusinessCardMedia(
+      _cardId,
+      image.id!,
+    );
+    if (!mounted) return;
+
+    if (result.isSuccess) {
+      _cardWasChanged = true;
+      await _loadDetail();
+    } else {
+      CustomBottomSheet.errorView(
+        text: result.error?.message ?? 'Gorsel silinemedi.',
+      );
+    }
+  }
+
+  Future<void> _confirmDeleteCard() async {
+    bool shouldDelete = false;
+    await CustomBottomSheet.customView(
+      context: context,
+      title: 'Kartviziti Sil',
+      text: 'Bu kartviziti silmek istediginizden emin misiniz?',
+      hexagonIcon: Icons.delete_outline,
+      hexagonColor: AppColors.negative700,
+      viewTopBar: true,
+      isDismissible: true,
+      buttons: [
+        ButtonProperties(
+          onPressed: () {
+            shouldDelete = true;
+            Navigator.pop(context);
+          },
+          text: 'Sil',
+          color: AppColors.negative700,
+        ),
+      ],
+      secondaryButtons: [
+        ButtonProperties(
+          onPressed: () {
+            shouldDelete = false;
+            Navigator.pop(context);
+          },
+          text: 'Vazgeç',
+          color: AppColors.neutral500,
+        ),
+      ],
     );
 
-    setState(() {
-      _localNotes.remove(note);
+    if (!shouldDelete || !mounted) return;
+
+    final result = await _homeViewModel.deleteBusinessCard(_cardId);
+    if (!mounted) return;
+
+    if (result.isSuccess) {
+      Navigator.of(context).pop(true);
+    } else {
+      CustomBottomSheet.errorView(
+        text: result.error?.message ?? 'Kartvizit silinemedi.',
+      );
+    }
+  }
+
+  Future<void> _showEditSheet() async {
+    final detail = _detail;
+    if (detail == null) return;
+
+    final companyController = TextEditingController(text: detail.companyName);
+    final sectorController = TextEditingController(text: detail.sector);
+    final phoneController = TextEditingController(text: detail.phone);
+    final emailController = TextEditingController(text: detail.email);
+    final websiteController = TextEditingController(text: detail.website);
+    final addressController = TextEditingController(text: detail.address);
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF111827),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 20,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Kartviziti Düzenle',
+                  style: AppFonts.baseBold.copyWith(
+                    fontSize: 18,
+                    color: AppColors.baseWhite,
+                  ),
+                ),
+                FigmaBox(height: 16),
+                _buildEditField('Firma Adı', companyController),
+                FigmaBox(height: 12),
+                _buildEditField('Sektör', sectorController),
+                FigmaBox(height: 12),
+                _buildEditField('Telefon', phoneController),
+                FigmaBox(height: 12),
+                _buildEditField('E-posta', emailController),
+                FigmaBox(height: 12),
+                _buildEditField('Website', websiteController),
+                FigmaBox(height: 12),
+                _buildEditField('Adres', addressController),
+                FigmaBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Navigator.of(sheetContext).pop();
+                      await _submitEdit(
+                        companyName: companyController.text.trim(),
+                        sector: sectorController.text.trim(),
+                        phone: phoneController.text.trim(),
+                        email: emailController.text.trim(),
+                        website: websiteController.text.trim(),
+                        address: addressController.text.trim(),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3B82F6),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      'Kaydet',
+                      style: AppFonts.baseBold.copyWith(
+                        color: AppColors.baseWhite,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEditField(String label, TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      style: AppFonts.baseRegular.copyWith(color: AppColors.baseWhite),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: AppFonts.baseRegular.copyWith(
+          color: AppColors.baseWhite.withValues(alpha: 0.6),
+        ),
+        filled: true,
+        fillColor: AppColors.baseWhite.withValues(alpha: 0.05),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: AppColors.baseWhite.withValues(alpha: 0.1),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitEdit({
+    required String companyName,
+    required String sector,
+    required String phone,
+    required String email,
+    required String website,
+    required String address,
+  }) async {
+    final result = await _homeViewModel.updateBusinessCard(_cardId, {
+      "company_name": companyName.isEmpty ? null : companyName,
+      "sector": sector.isEmpty ? null : sector,
+      "phone": phone.isEmpty ? null : phone,
+      "email": email.isEmpty ? null : email,
+      "website": website.isEmpty ? null : website,
+      "address": address.isEmpty ? null : address,
     });
+
+    if (!mounted) return;
+
+    if (result.isSuccess) {
+      _cardWasChanged = true;
+      await _loadDetail();
+    } else {
+      CustomBottomSheet.errorView(
+        text: result.error?.message ?? 'Kartvizit güncellenemedi.',
+      );
+    }
   }
 
   @override
@@ -164,165 +351,241 @@ class _ContactDetailViewState extends State<ContactDetailView>
 
   @override
   Widget build(BuildContext context) {
-    return BaseDesign(
-      topColor: _topColor,
-      bottomColor: _bottomColor,
-      children: [
-        FadeTransition(
-          opacity: _fadeAnimation,
-          child: SlideTransition(
-            position: _slideAnimation,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FigmaBox(height: 75),
-                // Back Button ve Header
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: FigmaContainer(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.baseWhite.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: AppColors.baseWhite.withValues(alpha: 0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.arrow_back_ios_new,
-                          color: AppColors.baseWhite,
-                          size: 18,
-                        ),
-                      ),
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {},
+      child: BaseDesign(
+        topColor: _topColor,
+        bottomColor: _bottomColor,
+        children: [
+          FadeTransition(
+            opacity: _fadeAnimation,
+            child: SlideTransition(
+              position: _slideAnimation,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FigmaBox(height: 75),
+                  _buildHeaderRow(),
+                  FigmaBox(height: 24),
+
+                  Text(
+                    widget.contact.name,
+                    style: AppFonts.baseBold.copyWith(
+                      fontSize: 28,
+                      color: AppColors.baseWhite,
+                      letterSpacing: -0.5,
                     ),
+                  ),
+                  FigmaBox(height: 8),
+                  Text(
+                    widget.contact.company,
+                    style: AppFonts.baseRegular.copyWith(
+                      fontSize: 16,
+                      color: AppColors.baseWhite.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  FigmaBox(height: 16),
+
+                  if (_isLoadingDetail)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 48),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (_detail != null) ...[
+                    if ((_detail!.cards?.isNotEmpty ?? false)) ...[
+                      _buildBusinessCardSection(),
+                      FigmaBox(height: 24),
+                    ],
+                    _buildContactInformation(),
+                    FigmaBox(height: 24),
+                    _buildNotesActivity(),
+                    FigmaBox(height: 24),
+                    _buildTagsSection(),
+                    FigmaBox(height: 24),
+                    _buildActionButtons(),
                   ],
-                ),
-                FigmaBox(height: 24),
+                  FigmaBox(height: 100),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                // İsim ve Şirket
-                Text(
-                  widget.contact.name,
-                  style: AppFonts.baseBold.copyWith(
-                    fontSize: 28,
-                    color: AppColors.baseWhite,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                FigmaBox(height: 8),
-                Text(
-                  widget.contact.company,
-                  style: AppFonts.baseRegular.copyWith(
-                    fontSize: 16,
-                    color: AppColors.baseWhite.withValues(alpha: 0.7),
-                  ),
-                ),
-                FigmaBox(height: 16),
-                // Scanned Business Card
-                /*  _buildBusinessCardSection(),
-                FigmaBox(height: 24), */
-
-                // Contact Information
-                _buildContactInformation(),
-                FigmaBox(height: 24),
-
-                // Notes & Activity
-                _buildNotesActivity(),
-                FigmaBox(height: 24),
-
-                // Tags & Sector
-                _buildTagsSection(),
-                FigmaBox(height: 24),
-
-                /*      // Professional Details
-                _buildProfessionalDetails(),
-                FigmaBox(height: 24), */
-
-                // Action Buttons
-                _buildActionButtons(),
-                FigmaBox(height: 100),
-              ],
+  Widget _buildHeaderRow() {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: () => Navigator.pop(context, _cardWasChanged),
+          child: FigmaContainer(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.baseWhite.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppColors.baseWhite.withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+            child: Icon(
+              Icons.arrow_back_ios_new,
+              color: AppColors.baseWhite,
+              size: 18,
             ),
           ),
         ),
+        const Spacer(),
+        if (_detail != null) ...[
+          GestureDetector(
+            onTap: _showEditSheet,
+            child: FigmaContainer(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.baseWhite.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.baseWhite.withValues(alpha: 0.2),
+                  width: 1,
+                ),
+              ),
+              child: Icon(
+                Icons.edit_outlined,
+                color: AppColors.baseWhite,
+                size: 18,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          GestureDetector(
+            onTap: _confirmDeleteCard,
+            child: FigmaContainer(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.negative700.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.negative700.withValues(alpha: 0.3),
+                  width: 1,
+                ),
+              ),
+              child: Icon(
+                Icons.delete_outline,
+                color: AppColors.negative300,
+                size: 18,
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }
 
-  /* Widget _buildBusinessCardSection() {
+  Widget _buildBusinessCardSection() {
+    final images = _detail!.cards!;
+    final current = images[_currentImageIndex.clamp(0, images.length - 1)];
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.baseWhite.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.1), width: 1),
+        border: Border.all(
+          color: AppColors.baseWhite.withValues(alpha: 0.1),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text('Scanned Business Card', style: AppFonts.baseSemibold.copyWith(fontSize: 14, color: AppColors.baseWhite)),
+            child: Text(
+              'Taranan Kartvizit',
+              style: AppFonts.baseSemibold.copyWith(
+                fontSize: 14,
+                color: AppColors.baseWhite,
+              ),
+            ),
           ),
           Container(
             height: 180,
             margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(image: NetworkImage(widget.contact.businessCardImages[_currentImageIndex]), fit: BoxFit.cover),
+              image: (current.url?.isNotEmpty ?? false)
+                  ? DecorationImage(
+                      image: NetworkImage(current.url!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+              color: AppColors.baseWhite.withValues(alpha: 0.05),
             ),
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 12,
-                  right: 12,
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: GestureDetector(
+                  onTap: () => _deleteMedia(current),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: AppColors.baseWhite.withValues(alpha: 0.9),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.3), width: 1),
+                      color: Colors.black.withValues(alpha: 0.5),
+                      shape: BoxShape.circle,
                     ),
-                    child: Text('Front', style: AppFonts.baseSemibold.copyWith(fontSize: 12, color: AppColors.baseBlack)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          // Indicator Dots
-          if (widget.contact.businessCardImages.length > 1)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  widget.contact.businessCardImages.length,
-                  (index) => Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: _currentImageIndex == index ? 24 : 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: _currentImageIndex == index ? Color(0xFF3B82F6) : AppColors.baseWhite.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(4),
+                    child: const Icon(
+                      Icons.close,
+                      size: 16,
+                      color: AppColors.baseWhite,
                     ),
                   ),
                 ),
               ),
             ),
+          ),
+          const SizedBox(height: 12),
+          if (images.length > 1)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  images.length,
+                  (index) => GestureDetector(
+                    onTap: () => setState(() => _currentImageIndex = index),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: _currentImageIndex == index ? 24 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: _currentImageIndex == index
+                            ? Color(0xFF3B82F6)
+                            : AppColors.baseWhite.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          else
+            const SizedBox(height: 4),
         ],
       ),
     );
-  } */
+  }
 
   Widget _buildContactInformation() {
-    final sector = widget.contact.sectorValue;
-    final website = widget.contact.websiteValue;
-    final companyEmail = widget.contact.emailValue;
-    final companyPhone = widget.contact.phoneValue;
-    final country = widget.contact.countryValue;
+    final detail = _detail!;
+    final sector = detail.sectorValue;
+    final website = detail.websiteValue;
+    final companyEmail = detail.emailValue;
+    final companyPhone = detail.phoneValue;
+    final country = detail.countryValue;
 
     return GestureDetector(
       onTap: () {
@@ -386,34 +649,31 @@ class _ContactDetailViewState extends State<ContactDetailView>
               secondChild: Column(
                 children: [
                   FigmaBox(height: 24),
-                  // Firma Adı / Ünvan
                   _buildContactInfoItem(
                     icon: Icons.business_center,
                     iconColor: const Color(0xFFF59E0B),
                     label: 'Firma Adı / Ünvan',
-                    value: widget.contact.companySummary,
+                    value: detail.companySummary,
                     onTap: () {},
                   ),
                   FigmaBox(height: 12),
-                  // İlgili Kişi Adı Soyadı
                   _buildContactInfoItem(
                     icon: Icons.person,
                     iconColor: const Color(0xFF06B6D4),
                     label: 'İlgili Kişi Adı Soyadı',
-                    value: widget.contact.contactPerson,
+                    value: detail.contactPerson,
                     onTap: () {},
                   ),
                   FigmaBox(height: 12),
-                  // İlgili Kişi Telefon
                   _buildContactInfoItem(
                     icon: Icons.phone_in_talk,
                     iconColor: const Color(0xFF10B981),
                     label: 'İlgili Kişi Telefon',
-                    value: widget.contact.contactPhone,
+                    value: detail.contactPhone,
                     onTap: () {
-                      final contactPhone = widget.contact.contactPhoneValue;
+                      final contactPhone = detail.contactPhoneValue;
                       if (contactPhone == null) {
-                        _showMissingFieldMessage(widget.contact.contactPhone);
+                        _showMissingFieldMessage(detail.contactPhone);
                         return;
                       }
 
@@ -421,16 +681,15 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     },
                   ),
                   FigmaBox(height: 12),
-                  // İlgili Kişi Mail
                   _buildContactInfoItem(
                     icon: Icons.mark_email_read,
                     iconColor: const Color(0xFF3B82F6),
                     label: 'İlgili Kişi Mail',
-                    value: widget.contact.contactEmail,
+                    value: detail.contactEmail,
                     onTap: () {
-                      final contactEmail = widget.contact.contactEmailValue;
+                      final contactEmail = detail.contactEmailValue;
                       if (contactEmail == null) {
-                        _showMissingFieldMessage(widget.contact.contactEmail);
+                        _showMissingFieldMessage(detail.contactEmail);
                         return;
                       }
 
@@ -438,7 +697,6 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     },
                   ),
                   FigmaBox(height: 12),
-                  // Hizmet / Sektör
                   _buildContactInfoItem(
                     icon: Icons.category,
                     iconColor: const Color(0xFFA855F7),
@@ -447,7 +705,6 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     onTap: () {},
                   ),
                   FigmaBox(height: 12),
-                  // Web Sitesi
                   _buildContactInfoItem(
                     icon: Icons.language,
                     iconColor: const Color(0xFF8B5CF6),
@@ -463,7 +720,6 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     },
                   ),
                   FigmaBox(height: 12),
-                  // Firma Email
                   _buildContactInfoItem(
                     icon: Icons.email,
                     iconColor: const Color(0xFF60A5FA),
@@ -479,7 +735,6 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     },
                   ),
                   FigmaBox(height: 12),
-                  // Firma Telefon
                   _buildContactInfoItem(
                     icon: Icons.phone,
                     iconColor: const Color(0xFF34D399),
@@ -495,7 +750,6 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     },
                   ),
                   FigmaBox(height: 12),
-                  // Ülke
                   _buildContactInfoItem(
                     icon: Icons.flag,
                     iconColor: const Color(0xFFF97316),
@@ -504,12 +758,11 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     onTap: () {},
                   ),
                   FigmaBox(height: 12),
-                  // Adres
                   _buildContactInfoItem(
                     icon: Icons.location_on,
                     iconColor: const Color(0xFFEC4899),
                     label: 'Adres',
-                    value: widget.contact.location,
+                    value: detail.location,
                     onTap: () {},
                     isMultiline: true,
                   ),
@@ -592,9 +845,8 @@ class _ContactDetailViewState extends State<ContactDetailView>
   }
 
   Widget _buildNotesActivity() {
-    /*     final combinedActivities = [...widget.contact.activities, ..._localNotes];
-    final bool needsExpansion = combinedActivities.length > 4;
- */
+    final notes = _detail!.notes ?? const <BusinessCardNote>[];
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -611,7 +863,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: _isNotesExpanded
+            onTap: notes.length > 4
                 ? () {
                     setState(() {
                       _isNotesExpanded = !_isNotesExpanded;
@@ -638,7 +890,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                   ),
                 ),
                 const Spacer(),
-                if (_isNotesExpanded)
+                if (notes.length > 4)
                   AnimatedRotation(
                     duration: const Duration(milliseconds: 300),
                     turns: _isNotesExpanded ? 0.5 : 0,
@@ -653,7 +905,6 @@ class _ContactDetailViewState extends State<ContactDetailView>
           ),
           FigmaBox(height: 16),
 
-          // Add Note Field (Always Visible)
           Row(
             children: [
               Expanded(
@@ -699,7 +950,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
               ),
               const SizedBox(width: 12),
               GestureDetector(
-                onTap: () => _saveLocalNote(_noteController.text),
+                onTap: () => _saveNote(_noteController.text),
                 child: Container(
                   width: 48,
                   height: 48,
@@ -725,31 +976,31 @@ class _ContactDetailViewState extends State<ContactDetailView>
           ),
           FigmaBox(height: 20),
 
-          // Activities List (Conditionally Expandable)
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 300),
-            crossFadeState: (_isNotesExpanded)
+            crossFadeState: _isNotesExpanded
                 ? CrossFadeState.showSecond
                 : CrossFadeState.showFirst,
             firstChild: Column(
-              children: _localNotes.reversed.take(4).map((activity) {
-                final bool isLocal = _localNotes.contains(activity);
-                final Widget item = _buildActivityItem(activity);
-                if (isLocal) {
-                  return _wrapWithDismissible(activity, item);
-                }
-                return item;
-              }).toList(),
+              children: notes.reversed
+                  .take(4)
+                  .map(
+                    (note) => _wrapWithDismissible(
+                      note,
+                      _buildActivityItem(note),
+                    ),
+                  )
+                  .toList(),
             ),
             secondChild: Column(
-              children: _localNotes.reversed.map((activity) {
-                final bool isLocal = _localNotes.contains(activity);
-                final Widget item = _buildActivityItem(activity);
-                if (isLocal) {
-                  return _wrapWithDismissible(activity, item);
-                }
-                return item;
-              }).toList(),
+              children: notes.reversed
+                  .map(
+                    (note) => _wrapWithDismissible(
+                      note,
+                      _buildActivityItem(note),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
         ],
@@ -757,9 +1008,9 @@ class _ContactDetailViewState extends State<ContactDetailView>
     );
   }
 
-  Widget _wrapWithDismissible(ActivityModel activity, Widget child) {
+  Widget _wrapWithDismissible(BusinessCardNote note, Widget child) {
     return Dismissible(
-      key: ValueKey('${activity.date}_${activity.description}'),
+      key: ValueKey('note_${note.id}'),
       direction: DismissDirection.endToStart,
       confirmDismiss: (direction) async {
         bool shouldDelete = false;
@@ -795,7 +1046,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
         return shouldDelete;
       },
       onDismissed: (direction) {
-        _deleteLocalNote(activity);
+        _deleteNote(note);
       },
       background: Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -811,7 +1062,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
     );
   }
 
-  Widget _buildActivityItem(ActivityModel activity) {
+  Widget _buildActivityItem(BusinessCardNote note) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -853,7 +1104,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      activity.date,
+                      note.createdAt ?? '',
                       style: AppFonts.baseRegular.copyWith(
                         fontSize: 12,
                         color: AppColors.baseWhite.withValues(alpha: 0.5),
@@ -863,7 +1114,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  activity.description,
+                  note.note ?? '',
                   style: AppFonts.baseRegular.copyWith(
                     fontSize: 13,
                     color: AppColors.baseWhite.withValues(alpha: 0.9),
@@ -878,7 +1129,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
   }
 
   Widget _buildTagsSection() {
-    final sector = widget.contact.sectorValue;
+    final sector = _detail!.sectorValue;
 
     return FigmaContainer(
       padding: const EdgeInsets.all(20),
@@ -914,7 +1165,6 @@ class _ContactDetailViewState extends State<ContactDetailView>
             ],
           ),
           FigmaBox(height: 16),
-          // Sektör chip'i
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -953,25 +1203,6 @@ class _ContactDetailViewState extends State<ContactDetailView>
               ),
             ],
           ),
-          FigmaBox(height: 12),
-          // Etiketler
-          /* if (widget.contact.tags.isNotEmpty)
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: List.generate(
-                widget.contact.tags.length,
-                (index) => FigmaContainer(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: widget.contact.tagColors[index].withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: widget.contact.tagColors[index].withValues(alpha: 0.4), width: 1),
-                  ),
-                  child: Text(widget.contact.tags[index], style: AppFonts.baseBold.copyWith(fontSize: 12, color: widget.contact.tagColors[index])),
-                ),
-              ),
-            ), */
         ],
       ),
     );
@@ -1013,7 +1244,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
         const SizedBox(width: 12),
         Expanded(
           child: GestureDetector(
-            onTap: () => _makePhoneCall(widget.contact.contactPhone),
+            onTap: () => _makePhoneCall(_detail!.contactPhone),
             child: FigmaContainer(
               height: 56,
               decoration: BoxDecoration(
@@ -1055,7 +1286,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
   }
 
   Future<void> onPressWhatsapp() async {
-    final contactPhone = widget.contact.contactPhoneValue;
+    final contactPhone = _detail?.contactPhoneValue;
     if (contactPhone == null) {
       _showMissingFieldMessage('Telefon bulunamadi');
       return;
@@ -1087,23 +1318,4 @@ class _ContactDetailViewState extends State<ContactDetailView>
   void _showMissingFieldMessage(String message) {
     CustomBottomSheet.errorView(text: message);
   }
-}
-
-// Activity Model
-class ActivityModel {
-  final String date;
-  final String description;
-
-  ActivityModel({required this.date, required this.description});
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ActivityModel &&
-          runtimeType == other.runtimeType &&
-          date == other.date &&
-          description == other.description;
-
-  @override
-  int get hashCode => date.hashCode ^ description.hashCode;
 }

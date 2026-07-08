@@ -13,72 +13,84 @@ part of 'appointment_response.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$AppointmentResponse {
+mixin _$AppointmentListResponse {
 
-@JsonKey(name: "success") bool? get success;@JsonKey(name: "message") String? get message;@JsonKey(name: "data") List<Datum>? get data;
-/// Create a copy of AppointmentResponse
+@JsonKey(name: "success") bool? get success;@JsonKey(name: "message") String? get message;@JsonKey(name: "data") AppointmentListData? get data;
+/// Create a copy of AppointmentListResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$AppointmentResponseCopyWith<AppointmentResponse> get copyWith => _$AppointmentResponseCopyWithImpl<AppointmentResponse>(this as AppointmentResponse, _$identity);
+$AppointmentListResponseCopyWith<AppointmentListResponse> get copyWith => _$AppointmentListResponseCopyWithImpl<AppointmentListResponse>(this as AppointmentListResponse, _$identity);
 
-  /// Serializes this AppointmentResponse to a JSON map.
+  /// Serializes this AppointmentListResponse to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppointmentResponse&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.data, data));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppointmentListResponse&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&(identical(other.data, data) || other.data == data));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(data));
+int get hashCode => Object.hash(runtimeType,success,message,data);
 
 @override
 String toString() {
-  return 'AppointmentResponse(success: $success, message: $message, data: $data)';
+  return 'AppointmentListResponse(success: $success, message: $message, data: $data)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $AppointmentResponseCopyWith<$Res>  {
-  factory $AppointmentResponseCopyWith(AppointmentResponse value, $Res Function(AppointmentResponse) _then) = _$AppointmentResponseCopyWithImpl;
+abstract mixin class $AppointmentListResponseCopyWith<$Res>  {
+  factory $AppointmentListResponseCopyWith(AppointmentListResponse value, $Res Function(AppointmentListResponse) _then) = _$AppointmentListResponseCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "success") bool? success,@JsonKey(name: "message") String? message,@JsonKey(name: "data") List<Datum>? data
+@JsonKey(name: "success") bool? success,@JsonKey(name: "message") String? message,@JsonKey(name: "data") AppointmentListData? data
 });
 
 
-
+$AppointmentListDataCopyWith<$Res>? get data;
 
 }
 /// @nodoc
-class _$AppointmentResponseCopyWithImpl<$Res>
-    implements $AppointmentResponseCopyWith<$Res> {
-  _$AppointmentResponseCopyWithImpl(this._self, this._then);
+class _$AppointmentListResponseCopyWithImpl<$Res>
+    implements $AppointmentListResponseCopyWith<$Res> {
+  _$AppointmentListResponseCopyWithImpl(this._self, this._then);
 
-  final AppointmentResponse _self;
-  final $Res Function(AppointmentResponse) _then;
+  final AppointmentListResponse _self;
+  final $Res Function(AppointmentListResponse) _then;
 
-/// Create a copy of AppointmentResponse
+/// Create a copy of AppointmentListResponse
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? success = freezed,Object? message = freezed,Object? data = freezed,}) {
   return _then(_self.copyWith(
 success: freezed == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,data: freezed == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
-as List<Datum>?,
+as AppointmentListData?,
   ));
 }
+/// Create a copy of AppointmentListResponse
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AppointmentListDataCopyWith<$Res>? get data {
+    if (_self.data == null) {
+    return null;
+  }
 
+  return $AppointmentListDataCopyWith<$Res>(_self.data!, (value) {
+    return _then(_self.copyWith(data: value));
+  });
+}
 }
 
 
-/// Adds pattern-matching-related methods to [AppointmentResponse].
-extension AppointmentResponsePatterns on AppointmentResponse {
+/// Adds pattern-matching-related methods to [AppointmentListResponse].
+extension AppointmentListResponsePatterns on AppointmentListResponse {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -91,10 +103,10 @@ extension AppointmentResponsePatterns on AppointmentResponse {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _AppointmentResponse value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _AppointmentListResponse value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _AppointmentResponse() when $default != null:
+case _AppointmentListResponse() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -113,10 +125,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _AppointmentResponse value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _AppointmentListResponse value)  $default,){
 final _that = this;
 switch (_that) {
-case _AppointmentResponse():
+case _AppointmentListResponse():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -134,10 +146,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _AppointmentResponse value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _AppointmentListResponse value)?  $default,){
 final _that = this;
 switch (_that) {
-case _AppointmentResponse() when $default != null:
+case _AppointmentListResponse() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -155,9 +167,9 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "success")  bool? success, @JsonKey(name: "message")  String? message, @JsonKey(name: "data")  List<Datum>? data)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "success")  bool? success, @JsonKey(name: "message")  String? message, @JsonKey(name: "data")  AppointmentListData? data)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _AppointmentResponse() when $default != null:
+case _AppointmentListResponse() when $default != null:
 return $default(_that.success,_that.message,_that.data);case _:
   return orElse();
 
@@ -176,9 +188,9 @@ return $default(_that.success,_that.message,_that.data);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "success")  bool? success, @JsonKey(name: "message")  String? message, @JsonKey(name: "data")  List<Datum>? data)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "success")  bool? success, @JsonKey(name: "message")  String? message, @JsonKey(name: "data")  AppointmentListData? data)  $default,) {final _that = this;
 switch (_that) {
-case _AppointmentResponse():
+case _AppointmentListResponse():
 return $default(_that.success,_that.message,_that.data);case _:
   throw StateError('Unexpected subclass');
 
@@ -196,9 +208,9 @@ return $default(_that.success,_that.message,_that.data);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "success")  bool? success, @JsonKey(name: "message")  String? message, @JsonKey(name: "data")  List<Datum>? data)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "success")  bool? success, @JsonKey(name: "message")  String? message, @JsonKey(name: "data")  AppointmentListData? data)?  $default,) {final _that = this;
 switch (_that) {
-case _AppointmentResponse() when $default != null:
+case _AppointmentListResponse() when $default != null:
 return $default(_that.success,_that.message,_that.data);case _:
   return null;
 
@@ -210,173 +222,460 @@ return $default(_that.success,_that.message,_that.data);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _AppointmentResponse implements AppointmentResponse {
-  const _AppointmentResponse({@JsonKey(name: "success") this.success, @JsonKey(name: "message") this.message, @JsonKey(name: "data") final  List<Datum>? data}): _data = data;
-  factory _AppointmentResponse.fromJson(Map<String, dynamic> json) => _$AppointmentResponseFromJson(json);
+class _AppointmentListResponse implements AppointmentListResponse {
+  const _AppointmentListResponse({@JsonKey(name: "success") this.success, @JsonKey(name: "message") this.message, @JsonKey(name: "data") this.data});
+  factory _AppointmentListResponse.fromJson(Map<String, dynamic> json) => _$AppointmentListResponseFromJson(json);
 
 @override@JsonKey(name: "success") final  bool? success;
 @override@JsonKey(name: "message") final  String? message;
- final  List<Datum>? _data;
-@override@JsonKey(name: "data") List<Datum>? get data {
-  final value = _data;
-  if (value == null) return null;
-  if (_data is EqualUnmodifiableListView) return _data;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(value);
-}
+@override@JsonKey(name: "data") final  AppointmentListData? data;
 
-
-/// Create a copy of AppointmentResponse
+/// Create a copy of AppointmentListResponse
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$AppointmentResponseCopyWith<_AppointmentResponse> get copyWith => __$AppointmentResponseCopyWithImpl<_AppointmentResponse>(this, _$identity);
+_$AppointmentListResponseCopyWith<_AppointmentListResponse> get copyWith => __$AppointmentListResponseCopyWithImpl<_AppointmentListResponse>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$AppointmentResponseToJson(this, );
+  return _$AppointmentListResponseToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppointmentResponse&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._data, _data));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppointmentListResponse&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&(identical(other.data, data) || other.data == data));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(_data));
+int get hashCode => Object.hash(runtimeType,success,message,data);
 
 @override
 String toString() {
-  return 'AppointmentResponse(success: $success, message: $message, data: $data)';
+  return 'AppointmentListResponse(success: $success, message: $message, data: $data)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$AppointmentResponseCopyWith<$Res> implements $AppointmentResponseCopyWith<$Res> {
-  factory _$AppointmentResponseCopyWith(_AppointmentResponse value, $Res Function(_AppointmentResponse) _then) = __$AppointmentResponseCopyWithImpl;
+abstract mixin class _$AppointmentListResponseCopyWith<$Res> implements $AppointmentListResponseCopyWith<$Res> {
+  factory _$AppointmentListResponseCopyWith(_AppointmentListResponse value, $Res Function(_AppointmentListResponse) _then) = __$AppointmentListResponseCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "success") bool? success,@JsonKey(name: "message") String? message,@JsonKey(name: "data") List<Datum>? data
+@JsonKey(name: "success") bool? success,@JsonKey(name: "message") String? message,@JsonKey(name: "data") AppointmentListData? data
 });
 
 
-
+@override $AppointmentListDataCopyWith<$Res>? get data;
 
 }
 /// @nodoc
-class __$AppointmentResponseCopyWithImpl<$Res>
-    implements _$AppointmentResponseCopyWith<$Res> {
-  __$AppointmentResponseCopyWithImpl(this._self, this._then);
+class __$AppointmentListResponseCopyWithImpl<$Res>
+    implements _$AppointmentListResponseCopyWith<$Res> {
+  __$AppointmentListResponseCopyWithImpl(this._self, this._then);
 
-  final _AppointmentResponse _self;
-  final $Res Function(_AppointmentResponse) _then;
+  final _AppointmentListResponse _self;
+  final $Res Function(_AppointmentListResponse) _then;
 
-/// Create a copy of AppointmentResponse
+/// Create a copy of AppointmentListResponse
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? success = freezed,Object? message = freezed,Object? data = freezed,}) {
-  return _then(_AppointmentResponse(
+  return _then(_AppointmentListResponse(
 success: freezed == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String?,data: freezed == data ? _self._data : data // ignore: cast_nullable_to_non_nullable
-as List<Datum>?,
+as String?,data: freezed == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
+as AppointmentListData?,
   ));
 }
 
+/// Create a copy of AppointmentListResponse
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AppointmentListDataCopyWith<$Res>? get data {
+    if (_self.data == null) {
+    return null;
+  }
 
+  return $AppointmentListDataCopyWith<$Res>(_self.data!, (value) {
+    return _then(_self.copyWith(data: value));
+  });
+}
 }
 
 
 /// @nodoc
-mixin _$Datum {
+mixin _$AppointmentListData {
 
-@JsonKey(name: "id") int? get id;@JsonKey(name: "employee_id") int? get employeeId;@JsonKey(name: "full_name") String? get fullName;@JsonKey(name: "company") String? get company;@JsonKey(name: "subject") String? get subject;@JsonKey(name: "note") String? get note;@JsonKey(name: "preferred_date") String? get preferredDate;@JsonKey(name: "status") String? get status;@JsonKey(name: "created_at") String? get createdAt;@JsonKey(name: "updated_at") DateTime? get updatedAt;@JsonKey(name: "deleted_at") dynamic get deletedAt;@JsonKey(name: "employee") Employee? get employee;
-/// Create a copy of Datum
+@JsonKey(name: "items") List<AppointmentListItem>? get items;@JsonKey(name: "meta") PageMeta? get meta;
+/// Create a copy of AppointmentListData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$DatumCopyWith<Datum> get copyWith => _$DatumCopyWithImpl<Datum>(this as Datum, _$identity);
+$AppointmentListDataCopyWith<AppointmentListData> get copyWith => _$AppointmentListDataCopyWithImpl<AppointmentListData>(this as AppointmentListData, _$identity);
 
-  /// Serializes this Datum to a JSON map.
+  /// Serializes this AppointmentListData to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Datum&&(identical(other.id, id) || other.id == id)&&(identical(other.employeeId, employeeId) || other.employeeId == employeeId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.company, company) || other.company == company)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.note, note) || other.note == note)&&(identical(other.preferredDate, preferredDate) || other.preferredDate == preferredDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.deletedAt, deletedAt)&&(identical(other.employee, employee) || other.employee == employee));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppointmentListData&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.meta, meta) || other.meta == meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,employeeId,fullName,company,subject,note,preferredDate,status,createdAt,updatedAt,const DeepCollectionEquality().hash(deletedAt),employee);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(items),meta);
 
 @override
 String toString() {
-  return 'Datum(id: $id, employeeId: $employeeId, fullName: $fullName, company: $company, subject: $subject, note: $note, preferredDate: $preferredDate, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, employee: $employee)';
+  return 'AppointmentListData(items: $items, meta: $meta)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $DatumCopyWith<$Res>  {
-  factory $DatumCopyWith(Datum value, $Res Function(Datum) _then) = _$DatumCopyWithImpl;
+abstract mixin class $AppointmentListDataCopyWith<$Res>  {
+  factory $AppointmentListDataCopyWith(AppointmentListData value, $Res Function(AppointmentListData) _then) = _$AppointmentListDataCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "employee_id") int? employeeId,@JsonKey(name: "full_name") String? fullName,@JsonKey(name: "company") String? company,@JsonKey(name: "subject") String? subject,@JsonKey(name: "note") String? note,@JsonKey(name: "preferred_date") String? preferredDate,@JsonKey(name: "status") String? status,@JsonKey(name: "created_at") String? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "deleted_at") dynamic deletedAt,@JsonKey(name: "employee") Employee? employee
+@JsonKey(name: "items") List<AppointmentListItem>? items,@JsonKey(name: "meta") PageMeta? meta
 });
 
 
-$EmployeeCopyWith<$Res>? get employee;
+$PageMetaCopyWith<$Res>? get meta;
 
 }
 /// @nodoc
-class _$DatumCopyWithImpl<$Res>
-    implements $DatumCopyWith<$Res> {
-  _$DatumCopyWithImpl(this._self, this._then);
+class _$AppointmentListDataCopyWithImpl<$Res>
+    implements $AppointmentListDataCopyWith<$Res> {
+  _$AppointmentListDataCopyWithImpl(this._self, this._then);
 
-  final Datum _self;
-  final $Res Function(Datum) _then;
+  final AppointmentListData _self;
+  final $Res Function(AppointmentListData) _then;
 
-/// Create a copy of Datum
+/// Create a copy of AppointmentListData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? employeeId = freezed,Object? fullName = freezed,Object? company = freezed,Object? subject = freezed,Object? note = freezed,Object? preferredDate = freezed,Object? status = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? deletedAt = freezed,Object? employee = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? items = freezed,Object? meta = freezed,}) {
+  return _then(_self.copyWith(
+items: freezed == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<AppointmentListItem>?,meta: freezed == meta ? _self.meta : meta // ignore: cast_nullable_to_non_nullable
+as PageMeta?,
+  ));
+}
+/// Create a copy of AppointmentListData
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PageMetaCopyWith<$Res>? get meta {
+    if (_self.meta == null) {
+    return null;
+  }
+
+  return $PageMetaCopyWith<$Res>(_self.meta!, (value) {
+    return _then(_self.copyWith(meta: value));
+  });
+}
+}
+
+
+/// Adds pattern-matching-related methods to [AppointmentListData].
+extension AppointmentListDataPatterns on AppointmentListData {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _AppointmentListData value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _AppointmentListData() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _AppointmentListData value)  $default,){
+final _that = this;
+switch (_that) {
+case _AppointmentListData():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _AppointmentListData value)?  $default,){
+final _that = this;
+switch (_that) {
+case _AppointmentListData() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "items")  List<AppointmentListItem>? items, @JsonKey(name: "meta")  PageMeta? meta)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _AppointmentListData() when $default != null:
+return $default(_that.items,_that.meta);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "items")  List<AppointmentListItem>? items, @JsonKey(name: "meta")  PageMeta? meta)  $default,) {final _that = this;
+switch (_that) {
+case _AppointmentListData():
+return $default(_that.items,_that.meta);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "items")  List<AppointmentListItem>? items, @JsonKey(name: "meta")  PageMeta? meta)?  $default,) {final _that = this;
+switch (_that) {
+case _AppointmentListData() when $default != null:
+return $default(_that.items,_that.meta);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _AppointmentListData implements AppointmentListData {
+  const _AppointmentListData({@JsonKey(name: "items") final  List<AppointmentListItem>? items, @JsonKey(name: "meta") this.meta}): _items = items;
+  factory _AppointmentListData.fromJson(Map<String, dynamic> json) => _$AppointmentListDataFromJson(json);
+
+ final  List<AppointmentListItem>? _items;
+@override@JsonKey(name: "items") List<AppointmentListItem>? get items {
+  final value = _items;
+  if (value == null) return null;
+  if (_items is EqualUnmodifiableListView) return _items;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
+}
+
+@override@JsonKey(name: "meta") final  PageMeta? meta;
+
+/// Create a copy of AppointmentListData
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AppointmentListDataCopyWith<_AppointmentListData> get copyWith => __$AppointmentListDataCopyWithImpl<_AppointmentListData>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$AppointmentListDataToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppointmentListData&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.meta, meta) || other.meta == meta));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),meta);
+
+@override
+String toString() {
+  return 'AppointmentListData(items: $items, meta: $meta)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$AppointmentListDataCopyWith<$Res> implements $AppointmentListDataCopyWith<$Res> {
+  factory _$AppointmentListDataCopyWith(_AppointmentListData value, $Res Function(_AppointmentListData) _then) = __$AppointmentListDataCopyWithImpl;
+@override @useResult
+$Res call({
+@JsonKey(name: "items") List<AppointmentListItem>? items,@JsonKey(name: "meta") PageMeta? meta
+});
+
+
+@override $PageMetaCopyWith<$Res>? get meta;
+
+}
+/// @nodoc
+class __$AppointmentListDataCopyWithImpl<$Res>
+    implements _$AppointmentListDataCopyWith<$Res> {
+  __$AppointmentListDataCopyWithImpl(this._self, this._then);
+
+  final _AppointmentListData _self;
+  final $Res Function(_AppointmentListData) _then;
+
+/// Create a copy of AppointmentListData
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? items = freezed,Object? meta = freezed,}) {
+  return _then(_AppointmentListData(
+items: freezed == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as List<AppointmentListItem>?,meta: freezed == meta ? _self.meta : meta // ignore: cast_nullable_to_non_nullable
+as PageMeta?,
+  ));
+}
+
+/// Create a copy of AppointmentListData
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PageMetaCopyWith<$Res>? get meta {
+    if (_self.meta == null) {
+    return null;
+  }
+
+  return $PageMetaCopyWith<$Res>(_self.meta!, (value) {
+    return _then(_self.copyWith(meta: value));
+  });
+}
+}
+
+
+/// @nodoc
+mixin _$AppointmentListItem {
+
+@JsonKey(name: "id") int? get id;@JsonKey(name: "full_name") String? get fullName;@JsonKey(name: "company") String? get company;@JsonKey(name: "subject") String? get subject;@JsonKey(name: "note") String? get note;@JsonKey(name: "preferred_date") String? get preferredDate;@JsonKey(name: "status") String? get status;@JsonKey(name: "status_label") String? get statusLabel;@JsonKey(name: "created_at") String? get createdAt;
+/// Create a copy of AppointmentListItem
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AppointmentListItemCopyWith<AppointmentListItem> get copyWith => _$AppointmentListItemCopyWithImpl<AppointmentListItem>(this as AppointmentListItem, _$identity);
+
+  /// Serializes this AppointmentListItem to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppointmentListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.company, company) || other.company == company)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.note, note) || other.note == note)&&(identical(other.preferredDate, preferredDate) || other.preferredDate == preferredDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,fullName,company,subject,note,preferredDate,status,statusLabel,createdAt);
+
+@override
+String toString() {
+  return 'AppointmentListItem(id: $id, fullName: $fullName, company: $company, subject: $subject, note: $note, preferredDate: $preferredDate, status: $status, statusLabel: $statusLabel, createdAt: $createdAt)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AppointmentListItemCopyWith<$Res>  {
+  factory $AppointmentListItemCopyWith(AppointmentListItem value, $Res Function(AppointmentListItem) _then) = _$AppointmentListItemCopyWithImpl;
+@useResult
+$Res call({
+@JsonKey(name: "id") int? id,@JsonKey(name: "full_name") String? fullName,@JsonKey(name: "company") String? company,@JsonKey(name: "subject") String? subject,@JsonKey(name: "note") String? note,@JsonKey(name: "preferred_date") String? preferredDate,@JsonKey(name: "status") String? status,@JsonKey(name: "status_label") String? statusLabel,@JsonKey(name: "created_at") String? createdAt
+});
+
+
+
+
+}
+/// @nodoc
+class _$AppointmentListItemCopyWithImpl<$Res>
+    implements $AppointmentListItemCopyWith<$Res> {
+  _$AppointmentListItemCopyWithImpl(this._self, this._then);
+
+  final AppointmentListItem _self;
+  final $Res Function(AppointmentListItem) _then;
+
+/// Create a copy of AppointmentListItem
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? fullName = freezed,Object? company = freezed,Object? subject = freezed,Object? note = freezed,Object? preferredDate = freezed,Object? status = freezed,Object? statusLabel = freezed,Object? createdAt = freezed,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,employeeId: freezed == employeeId ? _self.employeeId : employeeId // ignore: cast_nullable_to_non_nullable
 as int?,fullName: freezed == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
 as String?,company: freezed == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String?,subject: freezed == subject ? _self.subject : subject // ignore: cast_nullable_to_non_nullable
 as String?,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
 as String?,preferredDate: freezed == preferredDate ? _self.preferredDate : preferredDate // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String?,statusLabel: freezed == statusLabel ? _self.statusLabel : statusLabel // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as String?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
-as dynamic,employee: freezed == employee ? _self.employee : employee // ignore: cast_nullable_to_non_nullable
-as Employee?,
+as String?,
   ));
 }
-/// Create a copy of Datum
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$EmployeeCopyWith<$Res>? get employee {
-    if (_self.employee == null) {
-    return null;
-  }
 
-  return $EmployeeCopyWith<$Res>(_self.employee!, (value) {
-    return _then(_self.copyWith(employee: value));
-  });
-}
 }
 
 
-/// Adds pattern-matching-related methods to [Datum].
-extension DatumPatterns on Datum {
+/// Adds pattern-matching-related methods to [AppointmentListItem].
+extension AppointmentListItemPatterns on AppointmentListItem {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -389,10 +688,10 @@ extension DatumPatterns on Datum {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Datum value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _AppointmentListItem value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Datum() when $default != null:
+case _AppointmentListItem() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -411,10 +710,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Datum value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _AppointmentListItem value)  $default,){
 final _that = this;
 switch (_that) {
-case _Datum():
+case _AppointmentListItem():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -432,10 +731,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Datum value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _AppointmentListItem value)?  $default,){
 final _that = this;
 switch (_that) {
-case _Datum() when $default != null:
+case _AppointmentListItem() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -453,10 +752,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "employee_id")  int? employeeId, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "created_at")  String? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "deleted_at")  dynamic deletedAt, @JsonKey(name: "employee")  Employee? employee)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "status_label")  String? statusLabel, @JsonKey(name: "created_at")  String? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Datum() when $default != null:
-return $default(_that.id,_that.employeeId,_that.fullName,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.employee);case _:
+case _AppointmentListItem() when $default != null:
+return $default(_that.id,_that.fullName,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.statusLabel,_that.createdAt);case _:
   return orElse();
 
 }
@@ -474,10 +773,10 @@ return $default(_that.id,_that.employeeId,_that.fullName,_that.company,_that.sub
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "employee_id")  int? employeeId, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "created_at")  String? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "deleted_at")  dynamic deletedAt, @JsonKey(name: "employee")  Employee? employee)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "status_label")  String? statusLabel, @JsonKey(name: "created_at")  String? createdAt)  $default,) {final _that = this;
 switch (_that) {
-case _Datum():
-return $default(_that.id,_that.employeeId,_that.fullName,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.employee);case _:
+case _AppointmentListItem():
+return $default(_that.id,_that.fullName,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.statusLabel,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -494,10 +793,10 @@ return $default(_that.id,_that.employeeId,_that.fullName,_that.company,_that.sub
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "employee_id")  int? employeeId, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "created_at")  String? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "deleted_at")  dynamic deletedAt, @JsonKey(name: "employee")  Employee? employee)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "status_label")  String? statusLabel, @JsonKey(name: "created_at")  String? createdAt)?  $default,) {final _that = this;
 switch (_that) {
-case _Datum() when $default != null:
-return $default(_that.id,_that.employeeId,_that.fullName,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.employee);case _:
+case _AppointmentListItem() when $default != null:
+return $default(_that.id,_that.fullName,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.statusLabel,_that.createdAt);case _:
   return null;
 
 }
@@ -508,1284 +807,168 @@ return $default(_that.id,_that.employeeId,_that.fullName,_that.company,_that.sub
 /// @nodoc
 @JsonSerializable()
 
-class _Datum implements Datum {
-  const _Datum({@JsonKey(name: "id") this.id, @JsonKey(name: "employee_id") this.employeeId, @JsonKey(name: "full_name") this.fullName, @JsonKey(name: "company") this.company, @JsonKey(name: "subject") this.subject, @JsonKey(name: "note") this.note, @JsonKey(name: "preferred_date") this.preferredDate, @JsonKey(name: "status") this.status, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt, @JsonKey(name: "deleted_at") this.deletedAt, @JsonKey(name: "employee") this.employee});
-  factory _Datum.fromJson(Map<String, dynamic> json) => _$DatumFromJson(json);
+class _AppointmentListItem implements AppointmentListItem {
+  const _AppointmentListItem({@JsonKey(name: "id") this.id, @JsonKey(name: "full_name") this.fullName, @JsonKey(name: "company") this.company, @JsonKey(name: "subject") this.subject, @JsonKey(name: "note") this.note, @JsonKey(name: "preferred_date") this.preferredDate, @JsonKey(name: "status") this.status, @JsonKey(name: "status_label") this.statusLabel, @JsonKey(name: "created_at") this.createdAt});
+  factory _AppointmentListItem.fromJson(Map<String, dynamic> json) => _$AppointmentListItemFromJson(json);
 
 @override@JsonKey(name: "id") final  int? id;
-@override@JsonKey(name: "employee_id") final  int? employeeId;
 @override@JsonKey(name: "full_name") final  String? fullName;
 @override@JsonKey(name: "company") final  String? company;
 @override@JsonKey(name: "subject") final  String? subject;
 @override@JsonKey(name: "note") final  String? note;
 @override@JsonKey(name: "preferred_date") final  String? preferredDate;
 @override@JsonKey(name: "status") final  String? status;
+@override@JsonKey(name: "status_label") final  String? statusLabel;
 @override@JsonKey(name: "created_at") final  String? createdAt;
-@override@JsonKey(name: "updated_at") final  DateTime? updatedAt;
-@override@JsonKey(name: "deleted_at") final  dynamic deletedAt;
-@override@JsonKey(name: "employee") final  Employee? employee;
 
-/// Create a copy of Datum
+/// Create a copy of AppointmentListItem
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$DatumCopyWith<_Datum> get copyWith => __$DatumCopyWithImpl<_Datum>(this, _$identity);
+_$AppointmentListItemCopyWith<_AppointmentListItem> get copyWith => __$AppointmentListItemCopyWithImpl<_AppointmentListItem>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$DatumToJson(this, );
+  return _$AppointmentListItemToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Datum&&(identical(other.id, id) || other.id == id)&&(identical(other.employeeId, employeeId) || other.employeeId == employeeId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.company, company) || other.company == company)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.note, note) || other.note == note)&&(identical(other.preferredDate, preferredDate) || other.preferredDate == preferredDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.deletedAt, deletedAt)&&(identical(other.employee, employee) || other.employee == employee));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppointmentListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.company, company) || other.company == company)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.note, note) || other.note == note)&&(identical(other.preferredDate, preferredDate) || other.preferredDate == preferredDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,employeeId,fullName,company,subject,note,preferredDate,status,createdAt,updatedAt,const DeepCollectionEquality().hash(deletedAt),employee);
+int get hashCode => Object.hash(runtimeType,id,fullName,company,subject,note,preferredDate,status,statusLabel,createdAt);
 
 @override
 String toString() {
-  return 'Datum(id: $id, employeeId: $employeeId, fullName: $fullName, company: $company, subject: $subject, note: $note, preferredDate: $preferredDate, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, employee: $employee)';
+  return 'AppointmentListItem(id: $id, fullName: $fullName, company: $company, subject: $subject, note: $note, preferredDate: $preferredDate, status: $status, statusLabel: $statusLabel, createdAt: $createdAt)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$DatumCopyWith<$Res> implements $DatumCopyWith<$Res> {
-  factory _$DatumCopyWith(_Datum value, $Res Function(_Datum) _then) = __$DatumCopyWithImpl;
+abstract mixin class _$AppointmentListItemCopyWith<$Res> implements $AppointmentListItemCopyWith<$Res> {
+  factory _$AppointmentListItemCopyWith(_AppointmentListItem value, $Res Function(_AppointmentListItem) _then) = __$AppointmentListItemCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "employee_id") int? employeeId,@JsonKey(name: "full_name") String? fullName,@JsonKey(name: "company") String? company,@JsonKey(name: "subject") String? subject,@JsonKey(name: "note") String? note,@JsonKey(name: "preferred_date") String? preferredDate,@JsonKey(name: "status") String? status,@JsonKey(name: "created_at") String? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "deleted_at") dynamic deletedAt,@JsonKey(name: "employee") Employee? employee
+@JsonKey(name: "id") int? id,@JsonKey(name: "full_name") String? fullName,@JsonKey(name: "company") String? company,@JsonKey(name: "subject") String? subject,@JsonKey(name: "note") String? note,@JsonKey(name: "preferred_date") String? preferredDate,@JsonKey(name: "status") String? status,@JsonKey(name: "status_label") String? statusLabel,@JsonKey(name: "created_at") String? createdAt
 });
 
 
-@override $EmployeeCopyWith<$Res>? get employee;
+
 
 }
 /// @nodoc
-class __$DatumCopyWithImpl<$Res>
-    implements _$DatumCopyWith<$Res> {
-  __$DatumCopyWithImpl(this._self, this._then);
+class __$AppointmentListItemCopyWithImpl<$Res>
+    implements _$AppointmentListItemCopyWith<$Res> {
+  __$AppointmentListItemCopyWithImpl(this._self, this._then);
 
-  final _Datum _self;
-  final $Res Function(_Datum) _then;
+  final _AppointmentListItem _self;
+  final $Res Function(_AppointmentListItem) _then;
 
-/// Create a copy of Datum
+/// Create a copy of AppointmentListItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? employeeId = freezed,Object? fullName = freezed,Object? company = freezed,Object? subject = freezed,Object? note = freezed,Object? preferredDate = freezed,Object? status = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? deletedAt = freezed,Object? employee = freezed,}) {
-  return _then(_Datum(
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? fullName = freezed,Object? company = freezed,Object? subject = freezed,Object? note = freezed,Object? preferredDate = freezed,Object? status = freezed,Object? statusLabel = freezed,Object? createdAt = freezed,}) {
+  return _then(_AppointmentListItem(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,employeeId: freezed == employeeId ? _self.employeeId : employeeId // ignore: cast_nullable_to_non_nullable
 as int?,fullName: freezed == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
 as String?,company: freezed == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String?,subject: freezed == subject ? _self.subject : subject // ignore: cast_nullable_to_non_nullable
 as String?,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
 as String?,preferredDate: freezed == preferredDate ? _self.preferredDate : preferredDate // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String?,statusLabel: freezed == statusLabel ? _self.statusLabel : statusLabel // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as String?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
-as dynamic,employee: freezed == employee ? _self.employee : employee // ignore: cast_nullable_to_non_nullable
-as Employee?,
-  ));
-}
-
-/// Create a copy of Datum
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$EmployeeCopyWith<$Res>? get employee {
-    if (_self.employee == null) {
-    return null;
-  }
-
-  return $EmployeeCopyWith<$Res>(_self.employee!, (value) {
-    return _then(_self.copyWith(employee: value));
-  });
-}
-}
-
-
-/// @nodoc
-mixin _$Employee {
-
-@JsonKey(name: "id") int? get id;@JsonKey(name: "user_id") int? get userId;@JsonKey(name: "title") String? get title;@JsonKey(name: "email") String? get email;@JsonKey(name: "phone") String? get phone;@JsonKey(name: "extension_number") String? get extensionNumber;@JsonKey(name: "qr") int? get qr;@JsonKey(name: "qr_code_url") String? get qrCodeUrl;@JsonKey(name: "instagram_url") dynamic get instagramUrl;@JsonKey(name: "linkedin_url") dynamic get linkedinUrl;@JsonKey(name: "appointment_status") String? get appointmentStatus;@JsonKey(name: "date") DateTime? get date;@JsonKey(name: "status") String? get status;@JsonKey(name: "slug") String? get slug;@JsonKey(name: "created_at") DateTime? get createdAt;@JsonKey(name: "updated_at") DateTime? get updatedAt;@JsonKey(name: "deleted_at") dynamic get deletedAt;@JsonKey(name: "firm_name_id") int? get firmNameId;@JsonKey(name: "department_id") int? get departmentId;@JsonKey(name: "office_address_id") int? get officeAddressId;@JsonKey(name: "title_en") String? get titleEn;@JsonKey(name: "department") Department? get department;@JsonKey(name: "department_en") dynamic get departmentEn;@JsonKey(name: "photo") Photo? get photo;@JsonKey(name: "qr_photo") Photo? get qrPhoto;@JsonKey(name: "media") List<Photo>? get media;
-/// Create a copy of Employee
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$EmployeeCopyWith<Employee> get copyWith => _$EmployeeCopyWithImpl<Employee>(this as Employee, _$identity);
-
-  /// Serializes this Employee to a JSON map.
-  Map<String, dynamic> toJson();
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Employee&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.title, title) || other.title == title)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.extensionNumber, extensionNumber) || other.extensionNumber == extensionNumber)&&(identical(other.qr, qr) || other.qr == qr)&&(identical(other.qrCodeUrl, qrCodeUrl) || other.qrCodeUrl == qrCodeUrl)&&const DeepCollectionEquality().equals(other.instagramUrl, instagramUrl)&&const DeepCollectionEquality().equals(other.linkedinUrl, linkedinUrl)&&(identical(other.appointmentStatus, appointmentStatus) || other.appointmentStatus == appointmentStatus)&&(identical(other.date, date) || other.date == date)&&(identical(other.status, status) || other.status == status)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.deletedAt, deletedAt)&&(identical(other.firmNameId, firmNameId) || other.firmNameId == firmNameId)&&(identical(other.departmentId, departmentId) || other.departmentId == departmentId)&&(identical(other.officeAddressId, officeAddressId) || other.officeAddressId == officeAddressId)&&(identical(other.titleEn, titleEn) || other.titleEn == titleEn)&&(identical(other.department, department) || other.department == department)&&const DeepCollectionEquality().equals(other.departmentEn, departmentEn)&&(identical(other.photo, photo) || other.photo == photo)&&(identical(other.qrPhoto, qrPhoto) || other.qrPhoto == qrPhoto)&&const DeepCollectionEquality().equals(other.media, media));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hashAll([runtimeType,id,userId,title,email,phone,extensionNumber,qr,qrCodeUrl,const DeepCollectionEquality().hash(instagramUrl),const DeepCollectionEquality().hash(linkedinUrl),appointmentStatus,date,status,slug,createdAt,updatedAt,const DeepCollectionEquality().hash(deletedAt),firmNameId,departmentId,officeAddressId,titleEn,department,const DeepCollectionEquality().hash(departmentEn),photo,qrPhoto,const DeepCollectionEquality().hash(media)]);
-
-@override
-String toString() {
-  return 'Employee(id: $id, userId: $userId, title: $title, email: $email, phone: $phone, extensionNumber: $extensionNumber, qr: $qr, qrCodeUrl: $qrCodeUrl, instagramUrl: $instagramUrl, linkedinUrl: $linkedinUrl, appointmentStatus: $appointmentStatus, date: $date, status: $status, slug: $slug, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, firmNameId: $firmNameId, departmentId: $departmentId, officeAddressId: $officeAddressId, titleEn: $titleEn, department: $department, departmentEn: $departmentEn, photo: $photo, qrPhoto: $qrPhoto, media: $media)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $EmployeeCopyWith<$Res>  {
-  factory $EmployeeCopyWith(Employee value, $Res Function(Employee) _then) = _$EmployeeCopyWithImpl;
-@useResult
-$Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "user_id") int? userId,@JsonKey(name: "title") String? title,@JsonKey(name: "email") String? email,@JsonKey(name: "phone") String? phone,@JsonKey(name: "extension_number") String? extensionNumber,@JsonKey(name: "qr") int? qr,@JsonKey(name: "qr_code_url") String? qrCodeUrl,@JsonKey(name: "instagram_url") dynamic instagramUrl,@JsonKey(name: "linkedin_url") dynamic linkedinUrl,@JsonKey(name: "appointment_status") String? appointmentStatus,@JsonKey(name: "date") DateTime? date,@JsonKey(name: "status") String? status,@JsonKey(name: "slug") String? slug,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "deleted_at") dynamic deletedAt,@JsonKey(name: "firm_name_id") int? firmNameId,@JsonKey(name: "department_id") int? departmentId,@JsonKey(name: "office_address_id") int? officeAddressId,@JsonKey(name: "title_en") String? titleEn,@JsonKey(name: "department") Department? department,@JsonKey(name: "department_en") dynamic departmentEn,@JsonKey(name: "photo") Photo? photo,@JsonKey(name: "qr_photo") Photo? qrPhoto,@JsonKey(name: "media") List<Photo>? media
-});
-
-
-$DepartmentCopyWith<$Res>? get department;$PhotoCopyWith<$Res>? get photo;$PhotoCopyWith<$Res>? get qrPhoto;
-
-}
-/// @nodoc
-class _$EmployeeCopyWithImpl<$Res>
-    implements $EmployeeCopyWith<$Res> {
-  _$EmployeeCopyWithImpl(this._self, this._then);
-
-  final Employee _self;
-  final $Res Function(Employee) _then;
-
-/// Create a copy of Employee
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? userId = freezed,Object? title = freezed,Object? email = freezed,Object? phone = freezed,Object? extensionNumber = freezed,Object? qr = freezed,Object? qrCodeUrl = freezed,Object? instagramUrl = freezed,Object? linkedinUrl = freezed,Object? appointmentStatus = freezed,Object? date = freezed,Object? status = freezed,Object? slug = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? deletedAt = freezed,Object? firmNameId = freezed,Object? departmentId = freezed,Object? officeAddressId = freezed,Object? titleEn = freezed,Object? department = freezed,Object? departmentEn = freezed,Object? photo = freezed,Object? qrPhoto = freezed,Object? media = freezed,}) {
-  return _then(_self.copyWith(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as int?,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
-as String?,extensionNumber: freezed == extensionNumber ? _self.extensionNumber : extensionNumber // ignore: cast_nullable_to_non_nullable
-as String?,qr: freezed == qr ? _self.qr : qr // ignore: cast_nullable_to_non_nullable
-as int?,qrCodeUrl: freezed == qrCodeUrl ? _self.qrCodeUrl : qrCodeUrl // ignore: cast_nullable_to_non_nullable
-as String?,instagramUrl: freezed == instagramUrl ? _self.instagramUrl : instagramUrl // ignore: cast_nullable_to_non_nullable
-as dynamic,linkedinUrl: freezed == linkedinUrl ? _self.linkedinUrl : linkedinUrl // ignore: cast_nullable_to_non_nullable
-as dynamic,appointmentStatus: freezed == appointmentStatus ? _self.appointmentStatus : appointmentStatus // ignore: cast_nullable_to_non_nullable
-as String?,date: freezed == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
-as DateTime?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String?,slug: freezed == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
-as dynamic,firmNameId: freezed == firmNameId ? _self.firmNameId : firmNameId // ignore: cast_nullable_to_non_nullable
-as int?,departmentId: freezed == departmentId ? _self.departmentId : departmentId // ignore: cast_nullable_to_non_nullable
-as int?,officeAddressId: freezed == officeAddressId ? _self.officeAddressId : officeAddressId // ignore: cast_nullable_to_non_nullable
-as int?,titleEn: freezed == titleEn ? _self.titleEn : titleEn // ignore: cast_nullable_to_non_nullable
-as String?,department: freezed == department ? _self.department : department // ignore: cast_nullable_to_non_nullable
-as Department?,departmentEn: freezed == departmentEn ? _self.departmentEn : departmentEn // ignore: cast_nullable_to_non_nullable
-as dynamic,photo: freezed == photo ? _self.photo : photo // ignore: cast_nullable_to_non_nullable
-as Photo?,qrPhoto: freezed == qrPhoto ? _self.qrPhoto : qrPhoto // ignore: cast_nullable_to_non_nullable
-as Photo?,media: freezed == media ? _self.media : media // ignore: cast_nullable_to_non_nullable
-as List<Photo>?,
-  ));
-}
-/// Create a copy of Employee
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$DepartmentCopyWith<$Res>? get department {
-    if (_self.department == null) {
-    return null;
-  }
-
-  return $DepartmentCopyWith<$Res>(_self.department!, (value) {
-    return _then(_self.copyWith(department: value));
-  });
-}/// Create a copy of Employee
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PhotoCopyWith<$Res>? get photo {
-    if (_self.photo == null) {
-    return null;
-  }
-
-  return $PhotoCopyWith<$Res>(_self.photo!, (value) {
-    return _then(_self.copyWith(photo: value));
-  });
-}/// Create a copy of Employee
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PhotoCopyWith<$Res>? get qrPhoto {
-    if (_self.qrPhoto == null) {
-    return null;
-  }
-
-  return $PhotoCopyWith<$Res>(_self.qrPhoto!, (value) {
-    return _then(_self.copyWith(qrPhoto: value));
-  });
-}
-}
-
-
-/// Adds pattern-matching-related methods to [Employee].
-extension EmployeePatterns on Employee {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Employee value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _Employee() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Employee value)  $default,){
-final _that = this;
-switch (_that) {
-case _Employee():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Employee value)?  $default,){
-final _that = this;
-switch (_that) {
-case _Employee() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "user_id")  int? userId, @JsonKey(name: "title")  String? title, @JsonKey(name: "email")  String? email, @JsonKey(name: "phone")  String? phone, @JsonKey(name: "extension_number")  String? extensionNumber, @JsonKey(name: "qr")  int? qr, @JsonKey(name: "qr_code_url")  String? qrCodeUrl, @JsonKey(name: "instagram_url")  dynamic instagramUrl, @JsonKey(name: "linkedin_url")  dynamic linkedinUrl, @JsonKey(name: "appointment_status")  String? appointmentStatus, @JsonKey(name: "date")  DateTime? date, @JsonKey(name: "status")  String? status, @JsonKey(name: "slug")  String? slug, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "deleted_at")  dynamic deletedAt, @JsonKey(name: "firm_name_id")  int? firmNameId, @JsonKey(name: "department_id")  int? departmentId, @JsonKey(name: "office_address_id")  int? officeAddressId, @JsonKey(name: "title_en")  String? titleEn, @JsonKey(name: "department")  Department? department, @JsonKey(name: "department_en")  dynamic departmentEn, @JsonKey(name: "photo")  Photo? photo, @JsonKey(name: "qr_photo")  Photo? qrPhoto, @JsonKey(name: "media")  List<Photo>? media)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _Employee() when $default != null:
-return $default(_that.id,_that.userId,_that.title,_that.email,_that.phone,_that.extensionNumber,_that.qr,_that.qrCodeUrl,_that.instagramUrl,_that.linkedinUrl,_that.appointmentStatus,_that.date,_that.status,_that.slug,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.firmNameId,_that.departmentId,_that.officeAddressId,_that.titleEn,_that.department,_that.departmentEn,_that.photo,_that.qrPhoto,_that.media);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "user_id")  int? userId, @JsonKey(name: "title")  String? title, @JsonKey(name: "email")  String? email, @JsonKey(name: "phone")  String? phone, @JsonKey(name: "extension_number")  String? extensionNumber, @JsonKey(name: "qr")  int? qr, @JsonKey(name: "qr_code_url")  String? qrCodeUrl, @JsonKey(name: "instagram_url")  dynamic instagramUrl, @JsonKey(name: "linkedin_url")  dynamic linkedinUrl, @JsonKey(name: "appointment_status")  String? appointmentStatus, @JsonKey(name: "date")  DateTime? date, @JsonKey(name: "status")  String? status, @JsonKey(name: "slug")  String? slug, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "deleted_at")  dynamic deletedAt, @JsonKey(name: "firm_name_id")  int? firmNameId, @JsonKey(name: "department_id")  int? departmentId, @JsonKey(name: "office_address_id")  int? officeAddressId, @JsonKey(name: "title_en")  String? titleEn, @JsonKey(name: "department")  Department? department, @JsonKey(name: "department_en")  dynamic departmentEn, @JsonKey(name: "photo")  Photo? photo, @JsonKey(name: "qr_photo")  Photo? qrPhoto, @JsonKey(name: "media")  List<Photo>? media)  $default,) {final _that = this;
-switch (_that) {
-case _Employee():
-return $default(_that.id,_that.userId,_that.title,_that.email,_that.phone,_that.extensionNumber,_that.qr,_that.qrCodeUrl,_that.instagramUrl,_that.linkedinUrl,_that.appointmentStatus,_that.date,_that.status,_that.slug,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.firmNameId,_that.departmentId,_that.officeAddressId,_that.titleEn,_that.department,_that.departmentEn,_that.photo,_that.qrPhoto,_that.media);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "user_id")  int? userId, @JsonKey(name: "title")  String? title, @JsonKey(name: "email")  String? email, @JsonKey(name: "phone")  String? phone, @JsonKey(name: "extension_number")  String? extensionNumber, @JsonKey(name: "qr")  int? qr, @JsonKey(name: "qr_code_url")  String? qrCodeUrl, @JsonKey(name: "instagram_url")  dynamic instagramUrl, @JsonKey(name: "linkedin_url")  dynamic linkedinUrl, @JsonKey(name: "appointment_status")  String? appointmentStatus, @JsonKey(name: "date")  DateTime? date, @JsonKey(name: "status")  String? status, @JsonKey(name: "slug")  String? slug, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "deleted_at")  dynamic deletedAt, @JsonKey(name: "firm_name_id")  int? firmNameId, @JsonKey(name: "department_id")  int? departmentId, @JsonKey(name: "office_address_id")  int? officeAddressId, @JsonKey(name: "title_en")  String? titleEn, @JsonKey(name: "department")  Department? department, @JsonKey(name: "department_en")  dynamic departmentEn, @JsonKey(name: "photo")  Photo? photo, @JsonKey(name: "qr_photo")  Photo? qrPhoto, @JsonKey(name: "media")  List<Photo>? media)?  $default,) {final _that = this;
-switch (_that) {
-case _Employee() when $default != null:
-return $default(_that.id,_that.userId,_that.title,_that.email,_that.phone,_that.extensionNumber,_that.qr,_that.qrCodeUrl,_that.instagramUrl,_that.linkedinUrl,_that.appointmentStatus,_that.date,_that.status,_that.slug,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.firmNameId,_that.departmentId,_that.officeAddressId,_that.titleEn,_that.department,_that.departmentEn,_that.photo,_that.qrPhoto,_that.media);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-@JsonSerializable()
-
-class _Employee implements Employee {
-  const _Employee({@JsonKey(name: "id") this.id, @JsonKey(name: "user_id") this.userId, @JsonKey(name: "title") this.title, @JsonKey(name: "email") this.email, @JsonKey(name: "phone") this.phone, @JsonKey(name: "extension_number") this.extensionNumber, @JsonKey(name: "qr") this.qr, @JsonKey(name: "qr_code_url") this.qrCodeUrl, @JsonKey(name: "instagram_url") this.instagramUrl, @JsonKey(name: "linkedin_url") this.linkedinUrl, @JsonKey(name: "appointment_status") this.appointmentStatus, @JsonKey(name: "date") this.date, @JsonKey(name: "status") this.status, @JsonKey(name: "slug") this.slug, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt, @JsonKey(name: "deleted_at") this.deletedAt, @JsonKey(name: "firm_name_id") this.firmNameId, @JsonKey(name: "department_id") this.departmentId, @JsonKey(name: "office_address_id") this.officeAddressId, @JsonKey(name: "title_en") this.titleEn, @JsonKey(name: "department") this.department, @JsonKey(name: "department_en") this.departmentEn, @JsonKey(name: "photo") this.photo, @JsonKey(name: "qr_photo") this.qrPhoto, @JsonKey(name: "media") final  List<Photo>? media}): _media = media;
-  factory _Employee.fromJson(Map<String, dynamic> json) => _$EmployeeFromJson(json);
-
-@override@JsonKey(name: "id") final  int? id;
-@override@JsonKey(name: "user_id") final  int? userId;
-@override@JsonKey(name: "title") final  String? title;
-@override@JsonKey(name: "email") final  String? email;
-@override@JsonKey(name: "phone") final  String? phone;
-@override@JsonKey(name: "extension_number") final  String? extensionNumber;
-@override@JsonKey(name: "qr") final  int? qr;
-@override@JsonKey(name: "qr_code_url") final  String? qrCodeUrl;
-@override@JsonKey(name: "instagram_url") final  dynamic instagramUrl;
-@override@JsonKey(name: "linkedin_url") final  dynamic linkedinUrl;
-@override@JsonKey(name: "appointment_status") final  String? appointmentStatus;
-@override@JsonKey(name: "date") final  DateTime? date;
-@override@JsonKey(name: "status") final  String? status;
-@override@JsonKey(name: "slug") final  String? slug;
-@override@JsonKey(name: "created_at") final  DateTime? createdAt;
-@override@JsonKey(name: "updated_at") final  DateTime? updatedAt;
-@override@JsonKey(name: "deleted_at") final  dynamic deletedAt;
-@override@JsonKey(name: "firm_name_id") final  int? firmNameId;
-@override@JsonKey(name: "department_id") final  int? departmentId;
-@override@JsonKey(name: "office_address_id") final  int? officeAddressId;
-@override@JsonKey(name: "title_en") final  String? titleEn;
-@override@JsonKey(name: "department") final  Department? department;
-@override@JsonKey(name: "department_en") final  dynamic departmentEn;
-@override@JsonKey(name: "photo") final  Photo? photo;
-@override@JsonKey(name: "qr_photo") final  Photo? qrPhoto;
- final  List<Photo>? _media;
-@override@JsonKey(name: "media") List<Photo>? get media {
-  final value = _media;
-  if (value == null) return null;
-  if (_media is EqualUnmodifiableListView) return _media;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(value);
-}
-
-
-/// Create a copy of Employee
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$EmployeeCopyWith<_Employee> get copyWith => __$EmployeeCopyWithImpl<_Employee>(this, _$identity);
-
-@override
-Map<String, dynamic> toJson() {
-  return _$EmployeeToJson(this, );
-}
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Employee&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.title, title) || other.title == title)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.extensionNumber, extensionNumber) || other.extensionNumber == extensionNumber)&&(identical(other.qr, qr) || other.qr == qr)&&(identical(other.qrCodeUrl, qrCodeUrl) || other.qrCodeUrl == qrCodeUrl)&&const DeepCollectionEquality().equals(other.instagramUrl, instagramUrl)&&const DeepCollectionEquality().equals(other.linkedinUrl, linkedinUrl)&&(identical(other.appointmentStatus, appointmentStatus) || other.appointmentStatus == appointmentStatus)&&(identical(other.date, date) || other.date == date)&&(identical(other.status, status) || other.status == status)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.deletedAt, deletedAt)&&(identical(other.firmNameId, firmNameId) || other.firmNameId == firmNameId)&&(identical(other.departmentId, departmentId) || other.departmentId == departmentId)&&(identical(other.officeAddressId, officeAddressId) || other.officeAddressId == officeAddressId)&&(identical(other.titleEn, titleEn) || other.titleEn == titleEn)&&(identical(other.department, department) || other.department == department)&&const DeepCollectionEquality().equals(other.departmentEn, departmentEn)&&(identical(other.photo, photo) || other.photo == photo)&&(identical(other.qrPhoto, qrPhoto) || other.qrPhoto == qrPhoto)&&const DeepCollectionEquality().equals(other._media, _media));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hashAll([runtimeType,id,userId,title,email,phone,extensionNumber,qr,qrCodeUrl,const DeepCollectionEquality().hash(instagramUrl),const DeepCollectionEquality().hash(linkedinUrl),appointmentStatus,date,status,slug,createdAt,updatedAt,const DeepCollectionEquality().hash(deletedAt),firmNameId,departmentId,officeAddressId,titleEn,department,const DeepCollectionEquality().hash(departmentEn),photo,qrPhoto,const DeepCollectionEquality().hash(_media)]);
-
-@override
-String toString() {
-  return 'Employee(id: $id, userId: $userId, title: $title, email: $email, phone: $phone, extensionNumber: $extensionNumber, qr: $qr, qrCodeUrl: $qrCodeUrl, instagramUrl: $instagramUrl, linkedinUrl: $linkedinUrl, appointmentStatus: $appointmentStatus, date: $date, status: $status, slug: $slug, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, firmNameId: $firmNameId, departmentId: $departmentId, officeAddressId: $officeAddressId, titleEn: $titleEn, department: $department, departmentEn: $departmentEn, photo: $photo, qrPhoto: $qrPhoto, media: $media)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$EmployeeCopyWith<$Res> implements $EmployeeCopyWith<$Res> {
-  factory _$EmployeeCopyWith(_Employee value, $Res Function(_Employee) _then) = __$EmployeeCopyWithImpl;
-@override @useResult
-$Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "user_id") int? userId,@JsonKey(name: "title") String? title,@JsonKey(name: "email") String? email,@JsonKey(name: "phone") String? phone,@JsonKey(name: "extension_number") String? extensionNumber,@JsonKey(name: "qr") int? qr,@JsonKey(name: "qr_code_url") String? qrCodeUrl,@JsonKey(name: "instagram_url") dynamic instagramUrl,@JsonKey(name: "linkedin_url") dynamic linkedinUrl,@JsonKey(name: "appointment_status") String? appointmentStatus,@JsonKey(name: "date") DateTime? date,@JsonKey(name: "status") String? status,@JsonKey(name: "slug") String? slug,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "deleted_at") dynamic deletedAt,@JsonKey(name: "firm_name_id") int? firmNameId,@JsonKey(name: "department_id") int? departmentId,@JsonKey(name: "office_address_id") int? officeAddressId,@JsonKey(name: "title_en") String? titleEn,@JsonKey(name: "department") Department? department,@JsonKey(name: "department_en") dynamic departmentEn,@JsonKey(name: "photo") Photo? photo,@JsonKey(name: "qr_photo") Photo? qrPhoto,@JsonKey(name: "media") List<Photo>? media
-});
-
-
-@override $DepartmentCopyWith<$Res>? get department;@override $PhotoCopyWith<$Res>? get photo;@override $PhotoCopyWith<$Res>? get qrPhoto;
-
-}
-/// @nodoc
-class __$EmployeeCopyWithImpl<$Res>
-    implements _$EmployeeCopyWith<$Res> {
-  __$EmployeeCopyWithImpl(this._self, this._then);
-
-  final _Employee _self;
-  final $Res Function(_Employee) _then;
-
-/// Create a copy of Employee
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? userId = freezed,Object? title = freezed,Object? email = freezed,Object? phone = freezed,Object? extensionNumber = freezed,Object? qr = freezed,Object? qrCodeUrl = freezed,Object? instagramUrl = freezed,Object? linkedinUrl = freezed,Object? appointmentStatus = freezed,Object? date = freezed,Object? status = freezed,Object? slug = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? deletedAt = freezed,Object? firmNameId = freezed,Object? departmentId = freezed,Object? officeAddressId = freezed,Object? titleEn = freezed,Object? department = freezed,Object? departmentEn = freezed,Object? photo = freezed,Object? qrPhoto = freezed,Object? media = freezed,}) {
-  return _then(_Employee(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as int?,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
-as String?,extensionNumber: freezed == extensionNumber ? _self.extensionNumber : extensionNumber // ignore: cast_nullable_to_non_nullable
-as String?,qr: freezed == qr ? _self.qr : qr // ignore: cast_nullable_to_non_nullable
-as int?,qrCodeUrl: freezed == qrCodeUrl ? _self.qrCodeUrl : qrCodeUrl // ignore: cast_nullable_to_non_nullable
-as String?,instagramUrl: freezed == instagramUrl ? _self.instagramUrl : instagramUrl // ignore: cast_nullable_to_non_nullable
-as dynamic,linkedinUrl: freezed == linkedinUrl ? _self.linkedinUrl : linkedinUrl // ignore: cast_nullable_to_non_nullable
-as dynamic,appointmentStatus: freezed == appointmentStatus ? _self.appointmentStatus : appointmentStatus // ignore: cast_nullable_to_non_nullable
-as String?,date: freezed == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
-as DateTime?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String?,slug: freezed == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
-as dynamic,firmNameId: freezed == firmNameId ? _self.firmNameId : firmNameId // ignore: cast_nullable_to_non_nullable
-as int?,departmentId: freezed == departmentId ? _self.departmentId : departmentId // ignore: cast_nullable_to_non_nullable
-as int?,officeAddressId: freezed == officeAddressId ? _self.officeAddressId : officeAddressId // ignore: cast_nullable_to_non_nullable
-as int?,titleEn: freezed == titleEn ? _self.titleEn : titleEn // ignore: cast_nullable_to_non_nullable
-as String?,department: freezed == department ? _self.department : department // ignore: cast_nullable_to_non_nullable
-as Department?,departmentEn: freezed == departmentEn ? _self.departmentEn : departmentEn // ignore: cast_nullable_to_non_nullable
-as dynamic,photo: freezed == photo ? _self.photo : photo // ignore: cast_nullable_to_non_nullable
-as Photo?,qrPhoto: freezed == qrPhoto ? _self.qrPhoto : qrPhoto // ignore: cast_nullable_to_non_nullable
-as Photo?,media: freezed == media ? _self._media : media // ignore: cast_nullable_to_non_nullable
-as List<Photo>?,
-  ));
-}
-
-/// Create a copy of Employee
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$DepartmentCopyWith<$Res>? get department {
-    if (_self.department == null) {
-    return null;
-  }
-
-  return $DepartmentCopyWith<$Res>(_self.department!, (value) {
-    return _then(_self.copyWith(department: value));
-  });
-}/// Create a copy of Employee
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PhotoCopyWith<$Res>? get photo {
-    if (_self.photo == null) {
-    return null;
-  }
-
-  return $PhotoCopyWith<$Res>(_self.photo!, (value) {
-    return _then(_self.copyWith(photo: value));
-  });
-}/// Create a copy of Employee
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PhotoCopyWith<$Res>? get qrPhoto {
-    if (_self.qrPhoto == null) {
-    return null;
-  }
-
-  return $PhotoCopyWith<$Res>(_self.qrPhoto!, (value) {
-    return _then(_self.copyWith(qrPhoto: value));
-  });
-}
-}
-
-
-/// @nodoc
-mixin _$Department {
-
-@JsonKey(name: "id") int? get id;@JsonKey(name: "name") String? get name;@JsonKey(name: "name_en") String? get nameEn;@JsonKey(name: "created_at") DateTime? get createdAt;@JsonKey(name: "updated_at") DateTime? get updatedAt;@JsonKey(name: "deleted_at") dynamic get deletedAt;@JsonKey(name: "banner_background") Photo? get bannerBackground;@JsonKey(name: "media") List<Photo>? get media;
-/// Create a copy of Department
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$DepartmentCopyWith<Department> get copyWith => _$DepartmentCopyWithImpl<Department>(this as Department, _$identity);
-
-  /// Serializes this Department to a JSON map.
-  Map<String, dynamic> toJson();
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Department&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.nameEn, nameEn) || other.nameEn == nameEn)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.deletedAt, deletedAt)&&(identical(other.bannerBackground, bannerBackground) || other.bannerBackground == bannerBackground)&&const DeepCollectionEquality().equals(other.media, media));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,id,name,nameEn,createdAt,updatedAt,const DeepCollectionEquality().hash(deletedAt),bannerBackground,const DeepCollectionEquality().hash(media));
-
-@override
-String toString() {
-  return 'Department(id: $id, name: $name, nameEn: $nameEn, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, bannerBackground: $bannerBackground, media: $media)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $DepartmentCopyWith<$Res>  {
-  factory $DepartmentCopyWith(Department value, $Res Function(Department) _then) = _$DepartmentCopyWithImpl;
-@useResult
-$Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "name") String? name,@JsonKey(name: "name_en") String? nameEn,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "deleted_at") dynamic deletedAt,@JsonKey(name: "banner_background") Photo? bannerBackground,@JsonKey(name: "media") List<Photo>? media
-});
-
-
-$PhotoCopyWith<$Res>? get bannerBackground;
-
-}
-/// @nodoc
-class _$DepartmentCopyWithImpl<$Res>
-    implements $DepartmentCopyWith<$Res> {
-  _$DepartmentCopyWithImpl(this._self, this._then);
-
-  final Department _self;
-  final $Res Function(Department) _then;
-
-/// Create a copy of Department
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? name = freezed,Object? nameEn = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? deletedAt = freezed,Object? bannerBackground = freezed,Object? media = freezed,}) {
-  return _then(_self.copyWith(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String?,nameEn: freezed == nameEn ? _self.nameEn : nameEn // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
-as dynamic,bannerBackground: freezed == bannerBackground ? _self.bannerBackground : bannerBackground // ignore: cast_nullable_to_non_nullable
-as Photo?,media: freezed == media ? _self.media : media // ignore: cast_nullable_to_non_nullable
-as List<Photo>?,
-  ));
-}
-/// Create a copy of Department
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PhotoCopyWith<$Res>? get bannerBackground {
-    if (_self.bannerBackground == null) {
-    return null;
-  }
-
-  return $PhotoCopyWith<$Res>(_self.bannerBackground!, (value) {
-    return _then(_self.copyWith(bannerBackground: value));
-  });
-}
-}
-
-
-/// Adds pattern-matching-related methods to [Department].
-extension DepartmentPatterns on Department {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Department value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _Department() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Department value)  $default,){
-final _that = this;
-switch (_that) {
-case _Department():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Department value)?  $default,){
-final _that = this;
-switch (_that) {
-case _Department() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "name")  String? name, @JsonKey(name: "name_en")  String? nameEn, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "deleted_at")  dynamic deletedAt, @JsonKey(name: "banner_background")  Photo? bannerBackground, @JsonKey(name: "media")  List<Photo>? media)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _Department() when $default != null:
-return $default(_that.id,_that.name,_that.nameEn,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.bannerBackground,_that.media);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "name")  String? name, @JsonKey(name: "name_en")  String? nameEn, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "deleted_at")  dynamic deletedAt, @JsonKey(name: "banner_background")  Photo? bannerBackground, @JsonKey(name: "media")  List<Photo>? media)  $default,) {final _that = this;
-switch (_that) {
-case _Department():
-return $default(_that.id,_that.name,_that.nameEn,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.bannerBackground,_that.media);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "name")  String? name, @JsonKey(name: "name_en")  String? nameEn, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "deleted_at")  dynamic deletedAt, @JsonKey(name: "banner_background")  Photo? bannerBackground, @JsonKey(name: "media")  List<Photo>? media)?  $default,) {final _that = this;
-switch (_that) {
-case _Department() when $default != null:
-return $default(_that.id,_that.name,_that.nameEn,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.bannerBackground,_that.media);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-@JsonSerializable()
-
-class _Department implements Department {
-  const _Department({@JsonKey(name: "id") this.id, @JsonKey(name: "name") this.name, @JsonKey(name: "name_en") this.nameEn, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt, @JsonKey(name: "deleted_at") this.deletedAt, @JsonKey(name: "banner_background") this.bannerBackground, @JsonKey(name: "media") final  List<Photo>? media}): _media = media;
-  factory _Department.fromJson(Map<String, dynamic> json) => _$DepartmentFromJson(json);
-
-@override@JsonKey(name: "id") final  int? id;
-@override@JsonKey(name: "name") final  String? name;
-@override@JsonKey(name: "name_en") final  String? nameEn;
-@override@JsonKey(name: "created_at") final  DateTime? createdAt;
-@override@JsonKey(name: "updated_at") final  DateTime? updatedAt;
-@override@JsonKey(name: "deleted_at") final  dynamic deletedAt;
-@override@JsonKey(name: "banner_background") final  Photo? bannerBackground;
- final  List<Photo>? _media;
-@override@JsonKey(name: "media") List<Photo>? get media {
-  final value = _media;
-  if (value == null) return null;
-  if (_media is EqualUnmodifiableListView) return _media;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(value);
-}
-
-
-/// Create a copy of Department
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$DepartmentCopyWith<_Department> get copyWith => __$DepartmentCopyWithImpl<_Department>(this, _$identity);
-
-@override
-Map<String, dynamic> toJson() {
-  return _$DepartmentToJson(this, );
-}
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Department&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.nameEn, nameEn) || other.nameEn == nameEn)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.deletedAt, deletedAt)&&(identical(other.bannerBackground, bannerBackground) || other.bannerBackground == bannerBackground)&&const DeepCollectionEquality().equals(other._media, _media));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,id,name,nameEn,createdAt,updatedAt,const DeepCollectionEquality().hash(deletedAt),bannerBackground,const DeepCollectionEquality().hash(_media));
-
-@override
-String toString() {
-  return 'Department(id: $id, name: $name, nameEn: $nameEn, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, bannerBackground: $bannerBackground, media: $media)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$DepartmentCopyWith<$Res> implements $DepartmentCopyWith<$Res> {
-  factory _$DepartmentCopyWith(_Department value, $Res Function(_Department) _then) = __$DepartmentCopyWithImpl;
-@override @useResult
-$Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "name") String? name,@JsonKey(name: "name_en") String? nameEn,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "deleted_at") dynamic deletedAt,@JsonKey(name: "banner_background") Photo? bannerBackground,@JsonKey(name: "media") List<Photo>? media
-});
-
-
-@override $PhotoCopyWith<$Res>? get bannerBackground;
-
-}
-/// @nodoc
-class __$DepartmentCopyWithImpl<$Res>
-    implements _$DepartmentCopyWith<$Res> {
-  __$DepartmentCopyWithImpl(this._self, this._then);
-
-  final _Department _self;
-  final $Res Function(_Department) _then;
-
-/// Create a copy of Department
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? name = freezed,Object? nameEn = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? deletedAt = freezed,Object? bannerBackground = freezed,Object? media = freezed,}) {
-  return _then(_Department(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String?,nameEn: freezed == nameEn ? _self.nameEn : nameEn // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
-as dynamic,bannerBackground: freezed == bannerBackground ? _self.bannerBackground : bannerBackground // ignore: cast_nullable_to_non_nullable
-as Photo?,media: freezed == media ? _self._media : media // ignore: cast_nullable_to_non_nullable
-as List<Photo>?,
-  ));
-}
-
-/// Create a copy of Department
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PhotoCopyWith<$Res>? get bannerBackground {
-    if (_self.bannerBackground == null) {
-    return null;
-  }
-
-  return $PhotoCopyWith<$Res>(_self.bannerBackground!, (value) {
-    return _then(_self.copyWith(bannerBackground: value));
-  });
-}
-}
-
-
-/// @nodoc
-mixin _$Photo {
-
-@JsonKey(name: "id") int? get id;@JsonKey(name: "model_type") String? get modelType;@JsonKey(name: "model_id") int? get modelId;@JsonKey(name: "uuid") String? get uuid;@JsonKey(name: "collection_name") String? get collectionName;@JsonKey(name: "name") String? get name;@JsonKey(name: "file_name") String? get fileName;@JsonKey(name: "mime_type") String? get mimeType;@JsonKey(name: "disk") String? get disk;@JsonKey(name: "conversions_disk") String? get conversionsDisk;@JsonKey(name: "size") int? get size;@JsonKey(name: "manipulations") List<dynamic>? get manipulations;@JsonKey(name: "custom_properties") List<dynamic>? get customProperties;@JsonKey(name: "generated_conversions") GeneratedConversions? get generatedConversions;@JsonKey(name: "responsive_images") List<dynamic>? get responsiveImages;@JsonKey(name: "order_column") int? get orderColumn;@JsonKey(name: "created_at") DateTime? get createdAt;@JsonKey(name: "updated_at") DateTime? get updatedAt;@JsonKey(name: "original_url") String? get originalUrl;@JsonKey(name: "preview_url") String? get previewUrl;@JsonKey(name: "url") String? get url;@JsonKey(name: "thumbnail") String? get thumbnail;@JsonKey(name: "preview") String? get preview;
-/// Create a copy of Photo
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$PhotoCopyWith<Photo> get copyWith => _$PhotoCopyWithImpl<Photo>(this as Photo, _$identity);
-
-  /// Serializes this Photo to a JSON map.
-  Map<String, dynamic> toJson();
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Photo&&(identical(other.id, id) || other.id == id)&&(identical(other.modelType, modelType) || other.modelType == modelType)&&(identical(other.modelId, modelId) || other.modelId == modelId)&&(identical(other.uuid, uuid) || other.uuid == uuid)&&(identical(other.collectionName, collectionName) || other.collectionName == collectionName)&&(identical(other.name, name) || other.name == name)&&(identical(other.fileName, fileName) || other.fileName == fileName)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.disk, disk) || other.disk == disk)&&(identical(other.conversionsDisk, conversionsDisk) || other.conversionsDisk == conversionsDisk)&&(identical(other.size, size) || other.size == size)&&const DeepCollectionEquality().equals(other.manipulations, manipulations)&&const DeepCollectionEquality().equals(other.customProperties, customProperties)&&(identical(other.generatedConversions, generatedConversions) || other.generatedConversions == generatedConversions)&&const DeepCollectionEquality().equals(other.responsiveImages, responsiveImages)&&(identical(other.orderColumn, orderColumn) || other.orderColumn == orderColumn)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.originalUrl, originalUrl) || other.originalUrl == originalUrl)&&(identical(other.previewUrl, previewUrl) || other.previewUrl == previewUrl)&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.preview, preview) || other.preview == preview));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hashAll([runtimeType,id,modelType,modelId,uuid,collectionName,name,fileName,mimeType,disk,conversionsDisk,size,const DeepCollectionEquality().hash(manipulations),const DeepCollectionEquality().hash(customProperties),generatedConversions,const DeepCollectionEquality().hash(responsiveImages),orderColumn,createdAt,updatedAt,originalUrl,previewUrl,url,thumbnail,preview]);
-
-@override
-String toString() {
-  return 'Photo(id: $id, modelType: $modelType, modelId: $modelId, uuid: $uuid, collectionName: $collectionName, name: $name, fileName: $fileName, mimeType: $mimeType, disk: $disk, conversionsDisk: $conversionsDisk, size: $size, manipulations: $manipulations, customProperties: $customProperties, generatedConversions: $generatedConversions, responsiveImages: $responsiveImages, orderColumn: $orderColumn, createdAt: $createdAt, updatedAt: $updatedAt, originalUrl: $originalUrl, previewUrl: $previewUrl, url: $url, thumbnail: $thumbnail, preview: $preview)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $PhotoCopyWith<$Res>  {
-  factory $PhotoCopyWith(Photo value, $Res Function(Photo) _then) = _$PhotoCopyWithImpl;
-@useResult
-$Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "model_type") String? modelType,@JsonKey(name: "model_id") int? modelId,@JsonKey(name: "uuid") String? uuid,@JsonKey(name: "collection_name") String? collectionName,@JsonKey(name: "name") String? name,@JsonKey(name: "file_name") String? fileName,@JsonKey(name: "mime_type") String? mimeType,@JsonKey(name: "disk") String? disk,@JsonKey(name: "conversions_disk") String? conversionsDisk,@JsonKey(name: "size") int? size,@JsonKey(name: "manipulations") List<dynamic>? manipulations,@JsonKey(name: "custom_properties") List<dynamic>? customProperties,@JsonKey(name: "generated_conversions") GeneratedConversions? generatedConversions,@JsonKey(name: "responsive_images") List<dynamic>? responsiveImages,@JsonKey(name: "order_column") int? orderColumn,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "original_url") String? originalUrl,@JsonKey(name: "preview_url") String? previewUrl,@JsonKey(name: "url") String? url,@JsonKey(name: "thumbnail") String? thumbnail,@JsonKey(name: "preview") String? preview
-});
-
-
-$GeneratedConversionsCopyWith<$Res>? get generatedConversions;
-
-}
-/// @nodoc
-class _$PhotoCopyWithImpl<$Res>
-    implements $PhotoCopyWith<$Res> {
-  _$PhotoCopyWithImpl(this._self, this._then);
-
-  final Photo _self;
-  final $Res Function(Photo) _then;
-
-/// Create a copy of Photo
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? modelType = freezed,Object? modelId = freezed,Object? uuid = freezed,Object? collectionName = freezed,Object? name = freezed,Object? fileName = freezed,Object? mimeType = freezed,Object? disk = freezed,Object? conversionsDisk = freezed,Object? size = freezed,Object? manipulations = freezed,Object? customProperties = freezed,Object? generatedConversions = freezed,Object? responsiveImages = freezed,Object? orderColumn = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? originalUrl = freezed,Object? previewUrl = freezed,Object? url = freezed,Object? thumbnail = freezed,Object? preview = freezed,}) {
-  return _then(_self.copyWith(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,modelType: freezed == modelType ? _self.modelType : modelType // ignore: cast_nullable_to_non_nullable
-as String?,modelId: freezed == modelId ? _self.modelId : modelId // ignore: cast_nullable_to_non_nullable
-as int?,uuid: freezed == uuid ? _self.uuid : uuid // ignore: cast_nullable_to_non_nullable
-as String?,collectionName: freezed == collectionName ? _self.collectionName : collectionName // ignore: cast_nullable_to_non_nullable
-as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String?,fileName: freezed == fileName ? _self.fileName : fileName // ignore: cast_nullable_to_non_nullable
-as String?,mimeType: freezed == mimeType ? _self.mimeType : mimeType // ignore: cast_nullable_to_non_nullable
-as String?,disk: freezed == disk ? _self.disk : disk // ignore: cast_nullable_to_non_nullable
-as String?,conversionsDisk: freezed == conversionsDisk ? _self.conversionsDisk : conversionsDisk // ignore: cast_nullable_to_non_nullable
-as String?,size: freezed == size ? _self.size : size // ignore: cast_nullable_to_non_nullable
-as int?,manipulations: freezed == manipulations ? _self.manipulations : manipulations // ignore: cast_nullable_to_non_nullable
-as List<dynamic>?,customProperties: freezed == customProperties ? _self.customProperties : customProperties // ignore: cast_nullable_to_non_nullable
-as List<dynamic>?,generatedConversions: freezed == generatedConversions ? _self.generatedConversions : generatedConversions // ignore: cast_nullable_to_non_nullable
-as GeneratedConversions?,responsiveImages: freezed == responsiveImages ? _self.responsiveImages : responsiveImages // ignore: cast_nullable_to_non_nullable
-as List<dynamic>?,orderColumn: freezed == orderColumn ? _self.orderColumn : orderColumn // ignore: cast_nullable_to_non_nullable
-as int?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,originalUrl: freezed == originalUrl ? _self.originalUrl : originalUrl // ignore: cast_nullable_to_non_nullable
-as String?,previewUrl: freezed == previewUrl ? _self.previewUrl : previewUrl // ignore: cast_nullable_to_non_nullable
-as String?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String?,thumbnail: freezed == thumbnail ? _self.thumbnail : thumbnail // ignore: cast_nullable_to_non_nullable
-as String?,preview: freezed == preview ? _self.preview : preview // ignore: cast_nullable_to_non_nullable
-as String?,
-  ));
-}
-/// Create a copy of Photo
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$GeneratedConversionsCopyWith<$Res>? get generatedConversions {
-    if (_self.generatedConversions == null) {
-    return null;
-  }
-
-  return $GeneratedConversionsCopyWith<$Res>(_self.generatedConversions!, (value) {
-    return _then(_self.copyWith(generatedConversions: value));
-  });
-}
-}
-
-
-/// Adds pattern-matching-related methods to [Photo].
-extension PhotoPatterns on Photo {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Photo value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _Photo() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Photo value)  $default,){
-final _that = this;
-switch (_that) {
-case _Photo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Photo value)?  $default,){
-final _that = this;
-switch (_that) {
-case _Photo() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "model_type")  String? modelType, @JsonKey(name: "model_id")  int? modelId, @JsonKey(name: "uuid")  String? uuid, @JsonKey(name: "collection_name")  String? collectionName, @JsonKey(name: "name")  String? name, @JsonKey(name: "file_name")  String? fileName, @JsonKey(name: "mime_type")  String? mimeType, @JsonKey(name: "disk")  String? disk, @JsonKey(name: "conversions_disk")  String? conversionsDisk, @JsonKey(name: "size")  int? size, @JsonKey(name: "manipulations")  List<dynamic>? manipulations, @JsonKey(name: "custom_properties")  List<dynamic>? customProperties, @JsonKey(name: "generated_conversions")  GeneratedConversions? generatedConversions, @JsonKey(name: "responsive_images")  List<dynamic>? responsiveImages, @JsonKey(name: "order_column")  int? orderColumn, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "original_url")  String? originalUrl, @JsonKey(name: "preview_url")  String? previewUrl, @JsonKey(name: "url")  String? url, @JsonKey(name: "thumbnail")  String? thumbnail, @JsonKey(name: "preview")  String? preview)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _Photo() when $default != null:
-return $default(_that.id,_that.modelType,_that.modelId,_that.uuid,_that.collectionName,_that.name,_that.fileName,_that.mimeType,_that.disk,_that.conversionsDisk,_that.size,_that.manipulations,_that.customProperties,_that.generatedConversions,_that.responsiveImages,_that.orderColumn,_that.createdAt,_that.updatedAt,_that.originalUrl,_that.previewUrl,_that.url,_that.thumbnail,_that.preview);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "model_type")  String? modelType, @JsonKey(name: "model_id")  int? modelId, @JsonKey(name: "uuid")  String? uuid, @JsonKey(name: "collection_name")  String? collectionName, @JsonKey(name: "name")  String? name, @JsonKey(name: "file_name")  String? fileName, @JsonKey(name: "mime_type")  String? mimeType, @JsonKey(name: "disk")  String? disk, @JsonKey(name: "conversions_disk")  String? conversionsDisk, @JsonKey(name: "size")  int? size, @JsonKey(name: "manipulations")  List<dynamic>? manipulations, @JsonKey(name: "custom_properties")  List<dynamic>? customProperties, @JsonKey(name: "generated_conversions")  GeneratedConversions? generatedConversions, @JsonKey(name: "responsive_images")  List<dynamic>? responsiveImages, @JsonKey(name: "order_column")  int? orderColumn, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "original_url")  String? originalUrl, @JsonKey(name: "preview_url")  String? previewUrl, @JsonKey(name: "url")  String? url, @JsonKey(name: "thumbnail")  String? thumbnail, @JsonKey(name: "preview")  String? preview)  $default,) {final _that = this;
-switch (_that) {
-case _Photo():
-return $default(_that.id,_that.modelType,_that.modelId,_that.uuid,_that.collectionName,_that.name,_that.fileName,_that.mimeType,_that.disk,_that.conversionsDisk,_that.size,_that.manipulations,_that.customProperties,_that.generatedConversions,_that.responsiveImages,_that.orderColumn,_that.createdAt,_that.updatedAt,_that.originalUrl,_that.previewUrl,_that.url,_that.thumbnail,_that.preview);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "model_type")  String? modelType, @JsonKey(name: "model_id")  int? modelId, @JsonKey(name: "uuid")  String? uuid, @JsonKey(name: "collection_name")  String? collectionName, @JsonKey(name: "name")  String? name, @JsonKey(name: "file_name")  String? fileName, @JsonKey(name: "mime_type")  String? mimeType, @JsonKey(name: "disk")  String? disk, @JsonKey(name: "conversions_disk")  String? conversionsDisk, @JsonKey(name: "size")  int? size, @JsonKey(name: "manipulations")  List<dynamic>? manipulations, @JsonKey(name: "custom_properties")  List<dynamic>? customProperties, @JsonKey(name: "generated_conversions")  GeneratedConversions? generatedConversions, @JsonKey(name: "responsive_images")  List<dynamic>? responsiveImages, @JsonKey(name: "order_column")  int? orderColumn, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "original_url")  String? originalUrl, @JsonKey(name: "preview_url")  String? previewUrl, @JsonKey(name: "url")  String? url, @JsonKey(name: "thumbnail")  String? thumbnail, @JsonKey(name: "preview")  String? preview)?  $default,) {final _that = this;
-switch (_that) {
-case _Photo() when $default != null:
-return $default(_that.id,_that.modelType,_that.modelId,_that.uuid,_that.collectionName,_that.name,_that.fileName,_that.mimeType,_that.disk,_that.conversionsDisk,_that.size,_that.manipulations,_that.customProperties,_that.generatedConversions,_that.responsiveImages,_that.orderColumn,_that.createdAt,_that.updatedAt,_that.originalUrl,_that.previewUrl,_that.url,_that.thumbnail,_that.preview);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-@JsonSerializable()
-
-class _Photo implements Photo {
-  const _Photo({@JsonKey(name: "id") this.id, @JsonKey(name: "model_type") this.modelType, @JsonKey(name: "model_id") this.modelId, @JsonKey(name: "uuid") this.uuid, @JsonKey(name: "collection_name") this.collectionName, @JsonKey(name: "name") this.name, @JsonKey(name: "file_name") this.fileName, @JsonKey(name: "mime_type") this.mimeType, @JsonKey(name: "disk") this.disk, @JsonKey(name: "conversions_disk") this.conversionsDisk, @JsonKey(name: "size") this.size, @JsonKey(name: "manipulations") final  List<dynamic>? manipulations, @JsonKey(name: "custom_properties") final  List<dynamic>? customProperties, @JsonKey(name: "generated_conversions") this.generatedConversions, @JsonKey(name: "responsive_images") final  List<dynamic>? responsiveImages, @JsonKey(name: "order_column") this.orderColumn, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt, @JsonKey(name: "original_url") this.originalUrl, @JsonKey(name: "preview_url") this.previewUrl, @JsonKey(name: "url") this.url, @JsonKey(name: "thumbnail") this.thumbnail, @JsonKey(name: "preview") this.preview}): _manipulations = manipulations,_customProperties = customProperties,_responsiveImages = responsiveImages;
-  factory _Photo.fromJson(Map<String, dynamic> json) => _$PhotoFromJson(json);
-
-@override@JsonKey(name: "id") final  int? id;
-@override@JsonKey(name: "model_type") final  String? modelType;
-@override@JsonKey(name: "model_id") final  int? modelId;
-@override@JsonKey(name: "uuid") final  String? uuid;
-@override@JsonKey(name: "collection_name") final  String? collectionName;
-@override@JsonKey(name: "name") final  String? name;
-@override@JsonKey(name: "file_name") final  String? fileName;
-@override@JsonKey(name: "mime_type") final  String? mimeType;
-@override@JsonKey(name: "disk") final  String? disk;
-@override@JsonKey(name: "conversions_disk") final  String? conversionsDisk;
-@override@JsonKey(name: "size") final  int? size;
- final  List<dynamic>? _manipulations;
-@override@JsonKey(name: "manipulations") List<dynamic>? get manipulations {
-  final value = _manipulations;
-  if (value == null) return null;
-  if (_manipulations is EqualUnmodifiableListView) return _manipulations;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(value);
-}
-
- final  List<dynamic>? _customProperties;
-@override@JsonKey(name: "custom_properties") List<dynamic>? get customProperties {
-  final value = _customProperties;
-  if (value == null) return null;
-  if (_customProperties is EqualUnmodifiableListView) return _customProperties;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(value);
-}
-
-@override@JsonKey(name: "generated_conversions") final  GeneratedConversions? generatedConversions;
- final  List<dynamic>? _responsiveImages;
-@override@JsonKey(name: "responsive_images") List<dynamic>? get responsiveImages {
-  final value = _responsiveImages;
-  if (value == null) return null;
-  if (_responsiveImages is EqualUnmodifiableListView) return _responsiveImages;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(value);
-}
-
-@override@JsonKey(name: "order_column") final  int? orderColumn;
-@override@JsonKey(name: "created_at") final  DateTime? createdAt;
-@override@JsonKey(name: "updated_at") final  DateTime? updatedAt;
-@override@JsonKey(name: "original_url") final  String? originalUrl;
-@override@JsonKey(name: "preview_url") final  String? previewUrl;
-@override@JsonKey(name: "url") final  String? url;
-@override@JsonKey(name: "thumbnail") final  String? thumbnail;
-@override@JsonKey(name: "preview") final  String? preview;
-
-/// Create a copy of Photo
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$PhotoCopyWith<_Photo> get copyWith => __$PhotoCopyWithImpl<_Photo>(this, _$identity);
-
-@override
-Map<String, dynamic> toJson() {
-  return _$PhotoToJson(this, );
-}
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Photo&&(identical(other.id, id) || other.id == id)&&(identical(other.modelType, modelType) || other.modelType == modelType)&&(identical(other.modelId, modelId) || other.modelId == modelId)&&(identical(other.uuid, uuid) || other.uuid == uuid)&&(identical(other.collectionName, collectionName) || other.collectionName == collectionName)&&(identical(other.name, name) || other.name == name)&&(identical(other.fileName, fileName) || other.fileName == fileName)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.disk, disk) || other.disk == disk)&&(identical(other.conversionsDisk, conversionsDisk) || other.conversionsDisk == conversionsDisk)&&(identical(other.size, size) || other.size == size)&&const DeepCollectionEquality().equals(other._manipulations, _manipulations)&&const DeepCollectionEquality().equals(other._customProperties, _customProperties)&&(identical(other.generatedConversions, generatedConversions) || other.generatedConversions == generatedConversions)&&const DeepCollectionEquality().equals(other._responsiveImages, _responsiveImages)&&(identical(other.orderColumn, orderColumn) || other.orderColumn == orderColumn)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.originalUrl, originalUrl) || other.originalUrl == originalUrl)&&(identical(other.previewUrl, previewUrl) || other.previewUrl == previewUrl)&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.preview, preview) || other.preview == preview));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hashAll([runtimeType,id,modelType,modelId,uuid,collectionName,name,fileName,mimeType,disk,conversionsDisk,size,const DeepCollectionEquality().hash(_manipulations),const DeepCollectionEquality().hash(_customProperties),generatedConversions,const DeepCollectionEquality().hash(_responsiveImages),orderColumn,createdAt,updatedAt,originalUrl,previewUrl,url,thumbnail,preview]);
-
-@override
-String toString() {
-  return 'Photo(id: $id, modelType: $modelType, modelId: $modelId, uuid: $uuid, collectionName: $collectionName, name: $name, fileName: $fileName, mimeType: $mimeType, disk: $disk, conversionsDisk: $conversionsDisk, size: $size, manipulations: $manipulations, customProperties: $customProperties, generatedConversions: $generatedConversions, responsiveImages: $responsiveImages, orderColumn: $orderColumn, createdAt: $createdAt, updatedAt: $updatedAt, originalUrl: $originalUrl, previewUrl: $previewUrl, url: $url, thumbnail: $thumbnail, preview: $preview)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$PhotoCopyWith<$Res> implements $PhotoCopyWith<$Res> {
-  factory _$PhotoCopyWith(_Photo value, $Res Function(_Photo) _then) = __$PhotoCopyWithImpl;
-@override @useResult
-$Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "model_type") String? modelType,@JsonKey(name: "model_id") int? modelId,@JsonKey(name: "uuid") String? uuid,@JsonKey(name: "collection_name") String? collectionName,@JsonKey(name: "name") String? name,@JsonKey(name: "file_name") String? fileName,@JsonKey(name: "mime_type") String? mimeType,@JsonKey(name: "disk") String? disk,@JsonKey(name: "conversions_disk") String? conversionsDisk,@JsonKey(name: "size") int? size,@JsonKey(name: "manipulations") List<dynamic>? manipulations,@JsonKey(name: "custom_properties") List<dynamic>? customProperties,@JsonKey(name: "generated_conversions") GeneratedConversions? generatedConversions,@JsonKey(name: "responsive_images") List<dynamic>? responsiveImages,@JsonKey(name: "order_column") int? orderColumn,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "original_url") String? originalUrl,@JsonKey(name: "preview_url") String? previewUrl,@JsonKey(name: "url") String? url,@JsonKey(name: "thumbnail") String? thumbnail,@JsonKey(name: "preview") String? preview
-});
-
-
-@override $GeneratedConversionsCopyWith<$Res>? get generatedConversions;
-
-}
-/// @nodoc
-class __$PhotoCopyWithImpl<$Res>
-    implements _$PhotoCopyWith<$Res> {
-  __$PhotoCopyWithImpl(this._self, this._then);
-
-  final _Photo _self;
-  final $Res Function(_Photo) _then;
-
-/// Create a copy of Photo
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? modelType = freezed,Object? modelId = freezed,Object? uuid = freezed,Object? collectionName = freezed,Object? name = freezed,Object? fileName = freezed,Object? mimeType = freezed,Object? disk = freezed,Object? conversionsDisk = freezed,Object? size = freezed,Object? manipulations = freezed,Object? customProperties = freezed,Object? generatedConversions = freezed,Object? responsiveImages = freezed,Object? orderColumn = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? originalUrl = freezed,Object? previewUrl = freezed,Object? url = freezed,Object? thumbnail = freezed,Object? preview = freezed,}) {
-  return _then(_Photo(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,modelType: freezed == modelType ? _self.modelType : modelType // ignore: cast_nullable_to_non_nullable
-as String?,modelId: freezed == modelId ? _self.modelId : modelId // ignore: cast_nullable_to_non_nullable
-as int?,uuid: freezed == uuid ? _self.uuid : uuid // ignore: cast_nullable_to_non_nullable
-as String?,collectionName: freezed == collectionName ? _self.collectionName : collectionName // ignore: cast_nullable_to_non_nullable
-as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String?,fileName: freezed == fileName ? _self.fileName : fileName // ignore: cast_nullable_to_non_nullable
-as String?,mimeType: freezed == mimeType ? _self.mimeType : mimeType // ignore: cast_nullable_to_non_nullable
-as String?,disk: freezed == disk ? _self.disk : disk // ignore: cast_nullable_to_non_nullable
-as String?,conversionsDisk: freezed == conversionsDisk ? _self.conversionsDisk : conversionsDisk // ignore: cast_nullable_to_non_nullable
-as String?,size: freezed == size ? _self.size : size // ignore: cast_nullable_to_non_nullable
-as int?,manipulations: freezed == manipulations ? _self._manipulations : manipulations // ignore: cast_nullable_to_non_nullable
-as List<dynamic>?,customProperties: freezed == customProperties ? _self._customProperties : customProperties // ignore: cast_nullable_to_non_nullable
-as List<dynamic>?,generatedConversions: freezed == generatedConversions ? _self.generatedConversions : generatedConversions // ignore: cast_nullable_to_non_nullable
-as GeneratedConversions?,responsiveImages: freezed == responsiveImages ? _self._responsiveImages : responsiveImages // ignore: cast_nullable_to_non_nullable
-as List<dynamic>?,orderColumn: freezed == orderColumn ? _self.orderColumn : orderColumn // ignore: cast_nullable_to_non_nullable
-as int?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,originalUrl: freezed == originalUrl ? _self.originalUrl : originalUrl // ignore: cast_nullable_to_non_nullable
-as String?,previewUrl: freezed == previewUrl ? _self.previewUrl : previewUrl // ignore: cast_nullable_to_non_nullable
-as String?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String?,thumbnail: freezed == thumbnail ? _self.thumbnail : thumbnail // ignore: cast_nullable_to_non_nullable
-as String?,preview: freezed == preview ? _self.preview : preview // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
 
-/// Create a copy of Photo
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$GeneratedConversionsCopyWith<$Res>? get generatedConversions {
-    if (_self.generatedConversions == null) {
-    return null;
-  }
 
-  return $GeneratedConversionsCopyWith<$Res>(_self.generatedConversions!, (value) {
-    return _then(_self.copyWith(generatedConversions: value));
-  });
-}
 }
 
 
 /// @nodoc
-mixin _$GeneratedConversions {
+mixin _$AppointmentDetailResponse {
 
-@JsonKey(name: "thumb") bool? get thumb;@JsonKey(name: "preview") bool? get preview;
-/// Create a copy of GeneratedConversions
+@JsonKey(name: "success") bool? get success;@JsonKey(name: "message") String? get message;@JsonKey(name: "data") AppointmentListItem? get data;
+/// Create a copy of AppointmentDetailResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$GeneratedConversionsCopyWith<GeneratedConversions> get copyWith => _$GeneratedConversionsCopyWithImpl<GeneratedConversions>(this as GeneratedConversions, _$identity);
+$AppointmentDetailResponseCopyWith<AppointmentDetailResponse> get copyWith => _$AppointmentDetailResponseCopyWithImpl<AppointmentDetailResponse>(this as AppointmentDetailResponse, _$identity);
 
-  /// Serializes this GeneratedConversions to a JSON map.
+  /// Serializes this AppointmentDetailResponse to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GeneratedConversions&&(identical(other.thumb, thumb) || other.thumb == thumb)&&(identical(other.preview, preview) || other.preview == preview));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppointmentDetailResponse&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&(identical(other.data, data) || other.data == data));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,thumb,preview);
+int get hashCode => Object.hash(runtimeType,success,message,data);
 
 @override
 String toString() {
-  return 'GeneratedConversions(thumb: $thumb, preview: $preview)';
+  return 'AppointmentDetailResponse(success: $success, message: $message, data: $data)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $GeneratedConversionsCopyWith<$Res>  {
-  factory $GeneratedConversionsCopyWith(GeneratedConversions value, $Res Function(GeneratedConversions) _then) = _$GeneratedConversionsCopyWithImpl;
+abstract mixin class $AppointmentDetailResponseCopyWith<$Res>  {
+  factory $AppointmentDetailResponseCopyWith(AppointmentDetailResponse value, $Res Function(AppointmentDetailResponse) _then) = _$AppointmentDetailResponseCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "thumb") bool? thumb,@JsonKey(name: "preview") bool? preview
+@JsonKey(name: "success") bool? success,@JsonKey(name: "message") String? message,@JsonKey(name: "data") AppointmentListItem? data
 });
 
 
-
+$AppointmentListItemCopyWith<$Res>? get data;
 
 }
 /// @nodoc
-class _$GeneratedConversionsCopyWithImpl<$Res>
-    implements $GeneratedConversionsCopyWith<$Res> {
-  _$GeneratedConversionsCopyWithImpl(this._self, this._then);
+class _$AppointmentDetailResponseCopyWithImpl<$Res>
+    implements $AppointmentDetailResponseCopyWith<$Res> {
+  _$AppointmentDetailResponseCopyWithImpl(this._self, this._then);
 
-  final GeneratedConversions _self;
-  final $Res Function(GeneratedConversions) _then;
+  final AppointmentDetailResponse _self;
+  final $Res Function(AppointmentDetailResponse) _then;
 
-/// Create a copy of GeneratedConversions
+/// Create a copy of AppointmentDetailResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? thumb = freezed,Object? preview = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? success = freezed,Object? message = freezed,Object? data = freezed,}) {
   return _then(_self.copyWith(
-thumb: freezed == thumb ? _self.thumb : thumb // ignore: cast_nullable_to_non_nullable
-as bool?,preview: freezed == preview ? _self.preview : preview // ignore: cast_nullable_to_non_nullable
-as bool?,
+success: freezed == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
+as bool?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,data: freezed == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
+as AppointmentListItem?,
   ));
 }
+/// Create a copy of AppointmentDetailResponse
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AppointmentListItemCopyWith<$Res>? get data {
+    if (_self.data == null) {
+    return null;
+  }
 
+  return $AppointmentListItemCopyWith<$Res>(_self.data!, (value) {
+    return _then(_self.copyWith(data: value));
+  });
+}
 }
 
 
-/// Adds pattern-matching-related methods to [GeneratedConversions].
-extension GeneratedConversionsPatterns on GeneratedConversions {
+/// Adds pattern-matching-related methods to [AppointmentDetailResponse].
+extension AppointmentDetailResponsePatterns on AppointmentDetailResponse {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -1798,10 +981,10 @@ extension GeneratedConversionsPatterns on GeneratedConversions {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GeneratedConversions value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _AppointmentDetailResponse value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _GeneratedConversions() when $default != null:
+case _AppointmentDetailResponse() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -1820,10 +1003,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GeneratedConversions value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _AppointmentDetailResponse value)  $default,){
 final _that = this;
 switch (_that) {
-case _GeneratedConversions():
+case _AppointmentDetailResponse():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -1841,10 +1024,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GeneratedConversions value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _AppointmentDetailResponse value)?  $default,){
 final _that = this;
 switch (_that) {
-case _GeneratedConversions() when $default != null:
+case _AppointmentDetailResponse() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -1862,10 +1045,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "thumb")  bool? thumb, @JsonKey(name: "preview")  bool? preview)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "success")  bool? success, @JsonKey(name: "message")  String? message, @JsonKey(name: "data")  AppointmentListItem? data)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _GeneratedConversions() when $default != null:
-return $default(_that.thumb,_that.preview);case _:
+case _AppointmentDetailResponse() when $default != null:
+return $default(_that.success,_that.message,_that.data);case _:
   return orElse();
 
 }
@@ -1883,10 +1066,10 @@ return $default(_that.thumb,_that.preview);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "thumb")  bool? thumb, @JsonKey(name: "preview")  bool? preview)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "success")  bool? success, @JsonKey(name: "message")  String? message, @JsonKey(name: "data")  AppointmentListItem? data)  $default,) {final _that = this;
 switch (_that) {
-case _GeneratedConversions():
-return $default(_that.thumb,_that.preview);case _:
+case _AppointmentDetailResponse():
+return $default(_that.success,_that.message,_that.data);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1903,10 +1086,10 @@ return $default(_that.thumb,_that.preview);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "thumb")  bool? thumb, @JsonKey(name: "preview")  bool? preview)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "success")  bool? success, @JsonKey(name: "message")  String? message, @JsonKey(name: "data")  AppointmentListItem? data)?  $default,) {final _that = this;
 switch (_that) {
-case _GeneratedConversions() when $default != null:
-return $default(_that.thumb,_that.preview);case _:
+case _AppointmentDetailResponse() when $default != null:
+return $default(_that.success,_that.message,_that.data);case _:
   return null;
 
 }
@@ -1917,72 +1100,86 @@ return $default(_that.thumb,_that.preview);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _GeneratedConversions implements GeneratedConversions {
-  const _GeneratedConversions({@JsonKey(name: "thumb") this.thumb, @JsonKey(name: "preview") this.preview});
-  factory _GeneratedConversions.fromJson(Map<String, dynamic> json) => _$GeneratedConversionsFromJson(json);
+class _AppointmentDetailResponse implements AppointmentDetailResponse {
+  const _AppointmentDetailResponse({@JsonKey(name: "success") this.success, @JsonKey(name: "message") this.message, @JsonKey(name: "data") this.data});
+  factory _AppointmentDetailResponse.fromJson(Map<String, dynamic> json) => _$AppointmentDetailResponseFromJson(json);
 
-@override@JsonKey(name: "thumb") final  bool? thumb;
-@override@JsonKey(name: "preview") final  bool? preview;
+@override@JsonKey(name: "success") final  bool? success;
+@override@JsonKey(name: "message") final  String? message;
+@override@JsonKey(name: "data") final  AppointmentListItem? data;
 
-/// Create a copy of GeneratedConversions
+/// Create a copy of AppointmentDetailResponse
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$GeneratedConversionsCopyWith<_GeneratedConversions> get copyWith => __$GeneratedConversionsCopyWithImpl<_GeneratedConversions>(this, _$identity);
+_$AppointmentDetailResponseCopyWith<_AppointmentDetailResponse> get copyWith => __$AppointmentDetailResponseCopyWithImpl<_AppointmentDetailResponse>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$GeneratedConversionsToJson(this, );
+  return _$AppointmentDetailResponseToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GeneratedConversions&&(identical(other.thumb, thumb) || other.thumb == thumb)&&(identical(other.preview, preview) || other.preview == preview));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppointmentDetailResponse&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&(identical(other.data, data) || other.data == data));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,thumb,preview);
+int get hashCode => Object.hash(runtimeType,success,message,data);
 
 @override
 String toString() {
-  return 'GeneratedConversions(thumb: $thumb, preview: $preview)';
+  return 'AppointmentDetailResponse(success: $success, message: $message, data: $data)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$GeneratedConversionsCopyWith<$Res> implements $GeneratedConversionsCopyWith<$Res> {
-  factory _$GeneratedConversionsCopyWith(_GeneratedConversions value, $Res Function(_GeneratedConversions) _then) = __$GeneratedConversionsCopyWithImpl;
+abstract mixin class _$AppointmentDetailResponseCopyWith<$Res> implements $AppointmentDetailResponseCopyWith<$Res> {
+  factory _$AppointmentDetailResponseCopyWith(_AppointmentDetailResponse value, $Res Function(_AppointmentDetailResponse) _then) = __$AppointmentDetailResponseCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "thumb") bool? thumb,@JsonKey(name: "preview") bool? preview
+@JsonKey(name: "success") bool? success,@JsonKey(name: "message") String? message,@JsonKey(name: "data") AppointmentListItem? data
 });
 
 
-
+@override $AppointmentListItemCopyWith<$Res>? get data;
 
 }
 /// @nodoc
-class __$GeneratedConversionsCopyWithImpl<$Res>
-    implements _$GeneratedConversionsCopyWith<$Res> {
-  __$GeneratedConversionsCopyWithImpl(this._self, this._then);
+class __$AppointmentDetailResponseCopyWithImpl<$Res>
+    implements _$AppointmentDetailResponseCopyWith<$Res> {
+  __$AppointmentDetailResponseCopyWithImpl(this._self, this._then);
 
-  final _GeneratedConversions _self;
-  final $Res Function(_GeneratedConversions) _then;
+  final _AppointmentDetailResponse _self;
+  final $Res Function(_AppointmentDetailResponse) _then;
 
-/// Create a copy of GeneratedConversions
+/// Create a copy of AppointmentDetailResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? thumb = freezed,Object? preview = freezed,}) {
-  return _then(_GeneratedConversions(
-thumb: freezed == thumb ? _self.thumb : thumb // ignore: cast_nullable_to_non_nullable
-as bool?,preview: freezed == preview ? _self.preview : preview // ignore: cast_nullable_to_non_nullable
-as bool?,
+@override @pragma('vm:prefer-inline') $Res call({Object? success = freezed,Object? message = freezed,Object? data = freezed,}) {
+  return _then(_AppointmentDetailResponse(
+success: freezed == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
+as bool?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,data: freezed == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
+as AppointmentListItem?,
   ));
 }
 
+/// Create a copy of AppointmentDetailResponse
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AppointmentListItemCopyWith<$Res>? get data {
+    if (_self.data == null) {
+    return null;
+  }
 
+  return $AppointmentListItemCopyWith<$Res>(_self.data!, (value) {
+    return _then(_self.copyWith(data: value));
+  });
+}
 }
 
 // dart format on

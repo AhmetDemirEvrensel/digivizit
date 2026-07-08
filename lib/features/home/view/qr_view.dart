@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
-import 'package:digivizit/core/models/ocr/ocr_response.dart';
+import 'package:digivizit/core/models/business_cards/business_card_scan_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/shared/components/alert/custom_snacbar.dart';
@@ -28,11 +28,22 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
   late final Animation<double> _fadeAnimation;
   late final Animation<Offset> _slideAnimation;
 
+  final _companyController = TextEditingController();
+  final _nameSurnameController = TextEditingController();
+  final _unvanController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _websiteController = TextEditingController();
+  final _sectorController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _noteController = TextEditingController();
+
   File? _selectedImage;
-  OcrResponse? _ocrResponse;
+  BusinessCardScanResponse? _scanResponse;
   final String _selectedEngine = 'gemini';
   bool _isPickingImage = false;
   bool _isUploading = false;
+  bool _isSaving = false;
   Color _topColor = const Color(0xFF0F3B57);
   Color _bottomColor = const Color(0xFF071C2D);
 
@@ -54,9 +65,9 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
           ),
         );
 
-    final savedPersonelInfo = AppSettings.instance.personelInfo;
-    if (savedPersonelInfo != null) {
-      _homeViewModel.setInitialPersonelInfo(savedPersonelInfo);
+    final savedProfile = AppSettings.instance.profile;
+    if (savedProfile != null) {
+      _homeViewModel.setInitialProfile(savedProfile);
     }
     _homeViewModel
         .loadBackgroundColors(
@@ -77,6 +88,15 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _animationController.dispose();
+    _companyController.dispose();
+    _nameSurnameController.dispose();
+    _unvanController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _websiteController.dispose();
+    _sectorController.dispose();
+    _addressController.dispose();
+    _noteController.dispose();
     super.dispose();
   }
 
@@ -103,7 +123,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                 ),
                 FigmaBox(height: 10),
                 Text(
-                  'Kartvizitin fotoğrafını çekin veya galeriden yükleyin. Eklediğiniz görsel otomatik olarak bağlantılarım sayfasına kaydedilecektir.',
+                  'Kartvizitin fotoğrafını çekin veya galeriden yükleyin. Tarama sonrasında bilgileri düzenleyip bağlantılarım listesine kaydedebilirsiniz.',
                   style: AppFonts.baseRegular.copyWith(
                     color: AppColors.baseWhite.withValues(alpha: 0.78),
                   ),
@@ -113,7 +133,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                 FigmaBox(height: 20),
                 _buildImagePreviewCard(),
                 FigmaBox(height: 20),
-                if (_ocrResponse != null) _buildResultCard(_ocrResponse!),
+                if (_scanResponse != null) _buildResultForm(),
                 FigmaBox(height: 120),
               ],
             ),
@@ -279,58 +299,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildResultCard(OcrResponse response) {
-    final data = response.data;
-    final rows = <MapEntry<String, String>>[
-      if ((data?.companyName ?? '').trim().isNotEmpty)
-        MapEntry('Şirket', data!.companyName!.trim()),
-      if ((data?.nameSurname ?? const <String>[])
-          .where((value) => value.trim().isNotEmpty)
-          .isNotEmpty)
-        MapEntry(
-          'Ad Soyad',
-          data!.nameSurname!
-              .where((value) => value.trim().isNotEmpty)
-              .join(', '),
-        ),
-      if ((data?.unvan ?? const <dynamic>[])
-          .whereType<String>()
-          .where((value) => value.trim().isNotEmpty)
-          .isNotEmpty)
-        MapEntry(
-          'Ünvan',
-          data!.unvan!
-              .whereType<String>()
-              .where((value) => value.trim().isNotEmpty)
-              .join(', '),
-        ),
-      if ((data?.emailList ?? const <String>[])
-          .where((value) => value.trim().isNotEmpty)
-          .isNotEmpty)
-        MapEntry(
-          'E-posta Listesi',
-          data!.emailList!.where((value) => value.trim().isNotEmpty).join(', '),
-        ),
-      if ((data?.phoneList?.mobile ?? '').trim().isNotEmpty)
-        MapEntry('Mobil', data!.phoneList!.mobile!.trim()),
-      if ((data?.phoneList?.landline ?? '').trim().isNotEmpty)
-        MapEntry('Sabit Hat', data!.phoneList!.landline!.trim()),
-      if ((data?.phone ?? '').trim().isNotEmpty)
-        MapEntry('Telefon', data!.phone!.trim()),
-      if ((data?.email ?? '').trim().isNotEmpty)
-        MapEntry('E-posta', data!.email!.trim()),
-      if ((data?.website ?? '').trim().isNotEmpty)
-        MapEntry('Website', data!.website!.trim()),
-      if ((data?.sector ?? '').trim().isNotEmpty)
-        MapEntry('Sektör', data!.sector!.trim()),
-      if ((data?.address ?? '').trim().isNotEmpty)
-        MapEntry('Adres', data!.address!.trim()),
-      if ((data?.country ?? '').trim().isNotEmpty)
-        MapEntry('Ülke', data!.country!.trim()),
-      if ((data?.note ?? '').trim().isNotEmpty)
-        MapEntry('Not', data!.note!.trim()),
-    ];
-
+  Widget _buildResultForm() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -349,54 +318,101 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                 ),
               ),
               const SizedBox(width: 10),
-              Text('OCR Sonucu', style: AppFonts.lgBold),
+              Text('Tarama Sonucu', style: AppFonts.lgBold),
             ],
           ),
           FigmaBox(height: 8),
           Text(
-            (response.message?.trim().isNotEmpty ?? false)
-                ? response.message!.trim()
-                : 'Servisten gelen alanlar aşağıda listelendi.',
+            'Bilgileri kontrol edip gerekirse düzenleyin, ardından kaydedin.',
             style: AppFonts.baseRegular.copyWith(
               color: AppColors.baseWhite.withValues(alpha: 0.72),
             ),
           ),
           FigmaBox(height: 16),
-          if (rows.isEmpty)
-            Text(
-              'OCR tamamlandı ancak gösterilecek bir alan bulunamadı.',
-              style: AppFonts.baseRegular.copyWith(
-                color: AppColors.baseWhite.withValues(alpha: 0.72),
+          _buildFormField('Şirket', _companyController),
+          FigmaBox(height: 12),
+          _buildFormField('Ad Soyad (virgülle ayırın)', _nameSurnameController),
+          FigmaBox(height: 12),
+          _buildFormField('Ünvan (virgülle ayırın)', _unvanController),
+          FigmaBox(height: 12),
+          _buildFormField(
+            'E-posta',
+            _emailController,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          FigmaBox(height: 12),
+          _buildFormField(
+            'Telefon',
+            _phoneController,
+            keyboardType: TextInputType.phone,
+          ),
+          FigmaBox(height: 12),
+          _buildFormField('Website', _websiteController),
+          FigmaBox(height: 12),
+          _buildFormField('Sektör', _sectorController),
+          FigmaBox(height: 12),
+          _buildFormField('Adres', _addressController, maxLines: 2),
+          FigmaBox(height: 12),
+          _buildFormField('Not', _noteController, maxLines: 2),
+          FigmaBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _isSaving ? null : _saveBusinessCard,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF3B82F6),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
               ),
-            )
-          else
-            ...rows.map(_buildResultRow),
+              icon: _isSaving
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.baseWhite,
+                      ),
+                    )
+                  : const Icon(Icons.save_outlined, color: AppColors.baseWhite),
+              label: Text(
+                _isSaving ? 'Kaydediliyor...' : 'Kartvizit Olarak Kaydet',
+                style: AppFonts.base2Bold.copyWith(color: AppColors.baseWhite),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildResultRow(MapEntry<String, String> entry) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            entry.key,
-            style: AppFonts.smSemibold.copyWith(
-              color: const Color(0xFF93C5FD),
-              letterSpacing: 0.2,
-            ),
+  Widget _buildFormField(
+    String label,
+    TextEditingController controller, {
+    TextInputType? keyboardType,
+    int maxLines = 1,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      style: AppFonts.base2Regular.copyWith(
+        color: AppColors.baseWhite.withValues(alpha: 0.92),
+      ),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: AppFonts.smSemibold.copyWith(
+          color: const Color(0xFF93C5FD),
+        ),
+        filled: true,
+        fillColor: AppColors.baseWhite.withValues(alpha: 0.05),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: AppColors.baseWhite.withValues(alpha: 0.1),
           ),
-          FigmaBox(height: 4),
-          Text(
-            entry.value,
-            style: AppFonts.base2Regular.copyWith(
-              color: AppColors.baseWhite.withValues(alpha: 0.92),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -439,7 +455,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
 
       setState(() {
         _selectedImage = File(pickedFile.path);
-        _ocrResponse = null;
+        _scanResponse = null;
       });
     } catch (_) {
       showCustomSnackbarOverlay(
@@ -469,7 +485,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
       _isUploading = true;
     });
 
-    final result = await _homeViewModel.getOcrData(
+    final result = await _homeViewModel.scanBusinessCard(
       imageFile: imageFile,
       engine: _selectedEngine,
     );
@@ -479,18 +495,119 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
     setState(() {
       _isUploading = false;
       if (result.isSuccess) {
-        _ocrResponse = result.data;
+        _scanResponse = result.data;
+        _populateFormFromScan(result.data?.data?.data);
       }
     });
 
     if (result.isSuccess) {
+      showCustomSnackbarOverlay(
+        message: 'Tarama basariyla tamamlandi.',
+        status: SnackbarStatusEnum.success,
+      );
+    }
+  }
+
+  void _populateFormFromScan(BusinessCardScanData? data) {
+    _companyController.text = data?.companyName?.trim() ?? '';
+    _nameSurnameController.text = (data?.nameSurname ?? const [])
+        .where((value) => value.trim().isNotEmpty)
+        .join(', ');
+    _unvanController.text = (data?.unvan ?? const [])
+        .where((value) => value.trim().isNotEmpty)
+        .join(', ');
+    final listedEmails = (data?.emailList ?? const <String>[])
+        .where((value) => value.trim().isNotEmpty)
+        .toList();
+    final firstListedEmail = listedEmails.isEmpty ? null : listedEmails.first;
+    _emailController.text = data?.email?.trim() ?? (firstListedEmail?.trim() ?? '');
+    _phoneController.text =
+        data?.phone?.trim() ??
+        (data?.phoneList?.mobile?.trim() ?? data?.phoneList?.landline?.trim() ?? '');
+    _websiteController.text = data?.website?.trim() ?? '';
+    _sectorController.text = data?.sector?.trim() ?? '';
+    _addressController.text = data?.address?.trim() ?? '';
+    _noteController.text = data?.note?.trim() ?? '';
+  }
+
+  Future<void> _saveBusinessCard() async {
+    final companyName = _companyController.text.trim();
+    if (companyName.isEmpty) {
+      showCustomSnackbarOverlay(
+        message: 'Lutfen firma adini girin.',
+        status: SnackbarStatusEnum.warning,
+      );
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    final names = _nameSurnameController.text
+        .split(',')
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toList();
+    final titles = _unvanController.text
+        .split(',')
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toList();
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+    final website = _websiteController.text.trim();
+    final sector = _sectorController.text.trim();
+    final address = _addressController.text.trim();
+    final note = _noteController.text.trim();
+    final scanImage = _scanResponse?.data?.image;
+    final countryId = _scanResponse?.data?.data?.countryId;
+
+    final body = <String, dynamic>{
+      "company_name": companyName,
+      "name_surname": names.isEmpty ? null : names,
+      "unvan": titles.isEmpty ? null : titles,
+      "email_list": email.isEmpty ? null : [email],
+      "phone_list": phone.isEmpty ? null : [phone],
+      "email": email.isEmpty ? null : email,
+      "phone": phone.isEmpty ? null : phone,
+      "website": website.isEmpty ? null : website,
+      "sector": sector.isEmpty ? null : sector,
+      "address": address.isEmpty ? null : address,
+      "country_id": countryId,
+      "notes": note.isEmpty ? null : [note],
+      "card_image": scanImage == null ? null : [scanImage],
+    };
+
+    final result = await _homeViewModel.createBusinessCard(body);
+
+    if (!mounted) return;
+    setState(() => _isSaving = false);
+
+    if (result.isSuccess) {
+      showCustomSnackbarOverlay(
+        message: 'Kartvizit basariyla kaydedildi.',
+        status: SnackbarStatusEnum.success,
+      );
+      setState(() {
+        _selectedImage = null;
+        _scanResponse = null;
+      });
+      _companyController.clear();
+      _nameSurnameController.clear();
+      _unvanController.clear();
+      _emailController.clear();
+      _phoneController.clear();
+      _websiteController.clear();
+      _sectorController.clear();
+      _addressController.clear();
+      _noteController.clear();
+
       try {
         await widget.onContactsChanged?.call();
       } catch (_) {}
-
+    } else {
       showCustomSnackbarOverlay(
-        message: 'OCR istegi basariyla tamamlandi.',
-        status: SnackbarStatusEnum.success,
+        message: result.error?.message ?? 'Kartvizit kaydedilemedi.',
+        status: SnackbarStatusEnum.error,
       );
     }
   }

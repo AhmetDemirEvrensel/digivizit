@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
-import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
+import 'package:digivizit/core/models/personel/profile_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/features/meeting_requests/view_model/meeting_request_view_model.dart';
@@ -16,8 +16,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends StatefulWidget {
-  final GetPersonelInfoResponse personelInfo;
-  const HomeView({super.key, required this.personelInfo});
+  final ProfileResponse profile;
+  const HomeView({super.key, required this.profile});
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -38,7 +38,7 @@ class _HomeViewState extends State<HomeView>
   Color _topColor = const Color(0xFF2D1B69);
   Color _bottomColor = const Color(0xFF1A0F3D);
 
-  Datum get personel => _homeViewModel.personel!;
+  ProfileData get personel => _homeViewModel.profile!;
   String get _profileName => _homeViewModel.profileName;
 
   @override
@@ -61,7 +61,7 @@ class _HomeViewState extends State<HomeView>
           ),
         );
 
-    _homeViewModel.setInitialPersonelInfo(widget.personelInfo);
+    _homeViewModel.setInitialProfile(widget.profile);
     _homeViewModel
         .loadBackgroundColors(
           topFallback: _topColor,
@@ -135,7 +135,7 @@ class _HomeViewState extends State<HomeView>
           ),
           child: ClipOval(
             child: Image.network(
-              personel.photo?.originalUrl ?? '',
+              personel.photoUrl ?? '',
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
@@ -167,7 +167,7 @@ class _HomeViewState extends State<HomeView>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              personel.title,
+              personel.title ?? '',
               style: AppFonts.baseSemibold.copyWith(
                 fontSize: 16,
                 color: AppColors.baseWhite.withValues(alpha: 0.9),
@@ -183,7 +183,7 @@ class _HomeViewState extends State<HomeView>
               ),
             ),
             Text(
-              personel.firmName.firmName,
+              personel.firm?.firmName ?? '',
               style: AppFonts.baseSemibold.copyWith(
                 fontSize: 16,
                 color: AppColors.baseWhite.withValues(alpha: 0.9),
@@ -297,7 +297,7 @@ class _HomeViewState extends State<HomeView>
                     icon: Icons.email,
                     iconColor: Color(0xFF60A5FA),
                     label: "E-posta Adresi",
-                    value: personel.email,
+                    value: personel.email ?? 'Belirtilmemis',
                     onTap: () => _launchURL('mailto:${personel.email}'),
                   ),
                   FigmaBox(height: 20),
@@ -305,26 +305,23 @@ class _HomeViewState extends State<HomeView>
                     icon: Icons.phone,
                     iconColor: Color(0xFF10B981),
                     label: "Telefon Numarası",
-                    value: personel.phone,
+                    value: personel.phone ?? 'Belirtilmemis',
                     onTap: () => _launchURL('tel:${personel.phone}'),
                   ),
-                  FigmaBox(height: 20),
-                  _buildContactItem(
-                    icon: Icons.language,
-                    iconColor: Color(0xFF8B5CF6),
-                    label: "Website",
-                    value: personel.firmName.website,
-                    onTap: () => _launchURL(personel.firmName.website),
-                  ),
-                  FigmaBox(height: 20),
-                  _buildContactItem(
-                    icon: Icons.location_on,
-                    iconColor: Color(0xFFF59E0B),
-                    label: "Adres",
-                    value: personel.officeAddress.streetAddress,
-                    onTap: () {},
-                    isMultiline: true,
-                  ),
+                  if ((personel.officeAddress?.streetAddress
+                          ?.trim()
+                          .isNotEmpty ??
+                      false)) ...[
+                    FigmaBox(height: 20),
+                    _buildContactItem(
+                      icon: Icons.location_on,
+                      iconColor: Color(0xFFF59E0B),
+                      label: "Adres",
+                      value: personel.officeAddress!.streetAddress!,
+                      onTap: () {},
+                      isMultiline: true,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -393,8 +390,14 @@ class _HomeViewState extends State<HomeView>
     );
   }
 
-  // Şirket Bağlantıları
+  // Sosyal Medya (kişisel Instagram/LinkedIn bağlantıları)
   Widget _buildCompanyConnectionsSection() {
+    final hasInstagram = (personel.instagramUrl?.trim().isNotEmpty ?? false);
+    final hasLinkedin = (personel.linkedinUrl?.trim().isNotEmpty ?? false);
+    if (!hasInstagram && !hasLinkedin) {
+      return const SizedBox.shrink();
+    }
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -442,7 +445,7 @@ class _HomeViewState extends State<HomeView>
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
-                    Icons.business,
+                    Icons.share_rounded,
                     color: Color(0xFFF59E0B),
                     size: 20,
                   ),
@@ -450,7 +453,7 @@ class _HomeViewState extends State<HomeView>
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    "Şirket Bağlantıları",
+                    "Sosyal Medya",
                     style: AppFonts.baseBold.copyWith(
                       fontSize: 18,
                       color: AppColors.baseWhite,
@@ -478,140 +481,27 @@ class _HomeViewState extends State<HomeView>
                 children: [
                   FigmaBox(height: 24),
 
-                  // Katalog Butonu
-                  GestureDetector(
-                    onTap: () =>
-                        _launchURL(personel.firmName.catalogTr.originalUrl),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xFF3B82F6).withValues(alpha: 0.4),
-                            blurRadius: 15,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: AppColors.baseWhite.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              Icons.menu_book_rounded,
-                              color: AppColors.baseWhite,
-                              size: 24,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Kataloğu İncele",
-                                  style: AppFonts.baseBold.copyWith(
-                                    fontSize: 16,
-                                    color: AppColors.baseWhite,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Ürün ve hizmetlerimizi keşfedin",
-                                  style: AppFonts.baseRegular.copyWith(
-                                    fontSize: 13,
-                                    color: AppColors.baseWhite.withValues(
-                                      alpha: 0.85,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: AppColors.baseWhite.withValues(alpha: 0.2),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_forward_ios,
-                              color: AppColors.baseWhite,
-                              size: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  FigmaBox(height: 20),
-
-                  // Divider
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          color: AppColors.baseWhite.withValues(alpha: 0.2),
-                          thickness: 1,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text(
-                          "Sosyal Medya",
-                          style: AppFonts.baseRegular.copyWith(
-                            fontSize: 12,
-                            color: AppColors.baseWhite.withValues(alpha: 0.6),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: AppColors.baseWhite.withValues(alpha: 0.2),
-                          thickness: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                  FigmaBox(height: 20),
-
                   // Sosyal Medya Butonları
                   Row(
                     children: [
-                      Expanded(
-                        child: _buildCompanySocialButton(
-                          icon: Icons.ondemand_video_outlined,
-                          label: "Youtube",
-                          onTap: () =>
-                              _launchURL(personel.firmName.youtubeVideoUrl),
+                      if (hasLinkedin)
+                        Expanded(
+                          child: _buildCompanySocialButton(
+                            icon: Icons.business_center,
+                            label: "LinkedIn",
+                            onTap: () => _launchURL(personel.linkedinUrl!),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildCompanySocialButton(
-                          icon: Icons.business_center,
-                          label: "LinkedIn",
-                          onTap: () =>
-                              _launchURL(personel.firmName.linkedinUrl),
+                      if (hasLinkedin && hasInstagram)
+                        const SizedBox(width: 12),
+                      if (hasInstagram)
+                        Expanded(
+                          child: _buildCompanySocialButton(
+                            icon: Icons.camera_alt,
+                            label: "Instagram",
+                            onTap: () => _launchURL(personel.instagramUrl!),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildCompanySocialButton(
-                          icon: Icons.camera_alt,
-                          label: "Instagram",
-                          onTap: () =>
-                              _launchURL(personel.firmName.instagramUrl),
-                        ),
-                      ),
                     ],
                   ),
                 ],
@@ -685,7 +575,7 @@ class _HomeViewState extends State<HomeView>
           text: "Görüşme Talebi",
           backgroundColor: Color(0xFFA855F7),
           textColor: AppColors.baseWhite,
-          onTap: () => meetingViewModel.getAppointments(),
+          onTap: () => meetingViewModel.getAppointmentRequests(),
         ),
         FigmaBox(height: 20),
         _buildActionButton(
@@ -994,6 +884,7 @@ class _HomeViewState extends State<HomeView>
   }
 
   Future<void> _shareBusinessCardQr() async {
+    await _homeViewModel.ensureQrAndCardLoaded();
     final qrShareLink = _homeViewModel.qrShareLink;
 
     if (qrShareLink == null || qrShareLink.trim().isEmpty) {
@@ -1030,7 +921,7 @@ class _HomeViewState extends State<HomeView>
         final sharedWithCustomPreview = await _shareBusinessCardWithIosPreview(
           title: shareTitle,
           linkUrl: shareText,
-          logoUrl: _homeViewModel.firmLogoUrl,
+          logoUrl: personel.photoUrl,
         );
 
         if (sharedWithCustomPreview) {
@@ -1100,6 +991,7 @@ class _HomeViewState extends State<HomeView>
   }
 
   Future<void> _showQrCodePreview() async {
+    await _homeViewModel.ensureQrAndCardLoaded();
     final qrImageUrl = _homeViewModel.qrPhotoUrl;
     if (qrImageUrl == null) {
       if (!mounted) return;

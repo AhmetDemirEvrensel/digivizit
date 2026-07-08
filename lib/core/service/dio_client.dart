@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:digivizit/core/constants/app_config.dart';
+import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/core/utils/custom_logger_interceptor.dart';
 
 class DioClient {
@@ -20,6 +21,17 @@ class DioClient {
 
     // dio.options.contentType = Headers.formUrlEncodedContentType;
     dio.options.contentType = Headers.jsonContentType;
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          final token = AppSettings.instance.apiToken?.trim();
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          handler.next(options);
+        },
+      ),
+    );
     dio.interceptors.add(CustomLoggerInterceptor());
     return dio;
   }

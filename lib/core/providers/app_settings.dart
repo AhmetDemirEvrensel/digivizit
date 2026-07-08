@@ -7,7 +7,7 @@ import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/enums/app_languages.dart';
 import 'package:digivizit/core/models/auth/login_response.dart';
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
-import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
+import 'package:digivizit/core/models/personel/profile_response.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/providers/async_process_manager.dart';
 import 'package:digivizit/core/service/dio_client.dart';
@@ -36,8 +36,8 @@ class AppSettings extends GetxController {
   String? userName;
   String? userEmail;
   String? sessionPassword;
-  GetPersonelInfoResponse? personelInfo;
-  ContactsResponse? contactsInfo;
+  ProfileResponse? profile;
+  BusinessCardListResponse? contactsInfo;
   bool rememberMe = false;
 
   // late PackageInfo _info;
@@ -121,30 +121,31 @@ class AppSettings extends GetxController {
     apiToken = await _sharedPreferencesManager.getLocalDb<String>(
       SharedKeys.apiToken,
     );
-    final savedPersonelInfo = await _sharedPreferencesManager
-        .getLocalDb<String>(SharedKeys.personelInfo);
+    final savedProfile = await _sharedPreferencesManager.getLocalDb<String>(
+      SharedKeys.profileInfo,
+    );
     final savedContactsInfo = await _sharedPreferencesManager
         .getLocalDb<String>(SharedKeys.contactsInfo);
 
-    if (savedPersonelInfo?.trim().isNotEmpty ?? false) {
+    if (savedProfile?.trim().isNotEmpty ?? false) {
       try {
-        personelInfo = getPersonelInfoResponseFromJson(savedPersonelInfo!);
+        profile = profileResponseFromJson(savedProfile!);
       } catch (error, stackTrace) {
         logWarning(
-          'Saved personel info could not be parsed and will be cleared.',
+          'Saved profile info could not be parsed and will be cleared.',
         );
         logDebug(error.toString());
         logTrace(stackTrace.toString());
-        personelInfo = null;
+        profile = null;
         await _sharedPreferencesManager.removeItemFromLocalDb(
-          SharedKeys.personelInfo,
+          SharedKeys.profileInfo,
         );
       }
     }
 
     if (savedContactsInfo?.trim().isNotEmpty ?? false) {
       try {
-        contactsInfo = contactsResponseFromJson(savedContactsInfo!);
+        contactsInfo = businessCardListResponseFromJson(savedContactsInfo!);
       } catch (error, stackTrace) {
         logWarning(
           'Saved contacts info could not be parsed and will be cleared.',
@@ -200,7 +201,10 @@ class AppSettings extends GetxController {
     required bool rememberUser,
   }) async {
     final loginData = loginResponse.data;
-    final userDisplayName = loginData.user.name.trim();
+    if (loginData == null) {
+      return;
+    }
+    final userDisplayName = loginData.me.user.name.trim();
 
     userName = userDisplayName;
     userEmail = email;
@@ -241,7 +245,7 @@ class AppSettings extends GetxController {
     userName = null;
     userEmail = null;
     sessionPassword = null;
-    personelInfo = null;
+    profile = null;
     contactsInfo = null;
     rememberMe = false;
 
@@ -251,64 +255,35 @@ class AppSettings extends GetxController {
     await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.password);
     await _sharedPreferencesManager.removeItemFromLocalDb(SharedKeys.apiToken);
     await _sharedPreferencesManager.removeItemFromLocalDb(
-      SharedKeys.personelInfo,
+      SharedKeys.profileInfo,
     );
     await _sharedPreferencesManager.removeItemFromLocalDb(
       SharedKeys.contactsInfo,
     );
   }
 
-  Future<void> setPersonelInfo(GetPersonelInfoResponse value) async {
-    personelInfo = value;
+  Future<void> setProfile(ProfileResponse value) async {
+    profile = value;
     await _sharedPreferencesManager.saveLocalDb(
-      SharedKeys.personelInfo,
-      getPersonelInfoResponseToJson(value),
+      SharedKeys.profileInfo,
+      profileResponseToJson(value),
     );
   }
 
-  Future<void> setContactsInfo(ContactsResponse value) async {
+  Future<void> setContactsInfo(BusinessCardListResponse value) async {
     contactsInfo = value;
     await _sharedPreferencesManager.saveLocalDb(
       SharedKeys.contactsInfo,
-      contactsResponseToJson(value),
+      businessCardListResponseToJson(value),
     );
-  }
-
-  Future<String?> getCurrentUserEmail() async {
-    final currentEmail = userEmail?.trim();
-    if (currentEmail != null && currentEmail.isNotEmpty) {
-      return currentEmail;
-    }
-
-    final savedEmail = await _sharedPreferencesManager.getLocalDb<String>(
-      SharedKeys.email,
-    );
-    if (savedEmail?.trim().isNotEmpty ?? false) {
-      userEmail = savedEmail!.trim();
-      return userEmail;
-    }
-
-    return null;
-  }
-
-  Future<String?> getCurrentPassword() async {
-    final activePassword = sessionPassword;
-    if (activePassword?.isNotEmpty ?? false) {
-      return activePassword;
-    }
-
-    final savedPassword = await _sharedPreferencesManager.getLocalDb<String>(
-      SharedKeys.password,
-    );
-    if (savedPassword?.isNotEmpty ?? false) {
-      sessionPassword = savedPassword;
-      return sessionPassword;
-    }
-
-    return null;
   }
 
   Future<void> logout() async {
+    try {
+      await _generalService.logout(showLoader: false);
+    } catch (_) {
+      // Yerel oturum temizliğini engellemesin diye sunucu hatası yutuluyor.
+    }
     await clearSession();
     navigatorKey.currentState?.pushNamedAndRemoveUntil(
       NavigationEnums.login.rawValue,

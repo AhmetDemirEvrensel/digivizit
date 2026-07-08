@@ -1,13 +1,14 @@
 import 'package:digivizit/core/constants/app_fonts.dart';
-import 'package:digivizit/core/models/appointment/appointment_response.dart'
-    as appointment_model;
+import 'package:digivizit/core/models/appointment/appointment_response.dart';
+import 'package:digivizit/core/providers/app_settings.dart';
+import 'package:digivizit/features/meeting_requests/view_model/meeting_request_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'meeting_request_detail_view.dart';
 
 class MeetingRequestsView extends StatefulWidget {
-  final appointment_model.AppointmentResponse appointmentsResponse;
+  final AppointmentListResponse appointmentsResponse;
 
   const MeetingRequestsView({super.key, required this.appointmentsResponse});
 
@@ -36,13 +37,15 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
   late Map<int, List<_AppointmentCalendarEntry>> _appointmentsByDayKey;
   late Set<int> _meetingDayKeys;
   bool _isMonthExpanded = false;
+  final MeetingRequestViewModel _viewModel = MeetingRequestViewModel();
 
-  List<appointment_model.Datum> get _appointments =>
-      widget.appointmentsResponse.data ?? const [];
+  List<AppointmentListItem> get _appointments =>
+      _viewModel.appointments?.data?.items ?? const [];
 
   @override
   void initState() {
     super.initState();
+    _viewModel.appointments = widget.appointmentsResponse;
     selectedDate = _dateOnly(DateTime.now());
     _visibleMonth = DateTime(selectedDate.year, selectedDate.month);
     _rebuildAppointmentCache();
@@ -55,8 +58,25 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
   void didUpdateWidget(covariant MeetingRequestsView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.appointmentsResponse != widget.appointmentsResponse) {
+      _viewModel.appointments = widget.appointmentsResponse;
       _rebuildAppointmentCache();
     }
+  }
+
+  Future<bool> _handleApprove(int id) async {
+    final result = await _viewModel.approveAppointment(id);
+    if (result.isSuccess && mounted) {
+      setState(_rebuildAppointmentCache);
+    }
+    return result.isSuccess;
+  }
+
+  Future<bool> _handleReject(int id) async {
+    final result = await _viewModel.rejectAppointment(id);
+    if (result.isSuccess && mounted) {
+      setState(_rebuildAppointmentCache);
+    }
+    return result.isSuccess;
   }
 
   @override
@@ -96,8 +116,32 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                   ? _buildEmptyState()
                   : ListView.builder(
                       padding: EdgeInsets.zero,
-                      itemCount: filteredAppointments.length,
+                      itemCount:
+                          filteredAppointments.length +
+                          (_viewModel.hasMoreAppointments ? 1 : 0),
                       itemBuilder: (context, index) {
+                        if (index >= filteredAppointments.length) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: Center(
+                              child: _viewModel.isLoadingMoreAppointments
+                                  ? const CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    )
+                                  : TextButton(
+                                      onPressed: () async {
+                                        await _viewModel
+                                            .loadMoreAppointments();
+                                        if (mounted) {
+                                          setState(_rebuildAppointmentCache);
+                                        }
+                                      },
+                                      child: const Text('Daha fazla yükle'),
+                                    ),
+                            ),
+                          );
+                        }
+
                         return _buildMeetingRequestCard(
                           filteredAppointments[index].appointment,
                           appointmentDateTime:
@@ -329,28 +373,23 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
     return '${dateTime.day.toString().padLeft(2, '0')} ${_getMonthName(dateTime.month)} ${dateTime.year}';
   }
 
-  String _statusLabel(String? status) {
-    final normalized = status?.trim().toLowerCase() ?? '';
-    switch (normalized) {
-      case 'approved':
-        return 'Onaylandi';
-      case 'pending':
-        return 'Bekliyor';
-      case 'rejected':
-        return 'Reddedildi';
-      default:
-        return status?.trim().isNotEmpty == true ? status!.trim() : 'Belirsiz';
+  String _statusLabel(String? status, String? statusLabel) {
+    if (statusLabel?.trim().isNotEmpty ?? false) {
+      return statusLabel!.trim();
     }
+    return status?.trim().isNotEmpty == true ? status!.trim() : 'Belirsiz';
   }
 
   Color _statusColor(String? status) {
     final normalized = status?.trim().toLowerCase() ?? '';
     switch (normalized) {
-      case 'approved':
+      case 'planlandı':
+      case 'planlandi':
         return const Color(0xFF34C759);
-      case 'pending':
+      case 'talep edildi':
         return const Color(0xFFFF9500);
-      case 'rejected':
+      case 'reddedildi':
+      case 'iptal edildi':
         return const Color(0xFFFF453A);
       default:
         return const Color(0xFF8E8E93);
@@ -668,7 +707,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
   }
 
   Widget _buildMeetingRequestCard(
-    appointment_model.Datum appointment, {
+    AppointmentListItem appointment, {
     DateTime? appointmentDateTime,
   }) {
     final requesterName = appointment.fullName?.trim().isNotEmpty == true
@@ -680,9 +719,10 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
     final subject = appointment.subject?.trim().isNotEmpty == true
         ? appointment.subject!.trim()
         : 'Gorusme Talebi';
-    final department = appointment.employee?.department?.name?.trim() ?? '';
+    final department =
+        AppSettings.instance.profile?.data?.department?.name?.trim() ?? '';
     final timeTone = _meetingVisualTone(appointmentDateTime);
-    final statusText = _statusLabel(appointment.status);
+    final statusText = _statusLabel(appointment.status, appointment.statusLabel);
     final statusColor = _statusColor(appointment.status);
 
     return InkWell(
@@ -690,8 +730,11 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                MeetingRequestDetailView(appointment: appointment),
+            builder: (context) => MeetingRequestDetailView(
+              appointment: appointment,
+              onApprove: _handleApprove,
+              onReject: _handleReject,
+            ),
           ),
         );
       },
@@ -895,7 +938,7 @@ class _AppointmentCalendarEntry {
     required this.dayKey,
   });
 
-  final appointment_model.Datum appointment;
+  final AppointmentListItem appointment;
   final DateTime dateTime;
   final int dayKey;
 }

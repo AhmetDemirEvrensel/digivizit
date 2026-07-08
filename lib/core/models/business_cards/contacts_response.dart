@@ -1,34 +1,82 @@
 // To parse this JSON data, do
 //
-//     final contactsResponse = contactsResponseFromJson(jsonString);
+//     final businessCardListResponse = businessCardListResponseFromJson(jsonString);
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:digivizit/core/models/common/page_meta.dart';
 import 'dart:convert';
 
 part 'contacts_response.freezed.dart';
 part 'contacts_response.g.dart';
 
-ContactsResponse contactsResponseFromJson(String str) =>
-    ContactsResponse.fromJson(json.decode(str));
+BusinessCardListResponse businessCardListResponseFromJson(String str) =>
+    BusinessCardListResponse.fromJson(json.decode(str));
 
-String contactsResponseToJson(ContactsResponse data) =>
+String businessCardListResponseToJson(BusinessCardListResponse data) =>
+    json.encode(data.toJson());
+
+BusinessCardDetailResponse businessCardDetailResponseFromJson(String str) =>
+    BusinessCardDetailResponse.fromJson(json.decode(str));
+
+String businessCardDetailResponseToJson(BusinessCardDetailResponse data) =>
     json.encode(data.toJson());
 
 @freezed
-abstract class ContactsResponse with _$ContactsResponse {
-  const factory ContactsResponse({
+abstract class BusinessCardListResponse with _$BusinessCardListResponse {
+  const factory BusinessCardListResponse({
     @JsonKey(name: "success") bool? success,
     @JsonKey(name: "message") String? message,
-    @JsonKey(name: "data") List<ContactsData>? data,
-  }) = _ContactsResponse;
+    @JsonKey(name: "data") BusinessCardListData? data,
+  }) = _BusinessCardListResponse;
 
-  factory ContactsResponse.fromJson(Map<String, dynamic> json) =>
-      _$ContactsResponseFromJson(json);
+  factory BusinessCardListResponse.fromJson(Map<String, dynamic> json) =>
+      _$BusinessCardListResponseFromJson(json);
 }
 
 @freezed
-abstract class ContactsData with _$ContactsData {
-  const factory ContactsData({
+abstract class BusinessCardListData with _$BusinessCardListData {
+  const factory BusinessCardListData({
+    @JsonKey(name: "items") List<BusinessCardListItem>? items,
+    @JsonKey(name: "meta") PageMeta? meta,
+  }) = _BusinessCardListData;
+
+  factory BusinessCardListData.fromJson(Map<String, dynamic> json) =>
+      _$BusinessCardListDataFromJson(json);
+}
+
+@freezed
+abstract class BusinessCardListItem with _$BusinessCardListItem {
+  const factory BusinessCardListItem({
+    @JsonKey(name: "id") int? id,
+    @JsonKey(name: "company_name") String? companyName,
+    @JsonKey(name: "sector") String? sector,
+    @JsonKey(name: "primary_contact") String? primaryContact,
+    @JsonKey(name: "phone") String? phone,
+    @JsonKey(name: "email") String? email,
+    @JsonKey(name: "thumbnail") String? thumbnail,
+    @JsonKey(name: "has_image") bool? hasImage,
+    @JsonKey(name: "created_at") String? createdAt,
+  }) = _BusinessCardListItem;
+
+  factory BusinessCardListItem.fromJson(Map<String, dynamic> json) =>
+      _$BusinessCardListItemFromJson(json);
+}
+
+@freezed
+abstract class BusinessCardDetailResponse with _$BusinessCardDetailResponse {
+  const factory BusinessCardDetailResponse({
+    @JsonKey(name: "success") bool? success,
+    @JsonKey(name: "message") String? message,
+    @JsonKey(name: "data") BusinessCardDetailData? data,
+  }) = _BusinessCardDetailResponse;
+
+  factory BusinessCardDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$BusinessCardDetailResponseFromJson(json);
+}
+
+@freezed
+abstract class BusinessCardDetailData with _$BusinessCardDetailData {
+  const factory BusinessCardDetailData({
     @JsonKey(name: "id") int? id,
     @JsonKey(name: "user_id") int? userId,
     @JsonKey(name: "company_name") String? companyName,
@@ -43,19 +91,19 @@ abstract class ContactsData with _$ContactsData {
     @JsonKey(name: "sector") String? sector,
     @JsonKey(name: "country_id") int? countryId,
     @JsonKey(name: "country") String? country,
-    @JsonKey(name: "notes") List<Note>? notes,
-    @JsonKey(name: "cards") List<Card>? cards,
-    @JsonKey(name: "created_at") DateTime? createdAt,
-    @JsonKey(name: "updated_at") DateTime? updatedAt,
-  }) = _ContactsData;
+    @JsonKey(name: "notes") List<BusinessCardNote>? notes,
+    @JsonKey(name: "cards") List<BusinessCardImage>? cards,
+    @JsonKey(name: "created_at") String? createdAt,
+    @JsonKey(name: "updated_at") String? updatedAt,
+  }) = _BusinessCardDetailData;
 
-  factory ContactsData.fromJson(Map<String, dynamic> json) =>
-      _$ContactsDataFromJson(json);
+  factory BusinessCardDetailData.fromJson(Map<String, dynamic> json) =>
+      _$BusinessCardDetailDataFromJson(json);
 }
 
 @freezed
-abstract class Card with _$Card {
-  const factory Card({
+abstract class BusinessCardImage with _$BusinessCardImage {
+  const factory BusinessCardImage({
     @JsonKey(name: "id") int? id,
     @JsonKey(name: "url") String? url,
     @JsonKey(name: "thumbnail") String? thumbnail,
@@ -63,24 +111,79 @@ abstract class Card with _$Card {
     @JsonKey(name: "file_name") String? fileName,
     @JsonKey(name: "mime_type") String? mimeType,
     @JsonKey(name: "size") int? size,
-  }) = _Card;
+  }) = _BusinessCardImage;
 
-  factory Card.fromJson(Map<String, dynamic> json) => _$CardFromJson(json);
+  factory BusinessCardImage.fromJson(Map<String, dynamic> json) =>
+      _$BusinessCardImageFromJson(json);
 }
 
 @freezed
-abstract class Note with _$Note {
-  const factory Note({
+abstract class BusinessCardNote with _$BusinessCardNote {
+  const factory BusinessCardNote({
     @JsonKey(name: "id") int? id,
+    @JsonKey(name: "tenant_id") int? tenantId,
+    @JsonKey(name: "business_card_id") int? businessCardId,
     @JsonKey(name: "note") String? note,
-    @JsonKey(name: "created_at") DateTime? createdAt,
-    @JsonKey(name: "updated_at") DateTime? updatedAt,
-  }) = _Note;
+    @JsonKey(name: "created_at") String? createdAt,
+    @JsonKey(name: "updated_at") String? updatedAt,
+  }) = _BusinessCardNote;
 
-  factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
+  factory BusinessCardNote.fromJson(Map<String, dynamic> json) =>
+      _$BusinessCardNoteFromJson(json);
 }
 
-extension ContactsDataSafeFields on ContactsData {
+extension BusinessCardListItemSafeFields on BusinessCardListItem {
+  String? _normalizedText(String? value) {
+    final trimmed = value?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return null;
+    }
+    return trimmed;
+  }
+
+  String? get companyValue => _normalizedText(companyName);
+  String? get sectorValue => _normalizedText(sector);
+  String? get emailValue => _normalizedText(email);
+  String? get phoneValue => _normalizedText(phone);
+  String? get primaryContactValue => _normalizedText(primaryContact);
+
+  String get name => primaryContactValue ?? 'Isim bulunamadi';
+  String get company => companyValue ?? 'Firma adi bulunamadi';
+  String get sectorText => sectorValue ?? 'Sektor bulunamadi';
+
+  String get companySummary {
+    final company = companyValue;
+    final contact = primaryContactValue;
+    final summaryParts = <String>[
+      if (company != null) company,
+      if (contact != null) contact,
+    ];
+
+    if (summaryParts.isEmpty) {
+      return 'Firma bilgisi bulunamadi';
+    }
+
+    return summaryParts.join(' - ');
+  }
+
+  List<String> get searchableValues {
+    final company = companyValue;
+    final email = emailValue;
+    final phone = phoneValue;
+    final sector = sectorValue;
+    final contact = primaryContactValue;
+
+    return [
+      if (company != null) company,
+      if (email != null) email,
+      if (phone != null) phone,
+      if (sector != null) sector,
+      if (contact != null) contact,
+    ];
+  }
+}
+
+extension BusinessCardDetailDataSafeFields on BusinessCardDetailData {
   String? _normalizedText(String? value) {
     final trimmed = value?.trim();
     if (trimmed == null || trimmed.isEmpty) {
@@ -115,6 +218,12 @@ extension ContactsDataSafeFields on ContactsData {
   String _firstWithFallback(List<String>? values, String fallbackMessage) {
     return _firstValue(values) ?? fallbackMessage;
   }
+
+  List<String> get businessCardImages =>
+      (cards ?? const [])
+          .map((card) => card.url?.trim() ?? '')
+          .where((url) => url.isNotEmpty)
+          .toList();
 
   String? get companyValue => _normalizedText(companyName);
   String? get positionValue => _firstValue(unvan);

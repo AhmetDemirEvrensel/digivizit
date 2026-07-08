@@ -1,5 +1,5 @@
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
-import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
+import 'package:digivizit/core/models/personel/profile_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/home/view/contacts_view.dart';
 import 'package:digivizit/features/home/view/home_view.dart';
@@ -9,11 +9,11 @@ import 'package:digivizit/shared/components/navigation/custom_bottom_nav_bar.dar
 import 'package:flutter/material.dart';
 
 class MainNavigationView extends StatefulWidget {
-  final GetPersonelInfoResponse personelInfo;
-  final ContactsResponse contactsResponse;
+  final ProfileResponse profile;
+  final BusinessCardListResponse contactsResponse;
   const MainNavigationView({
     super.key,
-    required this.personelInfo,
+    required this.profile,
     required this.contactsResponse,
   });
 
@@ -23,7 +23,7 @@ class MainNavigationView extends StatefulWidget {
 
 class _MainNavigationViewState extends State<MainNavigationView> {
   int _currentIndex = 1; // Başlangıçta Kartvizit sayfası
-  late ContactsResponse _contactsResponse;
+  late BusinessCardListResponse _contactsResponse;
   final HomeViewModel _homeViewModel = HomeViewModel();
   bool _isRefreshingContacts = false;
 
@@ -36,7 +36,7 @@ class _MainNavigationViewState extends State<MainNavigationView> {
   }
 
   List<Widget> get _pages => [
-    HomeView(personelInfo: widget.personelInfo),
+    HomeView(profile: widget.profile),
     QrView(onContactsChanged: _refreshContacts),
     ContactsView(contactsResponse: _contactsResponse),
     /*

@@ -1,12 +1,37 @@
 import 'package:digivizit/core/constants/app_fonts.dart';
-import 'package:digivizit/core/models/appointment/appointment_response.dart'
-    as appointment_model;
+import 'package:digivizit/core/models/appointment/appointment_response.dart';
+import 'package:digivizit/core/providers/app_settings.dart';
+import 'package:digivizit/shared/components/bottom_sheet/custom_bottom_sheet_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MeetingRequestDetailView extends StatelessWidget {
-  final appointment_model.Datum appointment;
+class MeetingRequestDetailView extends StatefulWidget {
+  final AppointmentListItem appointment;
+  final Future<bool> Function(int id)? onApprove;
+  final Future<bool> Function(int id)? onReject;
+
+  const MeetingRequestDetailView({
+    super.key,
+    required this.appointment,
+    this.onApprove,
+    this.onReject,
+  });
+
+  @override
+  State<MeetingRequestDetailView> createState() =>
+      _MeetingRequestDetailViewState();
+}
+
+class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
+  late AppointmentListItem appointment;
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    appointment = widget.appointment;
+  }
 
   static const List<String> _monthNames = [
     '',
@@ -24,22 +49,21 @@ class MeetingRequestDetailView extends StatelessWidget {
     'Aralik',
   ];
 
-  const MeetingRequestDetailView({super.key, required this.appointment});
-
   @override
   Widget build(BuildContext context) {
+    final profileData = AppSettings.instance.profile?.data;
     final requesterName = appointment.fullName?.trim().isNotEmpty == true
         ? appointment.fullName!.trim()
         : 'Isimsiz Talep';
     final company = appointment.company?.trim().isNotEmpty == true
         ? appointment.company!.trim()
         : 'Sirket belirtilmedi';
-    final title = appointment.employee?.title?.trim().isNotEmpty == true
-        ? appointment.employee!.title!.trim()
-        : (appointment.employee?.department?.name?.trim().isNotEmpty == true
-              ? appointment.employee!.department!.name!.trim()
+    final title = profileData?.title?.trim().isNotEmpty == true
+        ? profileData!.title!.trim()
+        : (profileData?.department?.name?.trim().isNotEmpty == true
+              ? profileData!.department!.name!.trim()
               : 'Unvan belirtilmedi');
-    final statusText = _statusLabel(appointment.status);
+    final statusText = _statusLabel(appointment.status, appointment.statusLabel);
     final statusColor = _statusColor(appointment.status);
     final appointmentDateTime = _appointmentDateTime(appointment.preferredDate);
     final createdAt = _appointmentDateTime(appointment.createdAt);
@@ -49,10 +73,13 @@ class MeetingRequestDetailView extends StatelessWidget {
     final subject = appointment.subject?.trim().isNotEmpty == true
         ? appointment.subject!.trim()
         : 'Gorusme Talebi';
-    final email = appointment.employee?.email?.trim() ?? '';
-    final phone = appointment.employee?.phone?.trim() ?? '';
-    final department = appointment.employee?.department?.name?.trim() ?? '';
+    final email = profileData?.email?.trim() ?? '';
+    final phone = profileData?.phone?.trim() ?? '';
+    final department = profileData?.department?.name?.trim() ?? '';
     final timeTone = _meetingVisualTone(appointmentDateTime);
+    final photoUrl = profileData?.photoUrl?.trim() ?? '';
+    final canRespond = (appointment.status?.trim().toLowerCase() ==
+        'talep edildi');
 
     return Scaffold(
       backgroundColor: const Color(0xFF1C1C1E),
@@ -94,6 +121,7 @@ class MeetingRequestDetailView extends StatelessWidget {
                 department: department,
                 email: email,
                 phone: phone,
+                photoUrl: photoUrl,
                 statusText: statusText,
                 statusColor: statusColor,
                 timeTone: timeTone,
@@ -176,11 +204,109 @@ class MeetingRequestDetailView extends StatelessWidget {
               ],
               const SizedBox(height: 12),
               _buildNoteCard(note: note, timeTone: timeTone),
+              if (canRespond &&
+                  (widget.onApprove != null || widget.onReject != null)) ...[
+                const SizedBox(height: 20),
+                _buildResponseActions(),
+              ],
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildResponseActions() {
+    return Row(
+      children: [
+        if (widget.onReject != null)
+          Expanded(
+            child: _buildResponseButton(
+              label: 'Reddet',
+              icon: Icons.close_rounded,
+              color: const Color(0xFFFF453A),
+              onTap: () => _respond(isApprove: false),
+            ),
+          ),
+        if (widget.onReject != null && widget.onApprove != null)
+          const SizedBox(width: 12),
+        if (widget.onApprove != null)
+          Expanded(
+            child: _buildResponseButton(
+              label: 'Onayla',
+              icon: Icons.check_rounded,
+              color: const Color(0xFF34C759),
+              onTap: () => _respond(isApprove: true),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildResponseButton({
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: _isSubmitting ? null : onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        height: 52,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.16),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_isSubmitting)
+              SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: color),
+              )
+            else
+              Icon(icon, color: color, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: AppFonts.baseBold.copyWith(fontSize: 15, color: color),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _respond({required bool isApprove}) async {
+    final id = appointment.id;
+    if (id == null || _isSubmitting) return;
+
+    setState(() => _isSubmitting = true);
+
+    final callback = isApprove ? widget.onApprove : widget.onReject;
+    final success = await callback!(id);
+
+    if (!mounted) return;
+    setState(() => _isSubmitting = false);
+
+    if (success) {
+      setState(() {
+        appointment = appointment.copyWith(
+          status: isApprove ? 'planlandı' : 'reddedildi',
+          statusLabel: isApprove ? 'Planlandı' : 'Reddedildi',
+        );
+      });
+    } else {
+      CustomBottomSheet.errorView(
+        text: isApprove
+            ? 'Talep onaylanamadi.'
+            : 'Talep reddedilemedi.',
+      );
+    }
   }
 
   Widget _buildHeroCard({
@@ -190,6 +316,7 @@ class MeetingRequestDetailView extends StatelessWidget {
     required String department,
     required String email,
     required String phone,
+    required String photoUrl,
     required String statusText,
     required Color statusColor,
     required _MeetingVisualTone timeTone,
@@ -243,7 +370,9 @@ class MeetingRequestDetailView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 18),
-          Center(child: _buildProfileAvatar(requesterName, timeTone)),
+          Center(
+            child: _buildProfileAvatar(requesterName, photoUrl, timeTone),
+          ),
           const SizedBox(height: 16),
           Text(
             requesterName,
@@ -305,9 +434,9 @@ class MeetingRequestDetailView extends StatelessWidget {
 
   Widget _buildProfileAvatar(
     String requesterName,
+    String photoUrl,
     _MeetingVisualTone timeTone,
   ) {
-    final photoUrl = appointment.employee?.photo?.originalUrl?.trim() ?? '';
     final avatar = photoUrl.isNotEmpty
         ? ClipOval(
             child: Image.network(
@@ -721,28 +850,23 @@ class MeetingRequestDetailView extends StatelessWidget {
     return DateFormat('HH:mm').format(dateTime);
   }
 
-  String _statusLabel(String? status) {
-    final normalized = status?.trim().toLowerCase() ?? '';
-    switch (normalized) {
-      case 'approved':
-        return 'Onaylandi';
-      case 'pending':
-        return 'Bekliyor';
-      case 'rejected':
-        return 'Reddedildi';
-      default:
-        return status?.trim().isNotEmpty == true ? status!.trim() : 'Belirsiz';
+  String _statusLabel(String? status, String? statusLabel) {
+    if (statusLabel?.trim().isNotEmpty ?? false) {
+      return statusLabel!.trim();
     }
+    return status?.trim().isNotEmpty == true ? status!.trim() : 'Belirsiz';
   }
 
   Color _statusColor(String? status) {
     final normalized = status?.trim().toLowerCase() ?? '';
     switch (normalized) {
-      case 'approved':
+      case 'planlandı':
+      case 'planlandi':
         return const Color(0xFF34C759);
-      case 'pending':
+      case 'talep edildi':
         return const Color(0xFFFF9500);
-      case 'rejected':
+      case 'reddedildi':
+      case 'iptal edildi':
         return const Color(0xFFFF453A);
       default:
         return const Color(0xFF8E8E93);

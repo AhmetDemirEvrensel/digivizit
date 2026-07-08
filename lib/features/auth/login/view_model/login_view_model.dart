@@ -66,13 +66,13 @@ abstract class LoginViewModelBase with Store {
         );
 
         final homeViewModel = HomeViewModel();
-        await homeViewModel.getPersonelInfo();
-        await homeViewModel.getContactsInfo(email, password);
-        final personelInfo = homeViewModel.getPersonelInfoResponse;
+        await homeViewModel.getProfile();
+        await homeViewModel.getContactsInfo();
+        final profile = homeViewModel.profileResponse;
         final contactsInfo = homeViewModel.getContactsResponse;
 
         await NavigationEnums.mainNavigation.navigateToPageReplacement(
-          data: personelInfo,
+          data: profile,
           data2: contactsInfo,
         );
       } else {

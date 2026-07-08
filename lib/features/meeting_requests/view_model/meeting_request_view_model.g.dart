@@ -15,26 +15,40 @@ mixin _$MeetingRequestViewModel on MeetingRequestViewModelBase, Store {
   );
 
   @override
-  AppointmentResponse? get appointments {
+  AppointmentListResponse? get appointments {
     _$appointmentsAtom.reportRead();
     return super.appointments;
   }
 
   @override
-  set appointments(AppointmentResponse? value) {
+  set appointments(AppointmentListResponse? value) {
     _$appointmentsAtom.reportWrite(value, super.appointments, () {
       super.appointments = value;
     });
   }
 
-  late final _$getAppointmentsAsyncAction = AsyncAction(
-    'MeetingRequestViewModelBase.getAppointments',
+  late final _$getAppointmentRequestsAsyncAction = AsyncAction(
+    'MeetingRequestViewModelBase.getAppointmentRequests',
     context: context,
   );
 
   @override
-  Future<void> getAppointments() {
-    return _$getAppointmentsAsyncAction.run(() => super.getAppointments());
+  Future<void> getAppointmentRequests() {
+    return _$getAppointmentRequestsAsyncAction.run(
+      () => super.getAppointmentRequests(),
+    );
+  }
+
+  late final _$loadMoreAppointmentsAsyncAction = AsyncAction(
+    'MeetingRequestViewModelBase.loadMoreAppointments',
+    context: context,
+  );
+
+  @override
+  Future<void> loadMoreAppointments() {
+    return _$loadMoreAppointmentsAsyncAction.run(
+      () => super.loadMoreAppointments(),
+    );
   }
 
   @override

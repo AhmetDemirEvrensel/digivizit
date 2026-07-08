@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ContactsView extends StatefulWidget {
-  final ContactsResponse contactsResponse;
+  final BusinessCardListResponse contactsResponse;
   const ContactsView({super.key, required this.contactsResponse});
 
   @override
@@ -25,12 +25,16 @@ class _ContactsViewState extends State<ContactsView>
   String _searchQuery = '';
   String _selectedFilter = 'All';
   final HomeViewModel _homeViewModel = HomeViewModel();
+  final ScrollController _scrollController = ScrollController();
+  late BusinessCardListResponse _contactsResponse;
 
   Color _topColor = AppColors.info900;
   Color _bottomColor = AppColors.info950;
   @override
   void initState() {
     super.initState();
+    _contactsResponse = widget.contactsResponse;
+    _homeViewModel.getContactsResponse = _contactsResponse;
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -39,9 +43,9 @@ class _ContactsViewState extends State<ContactsView>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    final savedPersonelInfo = AppSettings.instance.personelInfo;
-    if (savedPersonelInfo != null) {
-      _homeViewModel.setInitialPersonelInfo(savedPersonelInfo);
+    final savedProfile = AppSettings.instance.profile;
+    if (savedProfile != null) {
+      _homeViewModel.setInitialProfile(savedProfile);
     }
 
     _homeViewModel
@@ -58,17 +62,49 @@ class _ContactsViewState extends State<ContactsView>
           });
         });
     _animationController.forward();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final threshold = _scrollController.position.maxScrollExtent - 200;
+    if (_scrollController.position.pixels >= threshold) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _refreshAfterDetailChange() async {
+    final refreshed = await _homeViewModel.refreshContactsInfo(
+      showLoader: false,
+    );
+    if (mounted && refreshed != null) {
+      setState(() {
+        _contactsResponse = refreshed;
+      });
+    }
+  }
+
+  Future<void> _loadMore() async {
+    await _homeViewModel.loadMoreContacts();
+    final updated = _homeViewModel.getContactsResponse;
+    if (mounted && updated != null) {
+      setState(() {
+        _contactsResponse = updated;
+      });
+    }
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final contacts = widget.contactsResponse.data ?? const <ContactsData>[];
+    final contacts =
+        _contactsResponse.data?.items ?? const <BusinessCardListItem>[];
     final filters = _buildSectorFilters(contacts);
     final normalizedQuery = _searchQuery.trim().toLowerCase();
     final filteredContacts = contacts.where((contact) {
@@ -132,19 +168,25 @@ class _ContactsViewState extends State<ContactsView>
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.7,
                   child: ListView.builder(
+                    controller: _scrollController,
                     padding: EdgeInsets.zero,
-                    itemCount: filteredContacts.length,
+                    itemCount:
+                        filteredContacts.length +
+                        (_homeViewModel.isLoadingMoreContacts ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index >= filteredContacts.length) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        );
+                      }
                       final contact = filteredContacts[index];
                       return _buildContactCard(contact);
                     },
                   ),
                 ),
-
-              /* // Kişi Listesi
-              ..._filteredContacts
-                  .map((contact) => _buildContactCard(contact))
-                  .toList(), */
 
               // Alt boşluk (bottom nav için)
               FigmaBox(height: 100),
@@ -202,7 +244,7 @@ class _ContactsViewState extends State<ContactsView>
     );
   }
 
-  List<String> _buildSectorFilters(List<ContactsData> contacts) {
+  List<String> _buildSectorFilters(List<BusinessCardListItem> contacts) {
     final uniqueSectors = <String>[];
     final seenSectors = <String>{};
 
@@ -283,16 +325,19 @@ class _ContactsViewState extends State<ContactsView>
     );
   }
 
-  Widget _buildContactCard(ContactsData contact) {
+  Widget _buildContactCard(BusinessCardListItem contact) {
     final name = contact.name;
-    final position = contact.position;
+    final sector = contact.sectorText;
 
     return GestureDetector(
-      onTap: () {
-        Get.toNamed(
+      onTap: () async {
+        final changed = await Get.toNamed(
           NavigationEnums.contactDetail.rawValue,
           arguments: NavigationArgs(data: contact),
         );
+        if (changed == true) {
+          await _refreshAfterDetailChange();
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -320,20 +365,15 @@ class _ContactsViewState extends State<ContactsView>
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(14),
-                child: Image.network(
-                  "https://via.placeholder.com/150",
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Color(0xFF1E3A8A),
-                      child: Icon(
-                        Icons.person,
-                        color: AppColors.baseWhite,
-                        size: 30,
-                      ),
-                    );
-                  },
-                ),
+                child: (contact.thumbnail?.trim().isNotEmpty ?? false)
+                    ? Image.network(
+                        contact.thumbnail!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _contactAvatarFallback();
+                        },
+                      )
+                    : _contactAvatarFallback(),
               ),
             ),
             const SizedBox(width: 16),
@@ -361,9 +401,9 @@ class _ContactsViewState extends State<ContactsView>
                     ),
                   ),
                   const SizedBox(height: 2),
-                  // Pozisyon
+                  // Sektör
                   Text(
-                    position,
+                    sector,
                     style: AppFonts.baseRegular.copyWith(
                       fontSize: 12,
                       color: AppColors.baseWhite.withValues(alpha: 0.6),
@@ -371,33 +411,8 @@ class _ContactsViewState extends State<ContactsView>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
-                  // Etiketler
-                  /* Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: List.generate(
-                      contact.tags.length,
-                      (index) => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: contact.tagColors[index].withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: contact.tagColors[index].withValues(alpha: 0.3), width: 1),
-                        ),
-                        child: Text(contact.tags[index], style: AppFonts.baseSemibold.copyWith(fontSize: 11, color: contact.tagColors[index])),
-                      ),
-                    ),
-                  ), */
                 ],
               ),
-            ),
-
-            // Aksiyon Butonları
-            _buildActionButton(
-              icon: Icons.save_alt,
-              color: Color(0xFF10B981),
-              onTap: () {},
             ),
           ],
         ),
@@ -405,23 +420,10 @@ class _ContactsViewState extends State<ContactsView>
     );
   }
 
-  Widget _buildActionButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
-        ),
-        child: Icon(icon, color: color, size: 20),
-      ),
+  Widget _contactAvatarFallback() {
+    return Container(
+      color: Color(0xFF1E3A8A),
+      child: Icon(Icons.person, color: AppColors.baseWhite, size: 30),
     );
   }
 }

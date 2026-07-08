@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:digivizit/core/models/appointment/appointment_response.dart'
     as appointment_model;
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
-import 'package:digivizit/core/models/personel/get_personel_info_response.dart';
+import 'package:digivizit/core/models/personel/profile_response.dart';
 import 'package:digivizit/core/navigation/navigation_args.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
@@ -52,9 +52,7 @@ class NavigationRoute {
 
       case NavigationEnums.home:
         return _buildRoute(
-          widget: HomeView(
-            personelInfo: navArgs?.data as GetPersonelInfoResponse,
-          ),
+          widget: HomeView(profile: navArgs?.data as ProfileResponse),
           screenEnum: NavigationEnums.home,
           navArgs: navArgs,
         );
@@ -62,8 +60,8 @@ class NavigationRoute {
       case NavigationEnums.mainNavigation:
         return _buildRoute(
           widget: MainNavigationView(
-            personelInfo: navArgs?.data as GetPersonelInfoResponse,
-            contactsResponse: navArgs?.data2 as ContactsResponse,
+            profile: navArgs?.data as ProfileResponse,
+            contactsResponse: navArgs?.data2 as BusinessCardListResponse,
           ),
           screenEnum: NavigationEnums.mainNavigation,
           navArgs: navArgs,
@@ -72,7 +70,7 @@ class NavigationRoute {
       case NavigationEnums.cardsList:
         return _buildRoute(
           widget: ContactsView(
-            contactsResponse: navArgs?.data as ContactsResponse,
+            contactsResponse: navArgs?.data as BusinessCardListResponse,
           ),
           screenEnum: NavigationEnums.cardsList,
           navArgs: navArgs,
@@ -80,7 +78,9 @@ class NavigationRoute {
 
       case NavigationEnums.contactDetail:
         return _buildRoute(
-          widget: ContactDetailView(contact: navArgs?.data as ContactsData),
+          widget: ContactDetailView(
+            contact: navArgs?.data as BusinessCardListItem,
+          ),
           screenEnum: NavigationEnums.contactDetail,
           navArgs: navArgs,
         );
@@ -89,7 +89,7 @@ class NavigationRoute {
         return _buildRoute(
           widget: MeetingRequestsView(
             appointmentsResponse:
-                navArgs?.data as appointment_model.AppointmentResponse,
+                navArgs?.data as appointment_model.AppointmentListResponse,
           ),
           screenEnum: NavigationEnums.meetingRequest,
           navArgs: navArgs,
