@@ -139,14 +139,56 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Görsel Seçimi',
-            style: AppFonts.lgBold.withColor(AppColors.ink),
-          ),
-          FigmaBox(height: 8),
-          Text(
-            'Kartvizit görselini seçmek için aşağıdaki seçeneklerden birini kullanabilirsiniz.',
-            style: AppFonts.baseRegular.copyWith(color: AppColors.inkSoft),
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.primary100,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.add_photo_alternate_rounded,
+                  color: AppColors.primary600,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Kartviziti Ekleyin',
+                      style: AppFonts.lgBold.withColor(AppColors.ink),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Kamera veya galeriyi kullanın',
+                      style: AppFonts.smRegular.withColor(AppColors.inkSoft),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primary50,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  '1. ADIM',
+                  style: AppFonts.xsBold.copyWith(
+                    color: AppColors.primary600,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ],
           ),
           FigmaBox(height: 18),
           Row(
@@ -155,6 +197,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                 child: _buildActionButton(
                   icon: Icons.photo_camera_outlined,
                   label: 'Fotoğraf Çek',
+                  description: 'Kamerayı aç',
                   onTap: () => _pickImage(ImageSource.camera),
                 ),
               ),
@@ -163,40 +206,11 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                 child: _buildActionButton(
                   icon: Icons.photo_library_outlined,
                   label: 'Galeriden Seç',
+                  description: 'Cihazdan yükle',
                   onTap: () => _pickImage(ImageSource.gallery),
                 ),
               ),
             ],
-          ),
-          FigmaBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _isUploading || _isPickingImage
-                  ? null
-                  : _sendOcrRequest,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary500,
-                foregroundColor: AppColors.baseWhite,
-                disabledBackgroundColor: AppColors.surfaceAlt,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
-              icon: _isUploading
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.cloud_upload_outlined),
-              label: Text(
-                _isUploading ? 'Yükleniyor...' : 'Kartviziti Tara',
-                style: AppFonts.base2Bold.copyWith(color: AppColors.baseWhite),
-              ),
-            ),
           ),
         ],
       ),
@@ -206,26 +220,57 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
   Widget _buildActionButton({
     required IconData icon,
     required String label,
+    required String description,
     required VoidCallback onTap,
   }) {
     return InkWell(
       onTap: _isPickingImage || _isUploading ? null : onTap,
       borderRadius: BorderRadius.circular(18),
       child: Ink(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.surfaceAlt.withValues(alpha: 0.72),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: AppColors.hairline),
         ),
-        child: Column(
+        child: Row(
           children: [
-            Icon(icon, color: AppColors.primary600, size: 28),
-            FigmaBox(height: 10),
-            Text(
-              label,
-              style: AppFonts.baseSemibold.withColor(AppColors.ink),
-              textAlign: TextAlign.center,
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.baseWhite,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary500.withValues(alpha: 0.10),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(icon, color: AppColors.primary600, size: 21),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppFonts.smSemibold.withColor(AppColors.ink),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    description,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppFonts.xsRegular.withColor(AppColors.inkSoft),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -241,45 +286,239 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Seçilen Görsel',
-            style: AppFonts.lgBold.withColor(AppColors.ink),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Görsel Önizleme',
+                      style: AppFonts.lgBold.withColor(AppColors.ink),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Kartvizitin tamamının göründüğünden emin olun',
+                      style: AppFonts.smRegular.withColor(AppColors.inkSoft),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: _selectedImage == null
+                      ? AppColors.surfaceAlt
+                      : AppColors.positive50,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _selectedImage == null
+                          ? Icons.hourglass_empty_rounded
+                          : Icons.check_circle_rounded,
+                      size: 14,
+                      color: _selectedImage == null
+                          ? AppColors.inkFaint
+                          : AppColors.positive600,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      _selectedImage == null ? 'Bekleniyor' : 'Hazır',
+                      style: AppFonts.xsSemibold.withColor(
+                        _selectedImage == null
+                            ? AppColors.inkSoft
+                            : AppColors.positive700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           FigmaBox(height: 16),
           if (_selectedImage == null)
             Container(
               width: double.infinity,
-              height: 220,
+              height: 156,
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFFF8FAFC), Color(0xFFEFF6FF)],
+                ),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.hairline),
+                border: Border.all(color: AppColors.primary100),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.credit_card, size: 54, color: AppColors.inkFaint),
-                  FigmaBox(height: 12),
-                  Text(
-                    'Henüz bir kartvizit seçilmedi.',
-                    style: AppFonts.baseRegular.copyWith(
-                      color: AppColors.inkSoft,
+                  Container(
+                    width: 54,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: AppColors.baseWhite,
+                      borderRadius: BorderRadius.circular(17),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary500.withValues(alpha: 0.12),
+                          blurRadius: 18,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
                     ),
+                    child: const Icon(
+                      Icons.credit_card_rounded,
+                      size: 28,
+                      color: AppColors.primary500,
+                    ),
+                  ),
+                  FigmaBox(height: 10),
+                  Text(
+                    'Henüz görsel seçilmedi',
+                    style: AppFonts.baseSemibold.withColor(AppColors.inkSoft),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Yukarıdaki seçeneklerden birini kullanın',
+                    style: AppFonts.xsRegular.withColor(AppColors.inkFaint),
                   ),
                 ],
               ),
             )
           else
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: AspectRatio(
-                aspectRatio: 4 / 3,
-                child: Image.file(_selectedImage!, fit: BoxFit.cover),
-              ),
+            Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceAlt,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.primary100),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: AspectRatio(
+                    aspectRatio: 16 / 10,
+                    child: Image.file(_selectedImage!, fit: BoxFit.contain),
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Material(
+                    color: AppColors.baseWhite,
+                    borderRadius: BorderRadius.circular(12),
+                    elevation: 3,
+                    child: InkWell(
+                      onTap: _isUploading ? null : _removeSelectedImage,
+                      borderRadius: BorderRadius.circular(12),
+                      child: const SizedBox(
+                        width: 38,
+                        height: 38,
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 20,
+                          color: AppColors.inkSoft,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
+          FigmaBox(height: 16),
+          _buildScanButton(),
         ],
       ),
     );
+  }
+
+  Widget _buildScanButton() {
+    final hasSelectedImage = _selectedImage != null;
+    final isEnabled = hasSelectedImage && !_isUploading && !_isPickingImage;
+
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(18),
+      child: Ink(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: hasSelectedImage
+              ? const LinearGradient(
+                  colors: [AppColors.primary600, AppColors.primary400],
+                )
+              : null,
+          color: hasSelectedImage ? null : AppColors.surfaceAlt,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: hasSelectedImage
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary500.withValues(alpha: 0.24),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ]
+              : null,
+        ),
+        child: InkWell(
+          onTap: isEnabled ? _sendOcrRequest : null,
+          borderRadius: BorderRadius.circular(18),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (_isUploading)
+                  const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.baseWhite,
+                    ),
+                  )
+                else
+                  Icon(
+                    _selectedImage == null
+                        ? Icons.document_scanner_outlined
+                        : Icons.auto_awesome_rounded,
+                    color: hasSelectedImage
+                        ? AppColors.baseWhite
+                        : AppColors.inkFaint,
+                    size: 20,
+                  ),
+                const SizedBox(width: 9),
+                Text(
+                  _isUploading
+                      ? 'Kartvizit Taranıyor...'
+                      : _selectedImage == null
+                      ? 'Önce bir görsel seçin'
+                      : 'Kartviziti Tara',
+                  style: AppFonts.base2Bold.copyWith(
+                    color: hasSelectedImage
+                        ? AppColors.baseWhite
+                        : AppColors.inkFaint,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _removeSelectedImage() {
+    setState(() {
+      _selectedImage = null;
+      _scanResponse = null;
+    });
   }
 
   Widget _buildResultForm() {

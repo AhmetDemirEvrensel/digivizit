@@ -226,6 +226,7 @@ class _ContactsViewState extends State<ContactsView> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeOut,
+      height: 52,
       padding: const EdgeInsets.symmetric(horizontal: 18),
       decoration: BoxDecoration(
         color: AppColors.baseWhite,
@@ -262,13 +263,19 @@ class _ContactsViewState extends State<ContactsView> {
               },
               style: AppFonts.base2Regular.withColor(_ink),
               decoration: InputDecoration(
+                filled: false,
                 hintText: 'İsim, firma veya sektör ara...',
                 hintStyle: AppFonts.base2Regular.withColor(
                   _inkSoft.withValues(alpha: 0.7),
                 ),
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                contentPadding: EdgeInsets.zero,
               ),
             ),
           ),
@@ -313,7 +320,7 @@ class _ContactsViewState extends State<ContactsView> {
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
-                curve: Curves.easeOutBack,
+                curve: Curves.easeOutCubic,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 9,
@@ -326,15 +333,15 @@ class _ContactsViewState extends State<ContactsView> {
                   border: Border.all(
                     color: isSelected ? AppColors.primary500 : _hairline,
                   ),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: AppColors.primary500.withValues(alpha: 0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                      : null,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary500.withValues(
+                        alpha: isSelected ? 0.3 : 0,
+                      ),
+                      blurRadius: isSelected ? 12 : 0,
+                      offset: Offset(0, isSelected ? 4 : 0),
+                    ),
+                  ],
                 ),
                 child: Text(
                   label,

@@ -606,7 +606,7 @@ $PageMetaCopyWith<$Res>? get meta {
 /// @nodoc
 mixin _$AppointmentListItem {
 
-@JsonKey(name: "id") int? get id;@JsonKey(name: "full_name") String? get fullName;@JsonKey(name: "company") String? get company;@JsonKey(name: "subject") String? get subject;@JsonKey(name: "note") String? get note;@JsonKey(name: "preferred_date") String? get preferredDate;@JsonKey(name: "status") String? get status;@JsonKey(name: "status_label") String? get statusLabel;@JsonKey(name: "created_at") String? get createdAt;
+@JsonKey(name: "id") int? get id;@JsonKey(name: "full_name") String? get fullName;@JsonKey(name: "email") String? get email;@JsonKey(name: "phone") String? get phone;@JsonKey(name: "company") String? get company;@JsonKey(name: "subject") String? get subject;@JsonKey(name: "note") String? get note;@JsonKey(name: "preferred_date") String? get preferredDate;@JsonKey(name: "status") String? get status;@JsonKey(name: "status_label") String? get statusLabel;@JsonKey(name: "created_at") String? get createdAt;
 /// Create a copy of AppointmentListItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -619,16 +619,16 @@ $AppointmentListItemCopyWith<AppointmentListItem> get copyWith => _$AppointmentL
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppointmentListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.company, company) || other.company == company)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.note, note) || other.note == note)&&(identical(other.preferredDate, preferredDate) || other.preferredDate == preferredDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppointmentListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.company, company) || other.company == company)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.note, note) || other.note == note)&&(identical(other.preferredDate, preferredDate) || other.preferredDate == preferredDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fullName,company,subject,note,preferredDate,status,statusLabel,createdAt);
+int get hashCode => Object.hash(runtimeType,id,fullName,email,phone,company,subject,note,preferredDate,status,statusLabel,createdAt);
 
 @override
 String toString() {
-  return 'AppointmentListItem(id: $id, fullName: $fullName, company: $company, subject: $subject, note: $note, preferredDate: $preferredDate, status: $status, statusLabel: $statusLabel, createdAt: $createdAt)';
+  return 'AppointmentListItem(id: $id, fullName: $fullName, email: $email, phone: $phone, company: $company, subject: $subject, note: $note, preferredDate: $preferredDate, status: $status, statusLabel: $statusLabel, createdAt: $createdAt)';
 }
 
 
@@ -639,7 +639,7 @@ abstract mixin class $AppointmentListItemCopyWith<$Res>  {
   factory $AppointmentListItemCopyWith(AppointmentListItem value, $Res Function(AppointmentListItem) _then) = _$AppointmentListItemCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "full_name") String? fullName,@JsonKey(name: "company") String? company,@JsonKey(name: "subject") String? subject,@JsonKey(name: "note") String? note,@JsonKey(name: "preferred_date") String? preferredDate,@JsonKey(name: "status") String? status,@JsonKey(name: "status_label") String? statusLabel,@JsonKey(name: "created_at") String? createdAt
+@JsonKey(name: "id") int? id,@JsonKey(name: "full_name") String? fullName,@JsonKey(name: "email") String? email,@JsonKey(name: "phone") String? phone,@JsonKey(name: "company") String? company,@JsonKey(name: "subject") String? subject,@JsonKey(name: "note") String? note,@JsonKey(name: "preferred_date") String? preferredDate,@JsonKey(name: "status") String? status,@JsonKey(name: "status_label") String? statusLabel,@JsonKey(name: "created_at") String? createdAt
 });
 
 
@@ -656,10 +656,12 @@ class _$AppointmentListItemCopyWithImpl<$Res>
 
 /// Create a copy of AppointmentListItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? fullName = freezed,Object? company = freezed,Object? subject = freezed,Object? note = freezed,Object? preferredDate = freezed,Object? status = freezed,Object? statusLabel = freezed,Object? createdAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? fullName = freezed,Object? email = freezed,Object? phone = freezed,Object? company = freezed,Object? subject = freezed,Object? note = freezed,Object? preferredDate = freezed,Object? status = freezed,Object? statusLabel = freezed,Object? createdAt = freezed,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,fullName: freezed == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
+as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,company: freezed == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String?,subject: freezed == subject ? _self.subject : subject // ignore: cast_nullable_to_non_nullable
 as String?,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
@@ -752,10 +754,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "status_label")  String? statusLabel, @JsonKey(name: "created_at")  String? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "email")  String? email, @JsonKey(name: "phone")  String? phone, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "status_label")  String? statusLabel, @JsonKey(name: "created_at")  String? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppointmentListItem() when $default != null:
-return $default(_that.id,_that.fullName,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.statusLabel,_that.createdAt);case _:
+return $default(_that.id,_that.fullName,_that.email,_that.phone,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.statusLabel,_that.createdAt);case _:
   return orElse();
 
 }
@@ -773,10 +775,10 @@ return $default(_that.id,_that.fullName,_that.company,_that.subject,_that.note,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "status_label")  String? statusLabel, @JsonKey(name: "created_at")  String? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "email")  String? email, @JsonKey(name: "phone")  String? phone, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "status_label")  String? statusLabel, @JsonKey(name: "created_at")  String? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _AppointmentListItem():
-return $default(_that.id,_that.fullName,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.statusLabel,_that.createdAt);case _:
+return $default(_that.id,_that.fullName,_that.email,_that.phone,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.statusLabel,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -793,10 +795,10 @@ return $default(_that.id,_that.fullName,_that.company,_that.subject,_that.note,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "status_label")  String? statusLabel, @JsonKey(name: "created_at")  String? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "full_name")  String? fullName, @JsonKey(name: "email")  String? email, @JsonKey(name: "phone")  String? phone, @JsonKey(name: "company")  String? company, @JsonKey(name: "subject")  String? subject, @JsonKey(name: "note")  String? note, @JsonKey(name: "preferred_date")  String? preferredDate, @JsonKey(name: "status")  String? status, @JsonKey(name: "status_label")  String? statusLabel, @JsonKey(name: "created_at")  String? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _AppointmentListItem() when $default != null:
-return $default(_that.id,_that.fullName,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.statusLabel,_that.createdAt);case _:
+return $default(_that.id,_that.fullName,_that.email,_that.phone,_that.company,_that.subject,_that.note,_that.preferredDate,_that.status,_that.statusLabel,_that.createdAt);case _:
   return null;
 
 }
@@ -808,11 +810,13 @@ return $default(_that.id,_that.fullName,_that.company,_that.subject,_that.note,_
 @JsonSerializable()
 
 class _AppointmentListItem implements AppointmentListItem {
-  const _AppointmentListItem({@JsonKey(name: "id") this.id, @JsonKey(name: "full_name") this.fullName, @JsonKey(name: "company") this.company, @JsonKey(name: "subject") this.subject, @JsonKey(name: "note") this.note, @JsonKey(name: "preferred_date") this.preferredDate, @JsonKey(name: "status") this.status, @JsonKey(name: "status_label") this.statusLabel, @JsonKey(name: "created_at") this.createdAt});
+  const _AppointmentListItem({@JsonKey(name: "id") this.id, @JsonKey(name: "full_name") this.fullName, @JsonKey(name: "email") this.email, @JsonKey(name: "phone") this.phone, @JsonKey(name: "company") this.company, @JsonKey(name: "subject") this.subject, @JsonKey(name: "note") this.note, @JsonKey(name: "preferred_date") this.preferredDate, @JsonKey(name: "status") this.status, @JsonKey(name: "status_label") this.statusLabel, @JsonKey(name: "created_at") this.createdAt});
   factory _AppointmentListItem.fromJson(Map<String, dynamic> json) => _$AppointmentListItemFromJson(json);
 
 @override@JsonKey(name: "id") final  int? id;
 @override@JsonKey(name: "full_name") final  String? fullName;
+@override@JsonKey(name: "email") final  String? email;
+@override@JsonKey(name: "phone") final  String? phone;
 @override@JsonKey(name: "company") final  String? company;
 @override@JsonKey(name: "subject") final  String? subject;
 @override@JsonKey(name: "note") final  String? note;
@@ -834,16 +838,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppointmentListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.company, company) || other.company == company)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.note, note) || other.note == note)&&(identical(other.preferredDate, preferredDate) || other.preferredDate == preferredDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppointmentListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.company, company) || other.company == company)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.note, note) || other.note == note)&&(identical(other.preferredDate, preferredDate) || other.preferredDate == preferredDate)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fullName,company,subject,note,preferredDate,status,statusLabel,createdAt);
+int get hashCode => Object.hash(runtimeType,id,fullName,email,phone,company,subject,note,preferredDate,status,statusLabel,createdAt);
 
 @override
 String toString() {
-  return 'AppointmentListItem(id: $id, fullName: $fullName, company: $company, subject: $subject, note: $note, preferredDate: $preferredDate, status: $status, statusLabel: $statusLabel, createdAt: $createdAt)';
+  return 'AppointmentListItem(id: $id, fullName: $fullName, email: $email, phone: $phone, company: $company, subject: $subject, note: $note, preferredDate: $preferredDate, status: $status, statusLabel: $statusLabel, createdAt: $createdAt)';
 }
 
 
@@ -854,7 +858,7 @@ abstract mixin class _$AppointmentListItemCopyWith<$Res> implements $Appointment
   factory _$AppointmentListItemCopyWith(_AppointmentListItem value, $Res Function(_AppointmentListItem) _then) = __$AppointmentListItemCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "full_name") String? fullName,@JsonKey(name: "company") String? company,@JsonKey(name: "subject") String? subject,@JsonKey(name: "note") String? note,@JsonKey(name: "preferred_date") String? preferredDate,@JsonKey(name: "status") String? status,@JsonKey(name: "status_label") String? statusLabel,@JsonKey(name: "created_at") String? createdAt
+@JsonKey(name: "id") int? id,@JsonKey(name: "full_name") String? fullName,@JsonKey(name: "email") String? email,@JsonKey(name: "phone") String? phone,@JsonKey(name: "company") String? company,@JsonKey(name: "subject") String? subject,@JsonKey(name: "note") String? note,@JsonKey(name: "preferred_date") String? preferredDate,@JsonKey(name: "status") String? status,@JsonKey(name: "status_label") String? statusLabel,@JsonKey(name: "created_at") String? createdAt
 });
 
 
@@ -871,10 +875,12 @@ class __$AppointmentListItemCopyWithImpl<$Res>
 
 /// Create a copy of AppointmentListItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? fullName = freezed,Object? company = freezed,Object? subject = freezed,Object? note = freezed,Object? preferredDate = freezed,Object? status = freezed,Object? statusLabel = freezed,Object? createdAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? fullName = freezed,Object? email = freezed,Object? phone = freezed,Object? company = freezed,Object? subject = freezed,Object? note = freezed,Object? preferredDate = freezed,Object? status = freezed,Object? statusLabel = freezed,Object? createdAt = freezed,}) {
   return _then(_AppointmentListItem(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,fullName: freezed == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
+as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,company: freezed == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String?,subject: freezed == subject ? _self.subject : subject // ignore: cast_nullable_to_non_nullable
 as String?,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable

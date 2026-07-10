@@ -51,6 +51,8 @@ abstract class AppointmentListItem with _$AppointmentListItem {
   const factory AppointmentListItem({
     @JsonKey(name: "id") int? id,
     @JsonKey(name: "full_name") String? fullName,
+    @JsonKey(name: "email") String? email,
+    @JsonKey(name: "phone") String? phone,
     @JsonKey(name: "company") String? company,
     @JsonKey(name: "subject") String? subject,
     @JsonKey(name: "note") String? note,

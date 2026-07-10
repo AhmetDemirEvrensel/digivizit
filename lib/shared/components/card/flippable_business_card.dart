@@ -160,8 +160,7 @@ class _FlippableBusinessCardState extends State<FlippableBusinessCard>
                               const Color(0xFF64748B),
                             ),
                           ),
-                        const SizedBox(height: 14),
-                        _buildContactChips(),
+                        
                       ],
                     ),
                   ),

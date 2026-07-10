@@ -152,18 +152,18 @@ class _HomeViewState extends State<HomeView> {
     return Column(
       children: [
         _buildActionCard(
+          icon: Icons.calendar_month_rounded,
+          title: 'Görüşmeler',
+          subtitle: 'Görüşme taleplerini görüntüle',
+          onTap: () => meetingViewModel.getAppointmentRequests(),
+        ),
+        const SizedBox(height: 12),
+        _buildActionCard(
           icon: Icons.ios_share_rounded,
           title: 'Kartı Paylaş',
           subtitle: 'QR bağlantını hızlıca paylaş',
           onTap: _shareBusinessCardQr,
           isPrimary: true,
-        ),
-        const SizedBox(height: 12),
-        _buildActionCard(
-          icon: Icons.calendar_month_rounded,
-          title: 'Görüşmeler',
-          subtitle: 'Görüşme taleplerini görüntüle',
-          onTap: () => meetingViewModel.getAppointmentRequests(),
         ),
       ],
     );

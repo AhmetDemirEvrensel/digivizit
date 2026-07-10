@@ -32,6 +32,24 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
   void initState() {
     super.initState();
     appointment = widget.appointment;
+    _loadAppointmentDetail();
+  }
+
+  Future<void> _loadAppointmentDetail() async {
+    final id = appointment.id;
+    if (id == null) return;
+
+    final result = await AppSettings.instance.generalService
+        .getAppointmentRequest(id: id, showLoader: false);
+    if (!mounted || !result.isSuccess || result.data?.data == null) return;
+
+    final detail = result.data!.data!;
+    setState(() {
+      appointment = detail.copyWith(
+        email: detail.email ?? appointment.email,
+        phone: detail.phone ?? appointment.phone,
+      );
+    });
   }
 
   static const List<String> _monthNames = [
@@ -77,8 +95,8 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
     final subject = appointment.subject?.trim().isNotEmpty == true
         ? appointment.subject!.trim()
         : 'Gorusme Talebi';
-    final email = profileData?.email?.trim() ?? '';
-    final phone = profileData?.phone?.trim() ?? '';
+    final email = appointment.email?.trim() ?? '';
+    final phone = appointment.phone?.trim() ?? '';
     final department = profileData?.department?.name?.trim() ?? '';
     final timeTone = _meetingVisualTone(appointmentDateTime);
     final photoUrl = profileData?.photoUrl?.trim() ?? '';
@@ -191,7 +209,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
                   title: 'E-posta',
                   content: email,
                   accentColor: const Color(0xFF0A84FF),
-                  onTap: () => _launchUri(Uri.parse('mailto:$email')),
+                  onTap: () => _sendEmail(email),
                 ),
               ],
               if (phone.isNotEmpty) ...[
@@ -201,7 +219,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
                   title: 'Telefon',
                   content: phone,
                   accentColor: const Color(0xFF34C759),
-                  onTap: () => _launchUri(Uri(scheme: 'tel', path: phone)),
+                  onTap: () => _callPhone(phone),
                 ),
               ],
               const SizedBox(height: 12),
@@ -405,7 +423,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
                       icon: Icons.mail_outline_rounded,
                       label: 'E-posta',
                       color: const Color(0xFF0A84FF),
-                      onTap: () => _launchUri(Uri.parse('mailto:$email')),
+                      onTap: () => _sendEmail(email),
                     ),
                   ),
                 if (email.isNotEmpty && phone.isNotEmpty)
@@ -416,7 +434,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
                       icon: Icons.call_outlined,
                       label: 'Ara',
                       color: const Color(0xFF34C759),
-                      onTap: () => _launchUri(Uri(scheme: 'tel', path: phone)),
+                      onTap: () => _callPhone(phone),
                     ),
                   ),
               ],
@@ -882,8 +900,41 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
     return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 
-  Future<void> _launchUri(Uri uri) async {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  Future<void> _sendEmail(String email) async {
+    final normalizedEmail = email.trim();
+    if (normalizedEmail.isEmpty) return;
+
+    await _launchContactUri(
+      Uri(scheme: 'mailto', path: normalizedEmail),
+      errorMessage: 'E-posta uygulaması açılamadı.',
+    );
+  }
+
+  Future<void> _callPhone(String phone) async {
+    final normalizedPhone = phone.replaceAll(RegExp(r'[^0-9+]'), '');
+    if (normalizedPhone.isEmpty) return;
+
+    await _launchContactUri(
+      Uri(scheme: 'tel', path: normalizedPhone),
+      errorMessage: 'Telefon uygulaması açılamadı.',
+    );
+  }
+
+  Future<void> _launchContactUri(
+    Uri uri, {
+    required String errorMessage,
+  }) async {
+    try {
+      final didLaunch = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (didLaunch) return;
+    } catch (_) {
+      // Platform uygulamayı açamazsa kullanıcıya aşağıda bilgi verilir.
+    }
+
+    CustomBottomSheet.errorView(text: errorMessage);
   }
 }
 

@@ -42,6 +42,8 @@ _AppointmentListItem _$AppointmentListItemFromJson(Map<String, dynamic> json) =>
     _AppointmentListItem(
       id: (json['id'] as num?)?.toInt(),
       fullName: json['full_name'] as String?,
+      email: json['email'] as String?,
+      phone: json['phone'] as String?,
       company: json['company'] as String?,
       subject: json['subject'] as String?,
       note: json['note'] as String?,
@@ -56,6 +58,8 @@ Map<String, dynamic> _$AppointmentListItemToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'full_name': instance.fullName,
+  'email': instance.email,
+  'phone': instance.phone,
   'company': instance.company,
   'subject': instance.subject,
   'note': instance.note,

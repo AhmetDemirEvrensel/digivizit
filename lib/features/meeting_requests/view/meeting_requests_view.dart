@@ -766,133 +766,158 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
         ),
         margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          child: Row(
+          padding: const EdgeInsets.all(16),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: 78,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: timeTone.panelColor,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: timeTone.borderColor),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _formatTime(appointmentDateTime),
-                        style: AppFonts.baseBold.copyWith(
-                          fontSize: 17,
-                          color: timeTone.accentColor,
-                        ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: timeTone.panelColor,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: timeTone.borderColor),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      _initials(requesterName),
+                      style: AppFonts.baseBold.copyWith(
+                        fontSize: 14,
+                        color: timeTone.accentColor,
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        _formatDate(appointmentDateTime),
-                        style: AppFonts.baseRegular.copyWith(
-                          fontSize: 11,
-                          color: AppColors.inkSoft,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Container(
-                width: 3,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: timeTone.accentColor,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: timeTone.panelColor,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: timeTone.borderColor),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            _initials(requesterName),
-                            style: AppFonts.baseBold.copyWith(
-                              fontSize: 12,
-                              color: timeTone.accentColor,
-                            ),
+                        Text(
+                          subject,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppFonts.lgBold.copyWith(color: AppColors.ink),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          requesterName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppFonts.baseSemibold.copyWith(
+                            color: AppColors.secondary600,
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                subject,
-                                style: AppFonts.baseBold.copyWith(
-                                  fontSize: 15,
-                                  color: AppColors.ink,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                requesterName,
-                                style: AppFonts.baseSemibold.copyWith(
-                                  fontSize: 13,
-                                  color: AppColors.secondary600,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                company,
-                                style: AppFonts.baseRegular.copyWith(
-                                  fontSize: 12,
-                                  color: AppColors.inkFaint,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(height: 1),
+                        Text(
+                          company,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppFonts.smRegular.copyWith(
+                            color: AppColors.inkFaint,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
+                  ),
+                  const SizedBox(width: 8),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                      color: AppColors.inkFaint,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _buildMetaChip(
+                    label: statusText,
+                    color: statusColor,
+                    backgroundColor: statusColor.withValues(alpha: 0.14),
+                  ),
+                  if (department.isNotEmpty)
+                    _buildMetaChip(
+                      label: department,
+                      color: AppColors.secondary600,
+                      backgroundColor: AppColors.surfaceAlt,
+                      icon: Icons.business_center_outlined,
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 11,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceAlt,
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: AppColors.hairline),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: timeTone.panelColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.calendar_today_rounded,
+                        size: 18,
+                        color: timeTone.accentColor,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        _formatDate(appointmentDateTime),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppFonts.baseSemibold.copyWith(
+                          color: AppColors.ink,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        _buildMetaChip(
-                          label: timeTone.label,
-                          color: timeTone.accentColor,
-                          backgroundColor: timeTone.panelColor,
-                          icon: timeTone.icon,
-                        ),
-                        _buildMetaChip(
-                          label: statusText,
-                          color: statusColor,
-                          backgroundColor: statusColor.withValues(alpha: 0.18),
-                        ),
-                        if (department.isNotEmpty)
-                          _buildMetaChip(
-                            label: department,
-                            color: AppColors.secondary600,
-                            backgroundColor: AppColors.surfaceAlt,
+                        Text(
+                          _formatTime(appointmentDateTime),
+                          style: AppFonts.lgBold.copyWith(
+                            color: timeTone.accentColor,
                           ),
+                        ),
+                        const SizedBox(height: 1),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              timeTone.icon,
+                              size: 13,
+                              color: timeTone.accentColor,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              timeTone.label,
+                              style: AppFonts.xsSemibold.copyWith(
+                                color: timeTone.accentColor,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ],
