@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
+import 'package:digivizit/core/constants/app_colors.dart';
 
 class SliverHeader extends StatelessWidget {
   final String text;
@@ -22,6 +23,8 @@ class SliverHeader extends StatelessWidget {
       floating: false,
       pinned: true,
       elevation: 0,
+      backgroundColor: AppColors.surface,
+      surfaceTintColor: Colors.transparent,
       flexibleSpace: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           // AppBar'ın scroll durumunu hesapla
@@ -37,7 +40,7 @@ class SliverHeader extends StatelessWidget {
             title: AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),
               style: appSizer.style(
-                color: const Color(0xFF101828),
+                color: AppColors.ink,
                 fontSize: isCollapsed ? collapsedFontSize : expandedFontSize,
                 fontWeight: FontWeight.w700,
                 height: 1.5,

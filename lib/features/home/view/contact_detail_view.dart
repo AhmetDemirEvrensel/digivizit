@@ -1,6 +1,5 @@
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
-import 'package:digivizit/core/constants/global_initializer.dart';
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
@@ -10,6 +9,7 @@ import 'package:digivizit/shared/components/buttons/button_properties.dart';
 import 'package:digivizit/shared/components/containers/figma_box.dart';
 import 'package:digivizit/shared/components/containers/figma_container.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
@@ -347,6 +347,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
       child: BaseDesign(
         topColor: _topColor,
         bottomColor: _bottomColor,
+        backgroundWidget: _buildPageBackground(),
         children: [
           FadeTransition(
             opacity: _fadeAnimation,
@@ -357,25 +358,9 @@ class _ContactDetailViewState extends State<ContactDetailView>
                 children: [
                   FigmaBox(height: 75),
                   _buildHeaderRow(),
-                  FigmaBox(height: 24),
-
-                  Text(
-                    widget.contact.name,
-                    style: AppFonts.baseBold.copyWith(
-                      fontSize: 28,
-                      color: AppColors.ink,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  FigmaBox(height: 8),
-                  Text(
-                    widget.contact.company,
-                    style: AppFonts.baseRegular.copyWith(
-                      fontSize: 16,
-                      color: AppColors.inkSoft,
-                    ),
-                  ),
-                  FigmaBox(height: 16),
+                  FigmaBox(height: 20),
+                  _buildProfileHero(),
+                  FigmaBox(height: 20),
 
                   if (_isLoadingDetail)
                     const Padding(
@@ -391,13 +376,314 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     FigmaBox(height: 24),
                     _buildNotesActivity(),
                     FigmaBox(height: 24),
-                    _buildTagsSection(),
-                    FigmaBox(height: 24),
                     _buildActionButtons(),
                   ],
                   FigmaBox(height: 100),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPageBackground() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        const DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFFF3F7FF),
+                AppColors.surface,
+                Color(0xFFFBFCFF),
+                AppColors.baseWhite,
+              ],
+              stops: [0, 0.32, 0.72, 1],
+            ),
+          ),
+        ),
+        Positioned(
+          top: -90,
+          right: -110,
+          child: _buildBackgroundGlow(
+            size: 330,
+            color: AppColors.primary200.withValues(alpha: 0.42),
+          ),
+        ),
+        Positioned(
+          top: 430,
+          left: -150,
+          child: _buildBackgroundGlow(
+            size: 320,
+            color: const Color(0xFFDDD6FE).withValues(alpha: 0.28),
+          ),
+        ),
+        Positioned(
+          bottom: -130,
+          right: -100,
+          child: _buildBackgroundGlow(
+            size: 340,
+            color: const Color(0xFFCFFAFE).withValues(alpha: 0.30),
+          ),
+        ),
+        const Positioned.fill(
+          child: IgnorePointer(
+            child: CustomPaint(painter: _DetailBackgroundPatternPainter()),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBackgroundGlow({required double size, required Color color}) {
+    return IgnorePointer(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(colors: [color, color.withValues(alpha: 0)]),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileHero() {
+    final detail = _detail;
+    final name = detail?.name ?? widget.contact.name;
+    final company = detail?.companyValue ?? widget.contact.company;
+    final position = detail?.positionValue;
+    final sector = detail?.sectorValue ?? widget.contact.sectorValue;
+    final thumbnail = widget.contact.thumbnail?.trim() ?? '';
+    final hasThumbnail =
+        (widget.contact.hasImage ?? false) && thumbnail.isNotEmpty;
+
+    return Container(
+      width: double.infinity,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: AppColors.baseWhite,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.hairline),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.ink.withValues(alpha: 0.06),
+            blurRadius: 22,
+            offset: const Offset(0, 9),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            height: 4,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.primary400, AppColors.primary600],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [AppColors.primary400, AppColors.primary600],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary500.withValues(alpha: 0.20),
+                            blurRadius: 14,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: hasThumbnail
+                          ? Image.network(
+                              thumbnail,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) =>
+                                  _buildHeroInitials(name),
+                            )
+                          : _buildHeroInitials(name),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 7,
+                                height: 7,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.positive500,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 7),
+                              Text(
+                                'KAYITLI BAĞLANTI',
+                                style: AppFonts.xsBold.copyWith(
+                                  color: AppColors.primary600,
+                                  letterSpacing: 0.7,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            name,
+                            style: AppFonts.xl2Bold.copyWith(
+                              color: AppColors.ink,
+                              letterSpacing: -0.4,
+                              height: 1.15,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            company,
+                            style: AppFonts.base2Regular.withColor(
+                              AppColors.inkSoft,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                if (position != null || sector != null) ...[
+                  const SizedBox(height: 18),
+                  const Divider(height: 1, color: AppColors.hairline),
+                  const SizedBox(height: 14),
+                  if (position != null && sector != null)
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: _buildHeroMetaTile(
+                              icon: Icons.workspace_premium_rounded,
+                              label: 'Ünvan',
+                              value: position,
+                              color: const Color(0xFF8B5CF6),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildHeroMetaTile(
+                              icon: Icons.category_rounded,
+                              label: 'Sektör',
+                              value: sector,
+                              color: AppColors.primary600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    _buildHeroMetaTile(
+                      icon: position != null
+                          ? Icons.workspace_premium_rounded
+                          : Icons.category_rounded,
+                      label: position != null ? 'Ünvan' : 'Sektör',
+                      value: position ?? sector!,
+                      color: position != null
+                          ? const Color(0xFF8B5CF6)
+                          : AppColors.primary600,
+                    ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeroInitials(String name) {
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    final initials = parts.isEmpty
+        ? '?'
+        : parts.length == 1
+        ? parts.first.characters.first.toUpperCase()
+        : (parts.first.characters.first + parts.last.characters.first)
+              .toUpperCase();
+
+    return Center(
+      child: Text(
+        initials,
+        style: AppFonts.xl2Bold.withColor(AppColors.baseWhite),
+      ),
+    );
+  }
+
+  Widget _buildHeroMetaTile({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.hairline),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: Icon(icon, size: 19, color: color),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: AppFonts.xsSemibold.withColor(AppColors.inkSoft),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  value,
+                  style: AppFonts.smBold.copyWith(
+                    color: AppColors.ink,
+                    height: 1.3,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -582,191 +868,261 @@ class _ContactDetailViewState extends State<ContactDetailView>
     final companyPhone = detail.phoneValue;
     final country = detail.countryValue;
 
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _isContactInfoExpanded = !_isContactInfoExpanded;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        padding: appSizer.paddingAll(20),
-        decoration: BoxDecoration(
-          color: AppColors.baseWhite,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: _isContactInfoExpanded
-                ? const Color(0xFF60A5FA).withValues(alpha: 0.5)
-                : AppColors.hairline,
-            width: 1.5,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return Column(
+      children: [
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            setState(() {
+              _isContactInfoExpanded = !_isContactInfoExpanded;
+            });
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 260),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: AppColors.baseWhite,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: _isContactInfoExpanded
+                    ? AppColors.primary300
+                    : AppColors.hairline,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: _isContactInfoExpanded
+                      ? AppColors.primary500.withValues(alpha: 0.10)
+                      : AppColors.ink.withValues(alpha: 0.04),
+                  blurRadius: _isContactInfoExpanded ? 22 : 14,
+                  offset: const Offset(0, 7),
+                ),
+              ],
+            ),
+            child: Row(
               children: [
-                FigmaContainer(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xFF60A5FA),
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary500.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(
+                    Icons.contact_page_rounded,
+                    color: AppColors.primary600,
+                    size: 24,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  'Bağlantı Bilgileri',
-                  style: AppFonts.baseBold.copyWith(
-                    fontSize: 18,
-                    color: AppColors.ink,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Bağlantı Bilgileri',
+                        style: AppFonts.lgBold.withColor(AppColors.ink),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Detaylı bilgi için tıklayınız',
+                        style: AppFonts.smRegular.withColor(AppColors.inkSoft),
+                      ),
+                    ],
                   ),
                 ),
-                const Spacer(),
                 AnimatedRotation(
-                  duration: const Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 260),
                   turns: _isContactInfoExpanded ? 0.5 : 0,
                   child: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Color(0xFF60A5FA),
-                    size: 28,
+                    Icons.keyboard_arrow_down_rounded,
+                    color: AppColors.primary600,
+                    size: 27,
                   ),
                 ),
               ],
             ),
-            AnimatedCrossFade(
-              duration: const Duration(milliseconds: 300),
-              crossFadeState: _isContactInfoExpanded
-                  ? CrossFadeState.showSecond
-                  : CrossFadeState.showFirst,
-              firstChild: const SizedBox(),
-              secondChild: Column(
-                children: [
-                  FigmaBox(height: 24),
-                  _buildContactInfoItem(
-                    icon: Icons.business_center,
-                    iconColor: const Color(0xFFF59E0B),
-                    label: 'Firma Adı / Ünvan',
-                    value: detail.companySummary,
-                    onTap: () {},
-                  ),
-                  FigmaBox(height: 12),
-                  _buildContactInfoItem(
-                    icon: Icons.person,
-                    iconColor: const Color(0xFF06B6D4),
-                    label: 'İlgili Kişi Adı Soyadı',
-                    value: detail.contactPerson,
-                    onTap: () {},
-                  ),
-                  FigmaBox(height: 12),
-                  _buildContactInfoItem(
-                    icon: Icons.phone_in_talk,
-                    iconColor: const Color(0xFF10B981),
-                    label: 'İlgili Kişi Telefon',
-                    value: detail.contactPhone,
-                    onTap: () {
-                      final contactPhone = detail.contactPhoneValue;
-                      if (contactPhone == null) {
-                        _showMissingFieldMessage(detail.contactPhone);
-                        return;
-                      }
-
-                      _launchUrl(Uri.parse('tel:$contactPhone'));
-                    },
-                  ),
-                  FigmaBox(height: 12),
-                  _buildContactInfoItem(
-                    icon: Icons.mark_email_read,
-                    iconColor: const Color(0xFF3B82F6),
-                    label: 'İlgili Kişi Mail',
-                    value: detail.contactEmail,
-                    onTap: () {
-                      final contactEmail = detail.contactEmailValue;
-                      if (contactEmail == null) {
-                        _showMissingFieldMessage(detail.contactEmail);
-                        return;
-                      }
-
-                      _launchUrl(Uri.parse('mailto:$contactEmail'));
-                    },
-                  ),
-                  FigmaBox(height: 12),
-                  _buildContactInfoItem(
-                    icon: Icons.category,
-                    iconColor: const Color(0xFFA855F7),
-                    label: 'Hizmet / Sektör',
-                    value: sector ?? 'Sektor bulunamadi',
-                    onTap: () {},
-                  ),
-                  FigmaBox(height: 12),
-                  _buildContactInfoItem(
-                    icon: Icons.language,
-                    iconColor: const Color(0xFF8B5CF6),
-                    label: 'Web Sitesi',
-                    value: website ?? 'Web sitesi bulunamadi',
-                    onTap: () {
-                      if (website == null) {
-                        _showMissingFieldMessage('Web sitesi bulunamadi');
-                        return;
-                      }
-
-                      _launchUrl(Uri.parse(website));
-                    },
-                  ),
-                  FigmaBox(height: 12),
-                  _buildContactInfoItem(
-                    icon: Icons.email,
-                    iconColor: const Color(0xFF60A5FA),
-                    label: 'Firma Email',
-                    value: companyEmail ?? 'Firma e-postasi bulunamadi',
-                    onTap: () {
-                      if (companyEmail == null) {
-                        _showMissingFieldMessage('Firma e-postasi bulunamadi');
-                        return;
-                      }
-
-                      _launchUrl(Uri.parse('mailto:$companyEmail'));
-                    },
-                  ),
-                  FigmaBox(height: 12),
-                  _buildContactInfoItem(
-                    icon: Icons.phone,
-                    iconColor: const Color(0xFF34D399),
-                    label: 'Firma Telefon',
-                    value: companyPhone ?? 'Firma telefonu bulunamadi',
-                    onTap: () {
-                      if (companyPhone == null) {
-                        _showMissingFieldMessage('Firma telefonu bulunamadi');
-                        return;
-                      }
-
-                      _launchUrl(Uri.parse('tel:$companyPhone'));
-                    },
-                  ),
-                  FigmaBox(height: 12),
-                  _buildContactInfoItem(
-                    icon: Icons.flag,
-                    iconColor: const Color(0xFFF97316),
-                    label: 'Ülke',
-                    value: country ?? 'Ulke bilgisi bulunamadi',
-                    onTap: () {},
-                  ),
-                  FigmaBox(height: 12),
-                  _buildContactInfoItem(
-                    icon: Icons.location_on,
-                    iconColor: const Color(0xFFEC4899),
-                    label: 'Adres',
-                    value: detail.location,
-                    onTap: () {},
-                    isMultiline: true,
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 280),
+          sizeCurve: Curves.easeOutCubic,
+          crossFadeState: _isContactInfoExpanded
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          firstChild: const SizedBox(width: double.infinity),
+          secondChild: Padding(
+            padding: const EdgeInsets.only(top: 14),
+            child: Column(
+              children: [
+                _ContactInfoGroupCard(
+                  key: const ValueKey('corporate-info'),
+                  title: 'Kurumsal Bilgiler',
+                  subtitle: 'Firma, ünvan ve sektör',
+                  icon: Icons.apartment_rounded,
+                  accentColor: AppColors.primary600,
+                  children: [
+                    _buildContactInfoItem(
+                      icon: Icons.business_center_rounded,
+                      iconColor: const Color(0xFFF59E0B),
+                      label: 'Firma Adı',
+                      value: detail.company,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 10),
+                    _buildContactInfoItem(
+                      icon: Icons.workspace_premium_rounded,
+                      iconColor: const Color(0xFF8B5CF6),
+                      label: 'Ünvan',
+                      value: detail.position,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 10),
+                    _buildContactInfoItem(
+                      icon: Icons.category_rounded,
+                      iconColor: const Color(0xFFA855F7),
+                      label: 'Hizmet / Sektör',
+                      value: sector ?? 'Sektör bulunamadı',
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _ContactInfoGroupCard(
+                  key: const ValueKey('contact-person-info'),
+                  title: 'İlgili Kişi',
+                  subtitle: 'Kişi ve doğrudan iletişim bilgileri',
+                  icon: Icons.person_rounded,
+                  accentColor: const Color(0xFF06B6D4),
+                  children: [
+                    _buildContactInfoItem(
+                      icon: Icons.person_outline_rounded,
+                      iconColor: const Color(0xFF06B6D4),
+                      label: 'Adı Soyadı',
+                      value: detail.contactPerson,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 10),
+                    _buildContactInfoItem(
+                      icon: Icons.phone_in_talk_rounded,
+                      iconColor: const Color(0xFF10B981),
+                      label: 'Telefon',
+                      value: detail.contactPhone,
+                      onTap: () {
+                        final contactPhone = detail.contactPhoneValue;
+                        if (contactPhone == null) {
+                          _showMissingFieldMessage(detail.contactPhone);
+                          return;
+                        }
+                        _launchUrl(Uri.parse('tel:$contactPhone'));
+                      },
+                      isActionable: true,
+                    ),
+                    const SizedBox(height: 10),
+                    _buildContactInfoItem(
+                      icon: Icons.mark_email_read_rounded,
+                      iconColor: AppColors.primary500,
+                      label: 'E-posta',
+                      value: detail.contactEmail,
+                      onTap: () {
+                        final contactEmail = detail.contactEmailValue;
+                        if (contactEmail == null) {
+                          _showMissingFieldMessage(detail.contactEmail);
+                          return;
+                        }
+                        _launchUrl(Uri.parse('mailto:$contactEmail'));
+                      },
+                      isActionable: true,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _ContactInfoGroupCard(
+                  key: const ValueKey('company-contact-info'),
+                  title: 'Firma İletişimi',
+                  subtitle: 'Firma kanalları ve web sitesi',
+                  icon: Icons.alternate_email_rounded,
+                  accentColor: AppColors.positive600,
+                  children: [
+                    _buildContactInfoItem(
+                      icon: Icons.email_outlined,
+                      iconColor: AppColors.primary400,
+                      label: 'Firma E-posta',
+                      value: companyEmail ?? 'Firma e-postası bulunamadı',
+                      onTap: () {
+                        if (companyEmail == null) {
+                          _showMissingFieldMessage(
+                            'Firma e-postası bulunamadı',
+                          );
+                          return;
+                        }
+                        _launchUrl(Uri.parse('mailto:$companyEmail'));
+                      },
+                      isActionable: true,
+                    ),
+                    const SizedBox(height: 10),
+                    _buildContactInfoItem(
+                      icon: Icons.phone_rounded,
+                      iconColor: AppColors.positive500,
+                      label: 'Firma Telefon',
+                      value: companyPhone ?? 'Firma telefonu bulunamadı',
+                      onTap: () {
+                        if (companyPhone == null) {
+                          _showMissingFieldMessage('Firma telefonu bulunamadı');
+                          return;
+                        }
+                        _launchUrl(Uri.parse('tel:$companyPhone'));
+                      },
+                      isActionable: true,
+                    ),
+                    const SizedBox(height: 10),
+                    _buildContactInfoItem(
+                      icon: Icons.language_rounded,
+                      iconColor: const Color(0xFF8B5CF6),
+                      label: 'Web Sitesi',
+                      value: website ?? 'Web sitesi bulunamadı',
+                      onTap: () {
+                        if (website == null) {
+                          _showMissingFieldMessage('Web sitesi bulunamadı');
+                          return;
+                        }
+                        _launchUrl(Uri.parse(website));
+                      },
+                      isActionable: true,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _ContactInfoGroupCard(
+                  key: const ValueKey('location-info'),
+                  title: 'Konum',
+                  subtitle: 'Ülke ve adres bilgileri',
+                  icon: Icons.location_on_rounded,
+                  accentColor: const Color(0xFFF97316),
+                  children: [
+                    _buildContactInfoItem(
+                      icon: Icons.flag_rounded,
+                      iconColor: const Color(0xFFF97316),
+                      label: 'Ülke',
+                      value: country ?? 'Ülke bilgisi bulunamadı',
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 10),
+                    _buildContactInfoItem(
+                      icon: Icons.map_outlined,
+                      iconColor: const Color(0xFFEC4899),
+                      label: 'Adres',
+                      value: detail.location,
+                      onTap: () {},
+                      isMultiline: true,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -777,214 +1133,236 @@ class _ContactDetailViewState extends State<ContactDetailView>
     required String value,
     required VoidCallback onTap,
     bool isMultiline = false,
+    bool isActionable = false,
   }) {
-    return GestureDetector(
+    return _ExpandableContactInfoItem(
+      icon: icon,
+      iconColor: iconColor,
+      label: label,
+      value: value,
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.hairline, width: 1),
-        ),
-        child: Row(
-          crossAxisAlignment: isMultiline
-              ? CrossAxisAlignment.start
-              : CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: iconColor.withValues(alpha: 0.3),
-                  width: 1,
-                ),
-              ),
-              child: Icon(icon, color: iconColor, size: 20),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: AppFonts.baseRegular.copyWith(
-                      fontSize: 12,
-                      color: AppColors.inkSoft,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    value,
-                    style: AppFonts.baseSemibold.copyWith(
-                      fontSize: 14,
-                      color: AppColors.ink,
-                    ),
-                    maxLines: isMultiline ? 2 : 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      collapsedMaxLines: isMultiline ? 2 : 1,
+      isActionable: isActionable,
     );
   }
 
   Widget _buildNotesActivity() {
     final notes = _detail!.notes ?? const <BusinessCardNote>[];
 
-    return Container(
-      padding: const EdgeInsets.all(20),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
         color: AppColors.baseWhite,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: _isNotesExpanded
-              ? const Color(0xFF60A5FA).withValues(alpha: 0.5)
-              : AppColors.hairline,
-          width: 1.5,
+          color: _isNotesExpanded ? AppColors.primary300 : AppColors.hairline,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: _isNotesExpanded
+                ? AppColors.primary500.withValues(alpha: 0.09)
+                : AppColors.ink.withValues(alpha: 0.04),
+            blurRadius: _isNotesExpanded ? 22 : 14,
+            offset: const Offset(0, 7),
+          ),
+        ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: notes.length > 4
-                ? () {
-                    setState(() {
-                      _isNotesExpanded = !_isNotesExpanded;
-                    });
-                  }
-                : null,
             behavior: HitTestBehavior.opaque,
-            child: Row(
-              children: [
-                FigmaContainer(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xFF3B82F6),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Notlarım',
-                  style: AppFonts.baseBold.copyWith(
-                    fontSize: 16,
-                    color: AppColors.ink,
-                  ),
-                ),
-                const Spacer(),
-                if (notes.length > 4)
-                  AnimatedRotation(
-                    duration: const Duration(milliseconds: 300),
-                    turns: _isNotesExpanded ? 0.5 : 0,
+            onTap: () {
+              setState(() {
+                _isNotesExpanded = !_isNotesExpanded;
+              });
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary500.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     child: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Color(0xFF3B82F6),
+                      Icons.sticky_note_2_rounded,
+                      color: AppColors.primary600,
                       size: 24,
                     ),
                   ),
-              ],
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Notlarım',
+                          style: AppFonts.lgBold.withColor(AppColors.ink),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          notes.isEmpty
+                              ? 'Henüz kayıtlı not bulunmuyor'
+                              : notes.length == 1
+                              ? '1 kayıtlı not'
+                              : '${notes.length} kayıtlı not',
+                          style: AppFonts.smRegular.withColor(
+                            AppColors.inkSoft,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  AnimatedRotation(
+                    duration: const Duration(milliseconds: 260),
+                    turns: _isNotesExpanded ? 0.5 : 0,
+                    child: const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.primary600,
+                      size: 27,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          FigmaBox(height: 16),
-
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _noteController,
-                  style: AppFonts.baseRegular.copyWith(
-                    color: AppColors.ink,
-                    fontSize: 14,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Not ekle...',
-                    hintStyle: AppFonts.baseRegular.copyWith(
-                      color: AppColors.inkFaint,
-                      fontSize: 14,
-                    ),
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.hairline),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.hairline),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF3B82F6),
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              GestureDetector(
-                onTap: () => _saveNote(_noteController.text),
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.add,
-                    color: AppColors.baseWhite,
-                    size: 24,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          FigmaBox(height: 20),
-
           AnimatedCrossFade(
-            duration: const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 280),
+            sizeCurve: Curves.easeOutCubic,
             crossFadeState: _isNotesExpanded
                 ? CrossFadeState.showSecond
                 : CrossFadeState.showFirst,
-            firstChild: Column(
-              children: notes.reversed
-                  .take(4)
-                  .map(
-                    (note) =>
-                        _wrapWithDismissible(note, _buildActivityItem(note)),
-                  )
-                  .toList(),
-            ),
-            secondChild: Column(
-              children: notes.reversed
-                  .map(
-                    (note) =>
-                        _wrapWithDismissible(note, _buildActivityItem(note)),
-                  )
-                  .toList(),
+            firstChild: const SizedBox(width: double.infinity),
+            secondChild: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+              child: Column(
+                children: [
+                  const Divider(height: 1, color: AppColors.hairline),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _noteController,
+                          style: AppFonts.baseRegular.copyWith(
+                            color: AppColors.ink,
+                            fontSize: 14,
+                          ),
+                          minLines: 1,
+                          maxLines: 3,
+                          decoration: InputDecoration(
+                            hintText: 'Yeni bir not yazın...',
+                            hintStyle: AppFonts.baseRegular.copyWith(
+                              color: AppColors.inkFaint,
+                              fontSize: 14,
+                            ),
+                            filled: true,
+                            fillColor: AppColors.surface,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(
+                                color: AppColors.hairline,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(
+                                color: AppColors.hairline,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(
+                                color: AppColors.primary500,
+                                width: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: () => _saveNote(_noteController.text),
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppColors.primary400,
+                                AppColors.primary600,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary500.withValues(
+                                  alpha: 0.25,
+                                ),
+                                blurRadius: 12,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.add_rounded,
+                            color: AppColors.baseWhite,
+                            size: 26,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  if (notes.isEmpty)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.hairline),
+                      ),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.note_alt_outlined,
+                            color: AppColors.inkFaint,
+                            size: 30,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'İlk notunuzu ekleyebilirsiniz',
+                            style: AppFonts.smSemibold.withColor(
+                              AppColors.inkSoft,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    Column(
+                      children: notes.reversed
+                          .map(
+                            (note) => _wrapWithDismissible(
+                              note,
+                              _buildActivityItem(note),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                ],
+              ),
             ),
           ),
         ],
@@ -1085,7 +1463,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      note.createdAt ?? '',
+                      _formatNoteDate(note.createdAt),
                       style: AppFonts.baseRegular.copyWith(
                         fontSize: 12,
                         color: AppColors.inkFaint,
@@ -1109,81 +1487,15 @@ class _ContactDetailViewState extends State<ContactDetailView>
     );
   }
 
-  Widget _buildTagsSection() {
-    final sector = _detail!.sectorValue;
+  String _formatNoteDate(String? rawDate) {
+    final value = rawDate?.trim();
+    if (value == null || value.isEmpty) return 'Tarih bulunamadı';
 
-    return FigmaContainer(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.baseWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.hairline, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              FigmaContainer(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFFA855F7),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Etiketler & Sektör',
-                style: AppFonts.baseBold.copyWith(
-                  fontSize: 16,
-                  color: AppColors.ink,
-                ),
-              ),
-            ],
-          ),
-          FigmaBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              FigmaContainer(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFA855F7).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: const Color(0xFFA855F7).withValues(alpha: 0.4),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.category,
-                      color: Color(0xFFA855F7),
-                      size: 14,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      sector ?? 'Sektor bulunamadi',
-                      style: AppFonts.baseBold.copyWith(
-                        fontSize: 12,
-                        color: const Color(0xFFA855F7),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+    final parsed = DateTime.tryParse(value);
+    if (parsed == null) return value;
+
+    final localDate = parsed.isUtc ? parsed.toLocal() : parsed;
+    return DateFormat('dd.MM.yyyy HH.mm').format(localDate);
   }
 
   Widget _buildActionButtons() {
@@ -1295,5 +1607,321 @@ class _ContactDetailViewState extends State<ContactDetailView>
 
   void _showMissingFieldMessage(String message) {
     CustomBottomSheet.errorView(text: message);
+  }
+}
+
+class _DetailBackgroundPatternPainter extends CustomPainter {
+  const _DetailBackgroundPatternPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.primary500.withValues(alpha: 0.035);
+    var row = 0;
+
+    for (double y = 24; y < size.height; y += 36) {
+      final startX = row.isEven ? 20.0 : 38.0;
+      for (double x = startX; x < size.width; x += 36) {
+        canvas.drawCircle(Offset(x, y), 1.1, paint);
+      }
+      row++;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DetailBackgroundPatternPainter oldDelegate) {
+    return false;
+  }
+}
+
+class _ContactInfoGroupCard extends StatefulWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color accentColor;
+  final List<Widget> children;
+
+  const _ContactInfoGroupCard({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.accentColor,
+    required this.children,
+  });
+
+  @override
+  State<_ContactInfoGroupCard> createState() => _ContactInfoGroupCardState();
+}
+
+class _ContactInfoGroupCardState extends State<_ContactInfoGroupCard> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
+      decoration: BoxDecoration(
+        color: AppColors.baseWhite,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: _isExpanded
+              ? widget.accentColor.withValues(alpha: 0.38)
+              : AppColors.hairline,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: _isExpanded
+                ? widget.accentColor.withValues(alpha: 0.08)
+                : AppColors.ink.withValues(alpha: 0.035),
+            blurRadius: _isExpanded ? 20 : 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => setState(() => _isExpanded = !_isExpanded),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: widget.accentColor.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      widget.icon,
+                      size: 22,
+                      color: widget.accentColor,
+                    ),
+                  ),
+                  const SizedBox(width: 13),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.title,
+                          style: AppFonts.base2Bold.withColor(AppColors.ink),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          widget.subtitle,
+                          style: AppFonts.smRegular.withColor(
+                            AppColors.inkSoft,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  AnimatedRotation(
+                    duration: const Duration(milliseconds: 240),
+                    turns: _isExpanded ? 0.5 : 0,
+                    child: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: _isExpanded
+                          ? widget.accentColor
+                          : AppColors.inkFaint,
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 260),
+            sizeCurve: Curves.easeOutCubic,
+            crossFadeState: _isExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox(width: double.infinity),
+            secondChild: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+              child: Column(children: widget.children),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExpandableContactInfoItem extends StatefulWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+  final int collapsedMaxLines;
+  final bool isActionable;
+
+  const _ExpandableContactInfoItem({
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    required this.value,
+    required this.onTap,
+    required this.collapsedMaxLines,
+    required this.isActionable,
+  });
+
+  @override
+  State<_ExpandableContactInfoItem> createState() =>
+      _ExpandableContactInfoItemState();
+}
+
+class _ExpandableContactInfoItemState
+    extends State<_ExpandableContactInfoItem> {
+  bool _isExpanded = false;
+
+  @override
+  void didUpdateWidget(covariant _ExpandableContactInfoItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      _isExpanded = false;
+    }
+  }
+
+  void _toggleExpanded() {
+    setState(() => _isExpanded = !_isExpanded);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final valueStyle = AppFonts.baseSemibold.copyWith(
+      fontSize: 14,
+      color: AppColors.ink,
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const horizontalSpaceWithoutText = 24.0 + 40.0 + 12.0;
+        final calculatedWidth =
+            constraints.maxWidth - horizontalSpaceWithoutText;
+        final availableTextWidth = calculatedWidth > 0 ? calculatedWidth : 0.0;
+        final textPainter = TextPainter(
+          text: TextSpan(text: widget.value, style: valueStyle),
+          maxLines: widget.collapsedMaxLines,
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+        )..layout(maxWidth: availableTextWidth);
+        final canExpand = textPainter.didExceedMaxLines;
+        final isExpanded = canExpand && _isExpanded;
+
+        return Semantics(
+          button: canExpand || widget.isActionable,
+          expanded: canExpand ? isExpanded : null,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: canExpand && !widget.isActionable
+                ? _toggleExpanded
+                : widget.onTap,
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 240),
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.topCenter,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 240),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isExpanded
+                      ? widget.iconColor.withValues(alpha: 0.06)
+                      : AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isExpanded
+                        ? widget.iconColor.withValues(alpha: 0.35)
+                        : AppColors.hairline,
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: widget.collapsedMaxLines > 1 || isExpanded
+                      ? CrossAxisAlignment.start
+                      : CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: widget.iconColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: widget.iconColor.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Icon(
+                        widget.icon,
+                        color: widget.iconColor,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: canExpand ? _toggleExpanded : null,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.label,
+                              style: AppFonts.baseRegular.copyWith(
+                                fontSize: 12,
+                                color: AppColors.inkSoft,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              widget.value,
+                              style: valueStyle,
+                              maxLines: isExpanded
+                                  ? null
+                                  : widget.collapsedMaxLines,
+                              overflow: isExpanded
+                                  ? TextOverflow.visible
+                                  : TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (canExpand) ...[
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: _toggleExpanded,
+                        child: Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: AnimatedRotation(
+                            duration: const Duration(milliseconds: 240),
+                            turns: isExpanded ? 0.5 : 0,
+                            child: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: isExpanded
+                                  ? widget.iconColor
+                                  : AppColors.inkFaint,
+                              size: 22,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

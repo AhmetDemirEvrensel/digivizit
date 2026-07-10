@@ -75,7 +75,7 @@ class _SplashViewState extends State<SplashView>
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8F9FB),
+        backgroundColor: AppColors.surface,
         body: Observer(
           builder: (_) {
             return Stack(
@@ -88,7 +88,7 @@ class _SplashViewState extends State<SplashView>
                       end: Alignment.bottomRight,
                       colors: [
                         Color(0xFFFFFFFF),
-                        Color(0xFFF8F9FB),
+                        AppColors.surface,
                         Color(0xFFEFF3F9),
                       ],
                     ),

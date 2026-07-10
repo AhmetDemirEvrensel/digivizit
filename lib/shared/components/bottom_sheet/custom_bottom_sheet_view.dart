@@ -1,43 +1,28 @@
-import 'package:digivizit/core/constants/global_initializer.dart';
-import 'package:digivizit/core/constants/icon_paths.dart';
-import 'package:digivizit/core/navigation/navigation_enums.dart';
-import 'package:digivizit/core/navigation/navigation_extension.dart';
-import 'package:digivizit/shared/components/containers/figma_box.dart';
-import 'package:flutter/material.dart';
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
+import 'package:digivizit/core/constants/global_initializer.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
-import 'package:digivizit/core/utils/number_formatter.dart';
 import 'package:digivizit/shared/components/buttons/button_properties.dart';
 import 'package:digivizit/shared/components/buttons/custom_app_button.dart';
-import 'package:digivizit/shared/components/containers/figma_container.dart';
-import 'package:digivizit/shared/components/hexagon/hexagon_widget.dart';
-
-import 'dart:io';
-import 'dart:ui';
-
-import 'package:digivizit/core/constants/global_initializer.dart';
-import 'package:digivizit/core/constants/image_paths.dart';
-import 'package:digivizit/core/extensions/integer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:digivizit/core/constants/app_colors.dart';
-import 'package:digivizit/core/constants/app_fonts.dart';
-import 'package:digivizit/core/providers/app_settings.dart';
-import 'package:digivizit/shared/components/buttons/custom_app_button.dart';
 
 enum TitlePosition { top, center }
 
 class CustomBottomSheetView extends StatefulWidget {
   final bool neverClose;
-  final bool isDismissible, viewTopBar;
+  final bool isDismissible;
+  final bool viewTopBar;
   final bool showCloseButton;
   final Widget? child;
   final double titleTopPadding;
   final double? height;
   final List<ButtonProperties>? buttons;
   final List<ButtonProperties>? secondaryButtons;
-  final String? title, titleIconPath, text, iconPath, iconSvgPath;
+  final String? title;
+  final String? titleIconPath;
+  final String? text;
+  final String? iconPath;
+  final String? iconSvgPath;
   final EdgeInsetsGeometry? padding;
   final bool useController;
   final bool centerAlign;
@@ -59,7 +44,7 @@ class CustomBottomSheetView extends StatefulWidget {
     this.titleIconPath,
     this.neverClose = false,
     this.useController = false,
-    this.showCloseButton = true,
+    this.showCloseButton = false,
     this.titleTopPadding = 16,
     required this.viewTopBar,
     required this.isDismissible,
@@ -76,7 +61,7 @@ class CustomBottomSheetView extends StatefulWidget {
     this.hexagonColor,
     this.hexagonGradientColors,
     this.hexagonIconColor,
-    this.useGlassmorphism = true,
+    this.useGlassmorphism = false,
   });
 
   @override
@@ -86,174 +71,190 @@ class CustomBottomSheetView extends StatefulWidget {
 class _CustomBottomSheetViewState extends State<CustomBottomSheetView> {
   @override
   Widget build(BuildContext context) {
+    final content = Padding(
+      padding: widget.padding ?? const EdgeInsets.fromLTRB(24, 12, 24, 12),
+      child: Column(
+        mainAxisSize: widget.height == null
+            ? MainAxisSize.min
+            : MainAxisSize.max,
+        children: [
+          _buildTopRow(),
+          const SizedBox(height: 20),
+          if (widget.height == null)
+            _buildContent()
+          else
+            Expanded(child: SingleChildScrollView(child: _buildContent())),
+          _buildButtonsSection(),
+        ],
+      ),
+    );
+
     return PopScope(
       canPop: widget.isDismissible && !widget.neverClose,
-      child: _view(height: widget.height),
-    );
-  }
-
-  Widget _view({double? height}) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 100),
-      height: height == null ? null : appSizer.px(height, Axis.vertical),
-      child: Padding(
-        padding:
-            widget.padding ??
-            appSizer.paddingSymmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          mainAxisSize: height != null ? MainAxisSize.max : MainAxisSize.min,
-          children: [
-            // Top bar
-            _buildTopRow(),
-            FigmaBox(height: 32),
-
-            // Content section - if height is set, this expands to fill space
-            if (height != null)
-              Expanded(child: SingleChildScrollView(child: _buildContent()))
-            else
-              _buildContent(),
-
-            // Buttons Section (always at bottom)
-            _buildButtonsSection(),
-          ],
-        ),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutCubic,
+        height: widget.height == null
+            ? null
+            : appSizer.px(widget.height!, Axis.vertical),
+        child: content,
       ),
     );
   }
 
-  /// Builds the content section (icons, title, text, child)
+  Widget _buildTopRow() {
+    final canShowCloseButton =
+        widget.showCloseButton && widget.isDismissible && !widget.neverClose;
+
+    return SizedBox(
+      height: canShowCloseButton ? 36 : (widget.viewTopBar ? 12 : 0),
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          if (widget.viewTopBar)
+            Container(
+              width: 42,
+              height: 5,
+              decoration: BoxDecoration(
+                color: widget.viewTopBarColor ?? AppColors.hairline,
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+          if (canShowCloseButton)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                tooltip: 'Kapat',
+                onPressed: () => Navigator.of(context).pop(),
+                style: IconButton.styleFrom(
+                  backgroundColor: AppColors.surfaceAlt,
+                  foregroundColor: AppColors.inkSoft,
+                ),
+                icon: const Icon(Icons.close_rounded, size: 20),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildContent() {
+    final alignment = widget.centerAlign
+        ? CrossAxisAlignment.center
+        : CrossAxisAlignment.start;
+    final textAlign = widget.centerAlign ? TextAlign.center : TextAlign.start;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: alignment,
       children: [
-        // Hexagon icon if provided
         if (widget.hexagonIcon != null) ...[
-          HexagonWidget.icon(
-            size: 80,
-            icon: widget.hexagonIcon!,
-            fillColor: widget.hexagonColor ?? AppColors.negative700,
-            gradientColors: widget.hexagonColor != null
-                ? (widget.hexagonGradientColors ??
-                      [AppColors.tertiary500, AppColors.primary500])
-                : null,
-            iconColor: widget.hexagonIconColor ?? AppColors.baseWhite,
-            borderColor: AppColors.baseWhite.withValues(alpha: 0.30),
-            iconSize: 36,
-          ),
-          FigmaBox(height: 32),
+          _buildStatusIcon(),
+          const SizedBox(height: 18),
         ],
-
-        // Image icon if provided
         if (widget.iconPath != null) ...[
-          Image.asset(widget.iconPath!, height: 80.pxv),
-          FigmaBox(height: 20),
+          _buildAssetIcon(widget.iconPath!),
+          const SizedBox(height: 18),
         ],
-
-        // SVG icon if provided
         if (widget.iconSvgPath != null) ...[
-          Image.asset(widget.iconSvgPath!, height: 80.pxv),
-          FigmaBox(height: 20),
+          _buildAssetIcon(widget.iconSvgPath!),
+          const SizedBox(height: 18),
         ],
-
-        // Title
         if (widget.title != null) ...[
           Text(
             widget.title!,
-            textAlign: widget.centerAlign ? TextAlign.center : TextAlign.start,
+            textAlign: textAlign,
             style: AppFonts.xl2Bold.copyWith(
               color: widget.titleColor ?? AppColors.ink,
+              letterSpacing: -0.3,
             ),
           ),
-          FigmaBox(height: 20),
+          const SizedBox(height: 10),
         ],
-
-        // Subtitle/Text
         if (widget.text != null) ...[
-          Padding(
-            padding: appSizer.paddingSymmetric(horizontal: 16),
-            child: Text(
-              widget.text!,
-              textAlign: widget.centerAlign
-                  ? TextAlign.center
-                  : TextAlign.start,
-              style: AppFonts.lgRegular.copyWith(
-                color: widget.textColor ?? AppColors.inkSoft,
-              ),
+          Text(
+            widget.text!,
+            textAlign: textAlign,
+            style: AppFonts.base2Regular.copyWith(
+              color: widget.textColor ?? AppColors.inkSoft,
+              height: 1.5,
             ),
           ),
-          FigmaBox(height: 20),
+          const SizedBox(height: 20),
         ],
-
-        // Custom child widget
         if (widget.child != null) widget.child!,
       ],
     );
   }
 
-  /// Builds the buttons section (always at bottom)
-  Widget _buildButtonsSection() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Primary buttons
-        if (widget.buttons != null) ...[
-          ...widget.buttons!.map(
-            (button) => Padding(
-              padding: appSizer.paddingOnly(bottom: 12),
-              child: _buildButton(button, isPrimary: true),
-            ),
-          ),
-        ],
-
-        // Secondary buttons
-        if (widget.secondaryButtons != null) ...[
-          ...widget.secondaryButtons!.map(
-            (button) => Padding(
-              padding: appSizer.paddingOnly(bottom: 12),
-              child: _buildButton(button, isPrimary: false),
-            ),
-          ),
-        ],
-
-        // Bottom safe area padding
-        FigmaBox(height: MediaQuery.of(context).padding.bottom > 0 ? 8 : 24),
-      ],
+  Widget _buildStatusIcon() {
+    final accent = widget.hexagonColor ?? AppColors.primary600;
+    return Container(
+      width: 58,
+      height: 58,
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(19),
+      ),
+      child: Icon(
+        widget.hexagonIcon,
+        size: 29,
+        color: widget.hexagonIconColor ?? accent,
+      ),
     );
   }
 
-  Widget _buildTopRow() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // Center drag handle
-        if (widget.viewTopBar)
-          Container(
-            height: 4,
-            width: 40,
-            decoration: BoxDecoration(
-              color: widget.viewTopBarColor ?? AppColors.hairline,
-              borderRadius: BorderRadius.circular(2),
+  Widget _buildAssetIcon(String path) {
+    return Container(
+      width: 64,
+      height: 64,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Image.asset(path, fit: BoxFit.contain),
+    );
+  }
+
+  Widget _buildButtonsSection() {
+    final hasButtons = widget.buttons?.isNotEmpty == true;
+    final hasSecondaryButtons = widget.secondaryButtons?.isNotEmpty == true;
+    if (!hasButtons && !hasSecondaryButtons) {
+      return SizedBox(height: MediaQuery.paddingOf(context).bottom + 12);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...?widget.buttons?.map(
+            (button) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _buildButton(button, isPrimary: true),
             ),
           ),
-        // Close button on the right
-        /* if (widget.showCloseButton && widget.isDismissible)
-          Positioned(
-            right: 0,
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(color: AppColors.baseWhite.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-                child: Icon(Icons.close, color: AppColors.baseWhite.withValues(alpha: 0.7), size: 20),
-              ),
+          ...?widget.secondaryButtons?.map(
+            (button) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _buildButton(button, isPrimary: false),
             ),
-          ), */
-      ],
+          ),
+          SizedBox(height: MediaQuery.paddingOf(context).bottom > 0 ? 2 : 10),
+        ],
+      ),
     );
   }
 
   Widget _buildButton(ButtonProperties button, {required bool isPrimary}) {
+    final fallbackBackground = isPrimary
+        ? AppColors.primary500
+        : AppColors.surfaceAlt;
+    final background =
+        button.backgroundColor ?? button.color ?? fallbackBackground;
+
     return CustomAppButton(
       onTap: button.onPressed,
       text: button.text ?? '',
@@ -264,11 +265,14 @@ class _CustomBottomSheetViewState extends State<CustomBottomSheetView> {
       iconSize: button.iconSize,
       leadingIcon: button.leadingIcon,
       leadingIconPath: button.leadingIconPath,
-      backgroundColor: button.backgroundColor ?? button.color,
+      backgroundColor: background,
       gradient: button.gradient,
-      borderColor: button.borderColor,
-      textColor: button.textColor,
-      iconColor: button.iconColor,
+      borderColor:
+          button.borderColor ?? (isPrimary ? background : AppColors.hairline),
+      textColor:
+          button.textColor ?? (isPrimary ? AppColors.baseWhite : AppColors.ink),
+      iconColor:
+          button.iconColor ?? (isPrimary ? AppColors.baseWhite : AppColors.ink),
       buttonHeight: button.buttonHeight,
       borderRadius: button.borderRadius,
       textSize: button.textSize,
@@ -277,7 +281,7 @@ class _CustomBottomSheetViewState extends State<CustomBottomSheetView> {
       contentPadding: button.contentPadding,
       isActive: button.isActive,
       isUnderLine: button.isUnderLine,
-      showShadow: button.showShadow,
+      showShadow: isPrimary && button.showShadow,
       showArrow: button.showArrow,
       showProBadge: button.showProBadge,
       contentAlignment: button.contentAlignment,
@@ -291,33 +295,26 @@ class _CustomBottomSheetViewState extends State<CustomBottomSheetView> {
 }
 
 class CustomBottomSheet {
-  /// Type alias for builder functions that receive setState
   static Future<void> customView({
-    double? height = 545,
+    double? height,
     bool isDismissible = true,
     bool viewTopBar = true,
-    bool showCloseButton = true,
+    bool showCloseButton = false,
     bool neverClose = false,
     bool toTitleCase = true,
     bool centerAlign = true,
     bool useController = false,
     bool btnTitleCase = true,
-    bool useGlassmorphism = true,
+    bool useGlassmorphism = false,
     double blurSigma = 20,
     double glassOpacity = 0.90,
     double glassBorderOpacity = 0.1,
     List<ButtonProperties>? buttons,
     List<ButtonProperties>? secondaryButtons,
-
-    /// Builder for dynamic buttons - receives setState function
     List<ButtonProperties> Function(void Function(void Function()) setState)?
     buttonsBuilder,
-
-    /// Builder for dynamic secondary buttons - receives setState function
     List<ButtonProperties> Function(void Function(void Function()) setState)?
     secondaryButtonsBuilder,
-
-    /// Builder for dynamic child - receives setState function
     Widget Function(void Function(void Function()) setState)? childBuilder,
     Color? barrierColor,
     Color? backgroundColor,
@@ -335,115 +332,76 @@ class CustomBottomSheet {
     Color? hexagonColor,
     List<Color>? hexagonGradientColors,
     Color? hexagonIconColor,
-    double borderRadius = 50,
+    double borderRadius = 32,
     double titleTopPadding = 16,
     required BuildContext context,
   }) async {
-    await showModalBottomSheet(
+    await showModalBottomSheet<void>(
       enableDrag: !neverClose,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(borderRadius)),
-      ),
-      barrierColor: barrierColor ?? Colors.black.withValues(alpha: 0.35),
-      backgroundColor: backgroundColor ?? Colors.transparent,
+      barrierColor: barrierColor ?? AppColors.ink.withValues(alpha: 0.35),
+      backgroundColor: Colors.transparent,
       isDismissible: isDismissible,
       isScrollControlled: true,
       context: context,
-      builder: (context) {
+      builder: (sheetContext) {
         return StatefulBuilder(
           builder: (context, setSheetState) {
-            // Get dynamic content if builder is provided
             final dynamicButtons = buttonsBuilder?.call(setSheetState);
             final dynamicSecondaryButtons = secondaryButtonsBuilder?.call(
               setSheetState,
             );
             final dynamicChild = childBuilder?.call(setSheetState);
 
-            return ClipRRect(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(borderRadius),
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.viewInsetsOf(context).bottom,
               ),
-              child: BackdropFilter(
-                filter: useGlassmorphism
-                    ? ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma)
-                    : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-                child: FigmaContainer(
-                  decoration: BoxDecoration(
-                    color: useGlassmorphism
-                        ? (backgroundColor ?? AppColors.baseWhite).withValues(
-                            alpha: glassOpacity,
-                          )
-                        : (backgroundColor ?? AppColors.baseWhite),
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(borderRadius),
-                    ),
-                    border: useGlassmorphism
-                        ? Border.all(color: AppColors.hairline, width: 1)
-                        : null,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: backgroundColor ?? AppColors.baseWhite,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(borderRadius),
                   ),
-                  child: Padding(
-                    padding: appSizer.paddingOnly(
-                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                  border: const Border(
+                    top: BorderSide(color: AppColors.hairline),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.ink.withValues(alpha: 0.10),
+                      blurRadius: 32,
+                      offset: const Offset(0, -10),
                     ),
-                    child: height != null
-                        ? CustomBottomSheetView(
-                            neverClose: neverClose,
-                            isDismissible: isDismissible,
-                            useController: useController,
-                            centerAlign: centerAlign,
-                            showCloseButton: showCloseButton,
-                            iconPath: iconPath,
-                            iconSvgPath: iconSvgPath,
-                            height: height,
-                            padding: padding,
-                            titleTopPadding: titleTopPadding,
-                            buttons: dynamicButtons ?? buttons,
-                            secondaryButtons:
-                                dynamicSecondaryButtons ?? secondaryButtons,
-                            text: text,
-                            title: title,
-                            titleIconPath: titleIconPath,
-                            viewTopBar: viewTopBar,
-                            viewTopBarColor: viewTopBarColor,
-                            textColor: textColor,
-                            titleColor: titleColor,
-                            hexagonIcon: hexagonIcon,
-                            hexagonColor: hexagonColor,
-                            hexagonGradientColors: hexagonGradientColors,
-                            hexagonIconColor: hexagonIconColor,
-                            useGlassmorphism: useGlassmorphism,
-                            child: dynamicChild ?? child,
-                          )
-                        : SingleChildScrollView(
-                            child: CustomBottomSheetView(
-                              neverClose: neverClose,
-                              isDismissible: isDismissible,
-                              useController: useController,
-                              centerAlign: centerAlign,
-                              showCloseButton: showCloseButton,
-                              iconPath: iconPath,
-                              iconSvgPath: iconSvgPath,
-                              height: height,
-                              padding: padding,
-                              titleTopPadding: titleTopPadding,
-                              buttons: dynamicButtons ?? buttons,
-                              secondaryButtons:
-                                  dynamicSecondaryButtons ?? secondaryButtons,
-                              text: text,
-                              title: title,
-                              titleIconPath: titleIconPath,
-                              viewTopBar: viewTopBar,
-                              viewTopBarColor: viewTopBarColor,
-                              textColor: textColor,
-                              titleColor: titleColor,
-                              hexagonIcon: hexagonIcon,
-                              hexagonColor: hexagonColor,
-                              hexagonGradientColors: hexagonGradientColors,
-                              hexagonIconColor: hexagonIconColor,
-                              useGlassmorphism: useGlassmorphism,
-                              child: dynamicChild ?? child,
-                            ),
-                          ),
+                  ],
+                ),
+                child: SafeArea(
+                  top: false,
+                  child: CustomBottomSheetView(
+                    neverClose: neverClose,
+                    isDismissible: isDismissible,
+                    useController: useController,
+                    centerAlign: centerAlign,
+                    showCloseButton: showCloseButton,
+                    iconPath: iconPath,
+                    iconSvgPath: iconSvgPath,
+                    height: height,
+                    padding: padding,
+                    titleTopPadding: titleTopPadding,
+                    buttons: dynamicButtons ?? buttons,
+                    secondaryButtons:
+                        dynamicSecondaryButtons ?? secondaryButtons,
+                    text: text,
+                    title: title,
+                    titleIconPath: titleIconPath,
+                    viewTopBar: viewTopBar,
+                    viewTopBarColor: viewTopBarColor,
+                    textColor: textColor,
+                    titleColor: titleColor,
+                    hexagonIcon: hexagonIcon,
+                    hexagonColor: hexagonColor,
+                    hexagonGradientColors: hexagonGradientColors,
+                    hexagonIconColor: hexagonIconColor,
+                    useGlassmorphism: useGlassmorphism,
+                    child: dynamicChild ?? child,
                   ),
                 ),
               ),
@@ -460,14 +418,11 @@ class CustomBottomSheet {
     Function()? onButtonPressed,
     List<ButtonProperties>? secondaryButtons,
   }) {
-    CustomBottomSheet.customView(
-      viewTopBar: true,
+    customView(
       title: title ?? 'İşlem Başarılı',
-      hexagonIcon: Icons.check_circle_outline,
+      hexagonIcon: Icons.check_rounded,
       hexagonColor: AppColors.positive600,
       text: text,
-      height: 545,
-      borderRadius: 50,
       context: AppSettings.instance.context!,
       buttons: [
         ButtonProperties(
@@ -475,7 +430,7 @@ class CustomBottomSheet {
             Navigator.pop(AppSettings.instance.context!);
             onButtonPressed?.call();
           },
-          text: "Tamam",
+          text: 'Tamam',
           color: AppColors.positive600,
         ),
       ],
@@ -488,14 +443,11 @@ class CustomBottomSheet {
     String? title,
     Function()? onButtonPressed,
   }) {
-    CustomBottomSheet.customView(
-      viewTopBar: true,
-      title: title ?? 'Servis Hatası',
-      hexagonIcon: Icons.error_outline,
-      hexagonColor: AppColors.negative700,
+    customView(
+      title: title ?? 'Bir Sorun Oluştu',
+      hexagonIcon: Icons.error_outline_rounded,
+      hexagonColor: AppColors.negative500,
       text: text,
-      height: 519,
-      borderRadius: 50,
       context: AppSettings.instance.context!,
       buttons: [
         ButtonProperties(
@@ -503,8 +455,8 @@ class CustomBottomSheet {
             Navigator.pop(AppSettings.instance.context!);
             onButtonPressed?.call();
           },
-          text: "Tamam",
-          color: AppColors.negative700,
+          text: 'Tamam',
+          color: AppColors.negative500,
         ),
       ],
     );
@@ -514,14 +466,11 @@ class CustomBottomSheet {
     required String text,
     Function()? onButtonPressed,
   }) {
-    CustomBottomSheet.customView(
-      viewTopBar: true,
-      title: 'Bildriim',
-      hexagonIcon: Icons.error_outline,
-      hexagonColor: AppColors.negative700,
+    customView(
+      title: 'Bildirim',
+      hexagonIcon: Icons.notifications_none_rounded,
+      hexagonColor: AppColors.primary600,
       text: text,
-      height: 519,
-      borderRadius: 50,
       context: AppSettings.instance.context!,
       buttons: [
         ButtonProperties(
@@ -529,8 +478,8 @@ class CustomBottomSheet {
             Navigator.pop(AppSettings.instance.context!);
             onButtonPressed?.call();
           },
-          text: "Tamam",
-          color: AppColors.negative700,
+          text: 'Tamam',
+          color: AppColors.primary500,
         ),
       ],
     );
@@ -541,14 +490,11 @@ class CustomBottomSheet {
     String? title,
     Function()? onButtonPressed,
   }) {
-    CustomBottomSheet.customView(
-      viewTopBar: true,
-      title: title ?? 'Uyarı',
+    customView(
+      title: title ?? 'Dikkat',
       hexagonIcon: Icons.warning_amber_rounded,
-      hexagonColor: AppColors.warning500,
+      hexagonColor: AppColors.warning600,
       text: text,
-      height: 519,
-      borderRadius: 50,
       context: AppSettings.instance.context!,
       buttons: [
         ButtonProperties(
@@ -556,8 +502,8 @@ class CustomBottomSheet {
             Navigator.pop(AppSettings.instance.context!);
             onButtonPressed?.call();
           },
-          text: "Tamam",
-          color: AppColors.warning500,
+          text: 'Tamam',
+          color: AppColors.warning600,
         ),
       ],
     );

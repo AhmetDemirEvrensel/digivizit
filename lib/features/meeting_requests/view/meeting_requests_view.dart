@@ -1,3 +1,4 @@
+import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/models/appointment/appointment_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
@@ -92,29 +93,23 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
         const <_AppointmentCalendarEntry>[];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FB),
+      backgroundColor: AppColors.surface,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF8F9FB),
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF0F172A)),
+          icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Gorusme Talepleri',
-          style: AppFonts.baseBold.copyWith(
-            fontSize: 20,
-            color: const Color(0xFF0F172A),
-          ),
+          'Görüşme Talepleri',
+          style: AppFonts.xlBold.withColor(AppColors.ink),
         ),
-        centerTitle: false,
       ),
       body: Column(
         children: [
           _buildCalendarView(),
           Expanded(
             child: Container(
-              color: const Color(0xFFF8F9FB),
+              color: AppColors.surface,
               child: filteredAppointments.isEmpty
                   ? _buildEmptyState()
                   : ListView.builder(
@@ -161,7 +156,18 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
   Widget _buildCalendarView() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: const BoxDecoration(color: Color(0xFFF8F9FB)),
+      decoration: BoxDecoration(
+        color: AppColors.baseWhite,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+        border: const Border(bottom: BorderSide(color: AppColors.hairline)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.ink.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -170,12 +176,12 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF3B82F6).withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.primary500.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.calendar_today,
-                  color: Color(0xFF2563EB),
+                  color: AppColors.primary600,
                   size: 20,
                 ),
               ),
@@ -184,7 +190,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                 '${_getMonthName(_visibleMonth.month)} ${_visibleMonth.year}',
                 style: AppFonts.baseBold.copyWith(
                   fontSize: 24,
-                  color: const Color(0xFF0F172A),
+                  color: AppColors.ink,
                 ),
               ),
               const Spacer(),
@@ -193,7 +199,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                   _isMonthExpanded
                       ? Icons.keyboard_arrow_up
                       : Icons.keyboard_arrow_down,
-                  color: const Color(0xFF0F172A),
+                  color: AppColors.ink,
                 ),
                 onPressed: _toggleCalendarMode,
               ),
@@ -219,14 +225,18 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.event_busy, size: 48, color: const Color(0xFF94A3B8)),
+            const Icon(
+              Icons.event_busy_rounded,
+              size: 48,
+              color: AppColors.inkFaint,
+            ),
             const SizedBox(height: 16),
             Text(
-              'Secili tarihte gorusme talebi yok.',
+              'Seçili tarihte görüşme talebi yok.',
               textAlign: TextAlign.center,
               style: AppFonts.baseSemibold.copyWith(
                 fontSize: 16,
-                color: const Color(0xFF64748B),
+                color: AppColors.inkSoft,
               ),
             ),
           ],
@@ -422,7 +432,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
     switch (_meetingTimeState(appointmentDateTime)) {
       case _MeetingTimeState.past:
         return const _MeetingVisualTone(
-          label: 'Gecmis',
+          label: 'Geçmiş',
           icon: Icons.history_toggle_off_rounded,
           accentColor: Color(0xFFE11D48),
           cardColor: Color(0xFFFFF1F2),
@@ -432,7 +442,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
         );
       case _MeetingTimeState.today:
         return const _MeetingVisualTone(
-          label: 'Bugun',
+          label: 'Bugün',
           icon: Icons.flash_on_rounded,
           accentColor: Color(0xFF0284C7),
           cardColor: Color(0xFFF0F9FF),
@@ -442,7 +452,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
         );
       case _MeetingTimeState.upcoming:
         return const _MeetingVisualTone(
-          label: 'Planli',
+          label: 'Planlı',
           icon: Icons.schedule_rounded,
           accentColor: Color(0xFFD97706),
           cardColor: Color(0xFFFFFBEB),
@@ -502,7 +512,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                     _weekDays[index],
                     style: AppFonts.baseRegular.copyWith(
                       fontSize: 12,
-                      color: const Color(0xFF94A3B8),
+                      color: AppColors.inkFaint,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -511,9 +521,9 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                     height: 44,
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? const Color(0xFF3B82F6)
+                          ? AppColors.primary500
                           : (isToday
-                                ? const Color(0xFFE2E8F0)
+                                ? AppColors.hairline
                                 : (hasMeeting
                                       ? const Color(0xFFFECDD3)
                                       : Colors.transparent)),
@@ -525,8 +535,8 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                         style: AppFonts.baseBold.copyWith(
                           fontSize: 16,
                           color: isSelected
-                              ? Colors.white
-                              : const Color(0xFF0F172A),
+                              ? AppColors.baseWhite
+                              : AppColors.ink,
                         ),
                       ),
                     ),
@@ -568,7 +578,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                       day,
                       style: AppFonts.baseRegular.copyWith(
                         fontSize: 12,
-                        color: const Color(0xFF94A3B8),
+                        color: AppColors.inkFaint,
                       ),
                     ),
                   ),
@@ -666,8 +676,8 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
               height: _monthDayCircleSize,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? const Color(0xFF3B82F6)
-                    : (isToday ? const Color(0xFFE2E8F0) : Colors.transparent),
+                    ? AppColors.primary500
+                    : (isToday ? AppColors.hairline : Colors.transparent),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -676,10 +686,10 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                   style: AppFonts.baseBold.copyWith(
                     fontSize: 14,
                     color: isSelected
-                        ? Colors.white
+                        ? AppColors.baseWhite
                         : (isCurrentMonth
-                              ? const Color(0xFF0F172A)
-                              : const Color(0xFFCBD5E1)),
+                              ? AppColors.ink
+                              : AppColors.secondary300),
                   ),
                 ),
               ),
@@ -693,7 +703,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                       height: _meetingMarkerSize,
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? Colors.white
+                            ? AppColors.baseWhite
                             : const Color(0xFFE11D48),
                         shape: BoxShape.circle,
                       ),
@@ -712,13 +722,13 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
   }) {
     final requesterName = appointment.fullName?.trim().isNotEmpty == true
         ? appointment.fullName!.trim()
-        : 'Isimsiz Talep';
+        : 'İsimsiz Talep';
     final company = appointment.company?.trim().isNotEmpty == true
         ? appointment.company!.trim()
-        : 'Sirket belirtilmedi';
+        : 'Şirket belirtilmedi';
     final subject = appointment.subject?.trim().isNotEmpty == true
         ? appointment.subject!.trim()
-        : 'Gorusme Talebi';
+        : 'Görüşme Talebi';
     final department =
         AppSettings.instance.profile?.data?.department?.name?.trim() ?? '';
     final timeTone = _meetingVisualTone(appointmentDateTime);
@@ -743,26 +753,18 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: timeTone.cardColor,
-          border: Border.all(color: timeTone.borderColor, width: 1),
+          color: AppColors.baseWhite,
+          border: Border.all(color: AppColors.hairline),
           borderRadius: BorderRadius.circular(22),
           boxShadow: [
             BoxShadow(
-              color: timeTone.softColor,
-              blurRadius: 18,
+              color: AppColors.ink.withValues(alpha: 0.05),
+              blurRadius: 16,
               offset: const Offset(0, 8),
             ),
           ],
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              timeTone.cardColor,
-              Color.lerp(timeTone.cardColor, Colors.white, 0.35)!,
-            ],
-          ),
         ),
-        margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+        margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           child: Row(
@@ -795,7 +797,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                         _formatDate(appointmentDateTime),
                         style: AppFonts.baseRegular.copyWith(
                           fontSize: 11,
-                          color: const Color(0xFF64748B),
+                          color: AppColors.inkSoft,
                         ),
                       ),
                     ],
@@ -845,7 +847,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                                 subject,
                                 style: AppFonts.baseBold.copyWith(
                                   fontSize: 15,
-                                  color: const Color(0xFF0F172A),
+                                  color: AppColors.ink,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -853,7 +855,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                                 requesterName,
                                 style: AppFonts.baseSemibold.copyWith(
                                   fontSize: 13,
-                                  color: const Color(0xFF475569),
+                                  color: AppColors.secondary600,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -861,7 +863,7 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                                 company,
                                 style: AppFonts.baseRegular.copyWith(
                                   fontSize: 12,
-                                  color: const Color(0xFF94A3B8),
+                                  color: AppColors.inkFaint,
                                 ),
                               ),
                             ],
@@ -888,8 +890,8 @@ class _MeetingRequestsViewState extends State<MeetingRequestsView> {
                         if (department.isNotEmpty)
                           _buildMetaChip(
                             label: department,
-                            color: const Color(0xFF475569),
-                            backgroundColor: const Color(0xFFF1F5F9),
+                            color: AppColors.secondary600,
+                            backgroundColor: AppColors.surfaceAlt,
                           ),
                       ],
                     ),

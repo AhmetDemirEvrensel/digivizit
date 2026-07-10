@@ -31,8 +31,8 @@ class _BlinkingAlertIconState extends State<BlinkingAlertIcon>
     )..repeat(reverse: true);
 
     _animation = Tween<double>(
-      begin: 1.0,
-      end: 0.2,
+      begin: 1,
+      end: 0.68,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 

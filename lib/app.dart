@@ -2,9 +2,9 @@ import 'package:digivizit/core/constants/global_initializer.dart';
 import 'package:digivizit/core/navigation/navigation_router.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/core/providers/async_process_manager.dart';
+import 'package:digivizit/core/utils/theme_service.dart';
 import 'package:digivizit/shared/components/containers/figma_box.dart';
 import 'package:digivizit/shared/widgets/async_process_loader.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -46,6 +46,7 @@ class _MyAppState extends State<MyApp> {
           );
         },
         debugShowCheckedModeBanner: false,
+        theme: ThemeService.lightTheme,
         themeMode: ThemeMode.light,
         onGenerateRoute: NavigationRoute().generateRoute,
         navigatorKey: AppSettings.instance.navigatorKey,

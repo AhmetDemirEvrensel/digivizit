@@ -55,6 +55,16 @@ class _ContactsViewState extends State<ContactsView> {
     });
   }
 
+  @override
+  void didUpdateWidget(covariant ContactsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.contactsResponse != widget.contactsResponse) {
+      _contactsResponse = widget.contactsResponse;
+      _homeViewModel.getContactsResponse = widget.contactsResponse;
+    }
+  }
+
   void _onScroll() {
     if (!_scrollController.hasClients) return;
     final threshold = _scrollController.position.maxScrollExtent - 200;

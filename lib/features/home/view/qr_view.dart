@@ -6,6 +6,7 @@ import 'package:digivizit/core/models/business_cards/business_card_scan_response
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/shared/components/alert/custom_snacbar.dart';
+import 'package:digivizit/shared/components/alert/custom_dialog.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
 import 'package:digivizit/shared/components/containers/figma_box.dart';
 import 'package:flutter/material.dart';
@@ -624,46 +625,21 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
     final isPermanentlyDenied =
         status.isPermanentlyDenied || status.isRestricted;
 
-    await showDialog<void>(
+    final openSettings = await showCustomDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: AppColors.baseWhite,
-          title: Text(
-            'Izin Gerekli',
-            style: AppFonts.lgBold.withColor(AppColors.ink),
-          ),
-          content: Text(
-            source == ImageSource.camera
-                ? 'Kartvizit fotografi cekebilmek icin kamera izni gerekli.'
-                : 'Galeriden gorsel secmek icin fotograf arsivi izni gerekli.',
-            style: AppFonts.baseRegular.copyWith(color: AppColors.inkSoft),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Kapat',
-                style: AppFonts.baseSemibold.copyWith(color: AppColors.inkSoft),
-              ),
-            ),
-            if (isPermanentlyDenied)
-              TextButton(
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  await openAppSettings();
-                },
-                child: Text(
-                  'Ayarlari Ac',
-                  style: AppFonts.baseSemibold.copyWith(
-                    color: AppColors.primary600,
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
+      title: 'İzin Gerekli',
+      message: source == ImageSource.camera
+          ? 'Kartvizit fotoğrafı çekebilmek için kamera izni gerekli.'
+          : 'Galeriden görsel seçmek için fotoğraf arşivi izni gerekli.',
+      status: CustomDialogStatus.warning,
+      icon: Icons.lock_outline_rounded,
+      confirmText: isPermanentlyDenied ? 'Ayarları Aç' : 'Kapat',
+      cancelText: isPermanentlyDenied ? 'Vazgeç' : null,
     );
+
+    if (isPermanentlyDenied && openSettings == true) {
+      await openAppSettings();
+    }
 
     return false;
   }

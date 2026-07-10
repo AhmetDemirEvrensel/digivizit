@@ -1,6 +1,5 @@
+import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:digivizit/core/constants/icon_paths.dart';
-import 'package:digivizit/core/extensions/integer.dart';
 
 class ArrowButton extends StatelessWidget {
   const ArrowButton({super.key});
@@ -8,20 +7,17 @@ class ArrowButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 28.pxh,
-      height: 28.pxh,
-      padding: EdgeInsets.all(6.pxh),
-      decoration: ShapeDecoration(
-        color: Colors.white.withValues(alpha: 0.20),
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1.15,
-            color: Colors.white.withValues(alpha: 0.30),
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
+      width: 30,
+      height: 30,
+      decoration: BoxDecoration(
+        color: AppColors.primary500.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(10),
       ),
-      child: Image.asset(IconPaths.arrowIcon),
+      child: const Icon(
+        Icons.arrow_forward_rounded,
+        size: 17,
+        color: AppColors.primary600,
+      ),
     );
   }
 }

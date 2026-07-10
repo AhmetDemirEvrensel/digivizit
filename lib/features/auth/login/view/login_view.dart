@@ -78,6 +78,7 @@ class _LoginViewState extends State<LoginView>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    FigmaBox(height: 68),
                     _buildHeroSection(),
                     FigmaBox(height: 28),
                     Observer(
@@ -593,16 +594,16 @@ class _LoginViewState extends State<LoginView>
                                   CustomBottomSheet.customView(
                                     context: context,
                                     viewTopBar: true,
-                                    title: 'Sifre Guncellendi',
+                                    title: 'Şifre Güncellendi',
                                     hexagonIcon: Icons.done_rounded,
-                                    hexagonColor: AppColors.tertiary500,
+                                    hexagonColor: AppColors.positive600,
                                     text:
-                                        'Sifreniz basariyla guncellendi. Yeni sifrenizle giris yapabilirsiniz.',
+                                        'Şifreniz başarıyla güncellendi. Yeni şifrenizle giriş yapabilirsiniz.',
                                     buttons: [
                                       ButtonProperties(
                                         onPressed: () => Navigator.pop(context),
                                         text: 'Tamam',
-                                        color: AppColors.tertiary500,
+                                        color: AppColors.positive600,
                                       ),
                                     ],
                                   );
@@ -645,11 +646,9 @@ class _LoginViewState extends State<LoginView>
       viewTopBar: true,
       title: 'Kayıt Başarılı',
       hexagonIcon: Icons.done_rounded,
-      hexagonColor: AppColors.tertiary500,
+      hexagonColor: AppColors.positive600,
       text:
           'Kayıt başarılı bir şekilde gerçekleştirildi. Sistemden onay geldikten sonra giriş yapabilirsiniz.',
-      height: 519,
-      borderRadius: 50,
       context: sheetContext,
       buttons: [
         ButtonProperties(
@@ -657,7 +656,7 @@ class _LoginViewState extends State<LoginView>
             Navigator.pop(sheetContext);
           },
           text: 'Tamam',
-          color: AppColors.tertiary500,
+          color: AppColors.positive600,
         ),
       ],
     );

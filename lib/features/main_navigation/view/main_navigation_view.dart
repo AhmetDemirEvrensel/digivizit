@@ -6,6 +6,7 @@ import 'package:digivizit/features/home/view/home_view.dart';
 import 'package:digivizit/features/home/view/qr_view.dart';
 import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/shared/components/navigation/custom_bottom_nav_bar.dart';
+import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class MainNavigationView extends StatefulWidget {
@@ -73,7 +74,7 @@ class _MainNavigationViewState extends State<MainNavigationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.surface,
       extendBody: true,
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: CustomBottomNavBar(

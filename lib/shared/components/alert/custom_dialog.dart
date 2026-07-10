@@ -1,160 +1,125 @@
+import 'package:digivizit/core/constants/app_colors.dart';
+import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:digivizit/core/constants/global_initializer.dart';
-import 'package:digivizit/core/extensions/integer.dart';
-import 'package:digivizit/shared/components/containers/figma_box.dart';
-import 'package:digivizit/shared/components/containers/figma_container.dart';
+
+enum CustomDialogStatus { info, success, warning, error, destructive }
 
 class CustomDialog extends StatelessWidget {
   final String text;
   final String description;
   final String confirmText;
   final String cancelText;
-  final IconData icon;
+  final IconData? icon;
+  final CustomDialogStatus status;
+  final bool showCancelButton;
   final VoidCallback? onPressedConfirm;
   final VoidCallback? onPressedCancel;
+
   const CustomDialog({
     super.key,
     required this.text,
     required this.description,
     this.confirmText = 'Onayla',
     this.cancelText = 'İptal',
-    this.icon = Icons.lock_outline,
+    this.icon,
+    this.status = CustomDialogStatus.destructive,
+    this.showCancelButton = true,
     this.onPressedConfirm,
     this.onPressedCancel,
   });
 
+  Color get _accentColor => switch (status) {
+    CustomDialogStatus.info => AppColors.primary600,
+    CustomDialogStatus.success => AppColors.positive600,
+    CustomDialogStatus.warning => AppColors.warning600,
+    CustomDialogStatus.error ||
+    CustomDialogStatus.destructive => AppColors.negative500,
+  };
+
+  IconData get _statusIcon =>
+      icon ??
+      switch (status) {
+        CustomDialogStatus.info => Icons.info_outline_rounded,
+        CustomDialogStatus.success => Icons.check_circle_outline_rounded,
+        CustomDialogStatus.warning => Icons.warning_amber_rounded,
+        CustomDialogStatus.error => Icons.error_outline_rounded,
+        CustomDialogStatus.destructive => Icons.delete_outline_rounded,
+      };
+
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      child: FigmaContainer(
-        padding: appSizer.paddingAll(24),
-        decoration: BoxDecoration(
-          color: isDarkMode ? const Color(0xFF1E2736) : Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: isDarkMode
-                  ? const Color(0x66000000)
-                  : const Color(0x4C000000),
-              blurRadius: 60,
-              offset: const Offset(0, 20),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Icon with gradient background
-            FigmaContainer(
-              width: 64.pxh,
-              height: 64.pxv,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDarkMode
-                      ? [const Color(0xFF3D2020), const Color(0xFF4D2525)]
-                      : [const Color(0xFFFEE2E2), const Color(0xFFFECACA)],
+      elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      backgroundColor: Colors.transparent,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 440),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: AppColors.baseWhite,
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: AppColors.hairline),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.ink.withValues(alpha: 0.12),
+                blurRadius: 36,
+                offset: const Offset(0, 18),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: _accentColor.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(17),
                 ),
-                shape: BoxShape.circle,
+                child: Icon(_statusIcon, size: 26, color: _accentColor),
               ),
-              child: Icon(icon, size: 32, color: const Color(0xFFEF4444)),
-            ),
-            FigmaBox(height: 16),
-            // Title
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: appSizer.style(
-                color: isDarkMode ? Colors.white : const Color(0xFF1F2937),
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.44,
+              const SizedBox(height: 18),
+              Text(text, style: AppFonts.lg2Bold.withColor(AppColors.ink)),
+              const SizedBox(height: 8),
+              Text(
+                description,
+                style: AppFonts.baseRegular
+                    .withColor(AppColors.inkSoft)
+                    .withHeight(1.5),
               ),
-            ),
-            FigmaBox(height: 8),
-            // Description
-            Text(
-              description,
-              textAlign: TextAlign.center,
-              style: appSizer.style(
-                color: isDarkMode
-                    ? const Color(0xFFB0B8C4)
-                    : const Color(0xFF6B7280),
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.15,
-              ),
-            ),
-            FigmaBox(height: 24),
-            // Confirm Button
-            FigmaContainer(
-              width: double.infinity,
-              height: 52,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-                ),
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0x3FEF4444),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  if (showCancelButton) ...[
+                    Expanded(
+                      child: _DialogButton(
+                        text: cancelText,
+                        foregroundColor: AppColors.ink,
+                        backgroundColor: AppColors.surfaceAlt,
+                        onTap:
+                            onPressedCancel ??
+                            () => Navigator.of(context).pop(false),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
+                    child: _DialogButton(
+                      text: confirmText,
+                      foregroundColor: AppColors.baseWhite,
+                      backgroundColor: _accentColor,
+                      onTap:
+                          onPressedConfirm ??
+                          () => Navigator.of(context).pop(true),
+                    ),
                   ),
                 ],
               ),
-              child: ElevatedButton(
-                onPressed: onPressedConfirm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: Text(
-                  confirmText,
-                  style: appSizer.style(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.15,
-                  ),
-                ),
-              ),
-            ),
-            FigmaBox(height: 10),
-            FigmaContainer(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: onPressedCancel,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isDarkMode
-                      ? const Color(0xFF2D3748)
-                      : const Color(0xFFF3F4F6),
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: Text(
-                  cancelText,
-                  style: appSizer.style(
-                    color: isDarkMode ? Colors.white : const Color(0xFF354152),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.15,
-                  ),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -163,15 +128,61 @@ class CustomDialog extends StatelessWidget {
   Future<bool?> show(BuildContext context) {
     return showDialog<bool>(
       context: context,
-      builder: (context) => CustomDialog(
-        text: text,
-        description: description,
-        confirmText: confirmText,
-        cancelText: cancelText,
-        icon: icon,
-        onPressedConfirm: onPressedConfirm,
-        onPressedCancel: onPressedCancel,
+      barrierColor: AppColors.ink.withValues(alpha: 0.35),
+      builder: (_) => this,
+    );
+  }
+}
+
+class _DialogButton extends StatelessWidget {
+  final String text;
+  final Color foregroundColor;
+  final Color backgroundColor;
+  final VoidCallback onTap;
+
+  const _DialogButton({
+    required this.text,
+    required this.foregroundColor,
+    required this.backgroundColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 52,
+      child: FilledButton(
+        onPressed: onTap,
+        style: FilledButton.styleFrom(
+          elevation: 0,
+          foregroundColor: foregroundColor,
+          backgroundColor: backgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Text(text, style: AppFonts.baseBold.withColor(foregroundColor)),
       ),
     );
   }
+}
+
+Future<bool?> showCustomDialog({
+  required BuildContext context,
+  required String title,
+  required String message,
+  CustomDialogStatus status = CustomDialogStatus.info,
+  IconData? icon,
+  String confirmText = 'Tamam',
+  String? cancelText,
+}) {
+  return CustomDialog(
+    text: title,
+    description: message,
+    status: status,
+    icon: icon,
+    confirmText: confirmText,
+    cancelText: cancelText ?? 'Vazgeç',
+    showCancelButton: cancelText != null,
+  ).show(context);
 }

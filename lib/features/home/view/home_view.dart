@@ -6,6 +6,7 @@ import 'package:digivizit/core/models/personel/profile_response.dart';
 import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/features/meeting_requests/view_model/meeting_request_view_model.dart';
+import 'package:digivizit/shared/components/alert/custom_dialog.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
 import 'package:digivizit/shared/components/buttons/pressable_scale.dart';
 import 'package:digivizit/shared/components/card/flippable_business_card.dart';
@@ -148,80 +149,103 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildActionRow() {
     final meetingViewModel = MeetingRequestViewModel();
 
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          flex: 3,
-          child: PressableScale(
-            onTap: _shareBusinessCardQr,
-            child: Container(
-              height: 56,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary600, AppColors.primary400],
-                ),
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary500.withValues(alpha: 0.35),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.ios_share_rounded,
-                    color: AppColors.baseWhite,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Kartı Paylaş',
-                    style: AppFonts.base2Bold.withColor(AppColors.baseWhite),
-                  ),
-                ],
-              ),
-            ),
-          ),
+        _buildActionCard(
+          icon: Icons.ios_share_rounded,
+          title: 'Kartı Paylaş',
+          subtitle: 'QR bağlantını hızlıca paylaş',
+          onTap: _shareBusinessCardQr,
+          isPrimary: true,
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          flex: 2,
-          child: PressableScale(
-            onTap: () => meetingViewModel.getAppointmentRequests(),
-            child: Container(
-              height: 56,
-              decoration: BoxDecoration(
-                color: AppColors.baseWhite,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: _hairline),
-                boxShadow: [
-                  BoxShadow(
-                    color: _ink.withValues(alpha: 0.05),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.calendar_month_rounded,
-                    color: AppColors.primary600,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Text('Görüşmeler', style: AppFonts.baseBold.withColor(_ink)),
-                ],
-              ),
-            ),
-          ),
+        const SizedBox(height: 12),
+        _buildActionCard(
+          icon: Icons.calendar_month_rounded,
+          title: 'Görüşmeler',
+          subtitle: 'Görüşme taleplerini görüntüle',
+          onTap: () => meetingViewModel.getAppointmentRequests(),
         ),
       ],
+    );
+  }
+
+  Widget _buildActionCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool isPrimary = false,
+  }) {
+    final foreground = isPrimary ? AppColors.baseWhite : _ink;
+    final mutedForeground = isPrimary
+        ? AppColors.baseWhite.withValues(alpha: 0.78)
+        : _inkSoft;
+
+    return PressableScale(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: isPrimary ? null : AppColors.baseWhite,
+          gradient: isPrimary
+              ? const LinearGradient(
+                  colors: [AppColors.primary600, AppColors.primary400],
+                )
+              : null,
+          borderRadius: BorderRadius.circular(18),
+          border: isPrimary ? null : Border.all(color: _hairline),
+          boxShadow: [
+            BoxShadow(
+              color: isPrimary
+                  ? AppColors.primary500.withValues(alpha: 0.24)
+                  : _ink.withValues(alpha: 0.05),
+              blurRadius: isPrimary ? 20 : 12,
+              offset: Offset(0, isPrimary ? 10 : 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: isPrimary
+                    ? AppColors.baseWhite.withValues(alpha: 0.16)
+                    : AppColors.primary100,
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: Icon(
+                icon,
+                color: isPrimary ? AppColors.baseWhite : AppColors.primary600,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 13),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: AppFonts.lgBold.withColor(foreground)),
+                  const SizedBox(height: 1),
+                  Text(
+                    subtitle,
+                    style: AppFonts.smRegular.withColor(mutedForeground),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_rounded,
+              color: isPrimary
+                  ? AppColors.baseWhite.withValues(alpha: 0.9)
+                  : AppColors.primary500,
+              size: 22,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -441,113 +465,15 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> _confirmLogout() async {
-    final shouldLogout = await showDialog<bool>(
+    final shouldLogout = await showCustomDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.35),
-      builder: (dialogContext) {
-        return Dialog(
-          backgroundColor: AppColors.baseWhite,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(26),
-          ),
-          insetPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 32,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: AppColors.negative500.withValues(alpha: 0.10),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Icon(
-                        Icons.logout_rounded,
-                        color: AppColors.negative500,
-                        size: 26,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Oturumu Kapat',
-                            style: AppFonts.lg2Bold.withColor(_ink),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Bu cihazdaki aktif oturum sonlandırılacak.',
-                            style: AppFonts.smRegular.withColor(_inkSoft),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Çıkış yaptıktan sonra tekrar kullanmak için yeniden giriş yapmanız gerekecek. Devam etmek istiyor musunuz?',
-                  style: AppFonts.baseRegular
-                      .withColor(_inkSoft)
-                      .withHeight(1.5),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: PressableScale(
-                        onTap: () => Navigator.of(dialogContext).pop(false),
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF1F5F9),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Vazgeç',
-                            style: AppFonts.baseBold.withColor(_ink),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: PressableScale(
-                        onTap: () => Navigator.of(dialogContext).pop(true),
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.negative500,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Çıkış Yap',
-                            style: AppFonts.baseBold.withColor(
-                              AppColors.baseWhite,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+      title: 'Oturumu Kapat',
+      message:
+          'Çıkış yaptıktan sonra tekrar kullanmak için yeniden giriş yapmanız gerekecek. Devam etmek istiyor musunuz?',
+      status: CustomDialogStatus.destructive,
+      icon: Icons.logout_rounded,
+      confirmText: 'Çıkış Yap',
+      cancelText: 'Vazgeç',
     );
 
     if (shouldLogout == true) {
@@ -605,30 +531,12 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _showInfoDialog({required String title, required String message}) {
-    showDialog<void>(
+    showCustomDialog(
       context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          backgroundColor: AppColors.baseWhite,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(22),
-          ),
-          title: Text(title, style: AppFonts.lgBold.withColor(_ink)),
-          content: Text(
-            message,
-            style: AppFonts.baseRegular.withColor(_inkSoft),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text(
-                'Kapat',
-                style: AppFonts.baseBold.withColor(AppColors.primary600),
-              ),
-            ),
-          ],
-        );
-      },
+      title: title,
+      message: message,
+      status: CustomDialogStatus.info,
+      confirmText: 'Kapat',
     );
   }
 

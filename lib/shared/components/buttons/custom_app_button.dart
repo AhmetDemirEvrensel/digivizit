@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:digivizit/core/constants/app_colors.dart';
 import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/constants/global_initializer.dart';
-import 'package:digivizit/core/constants/icon_paths.dart';
-import 'package:digivizit/core/constants/image_paths.dart';
 import 'package:digivizit/core/enums/buton_enums.dart';
 import 'package:digivizit/core/extensions/integer.dart';
 import 'package:digivizit/shared/components/buttons/arrow_button.dart';
-import 'package:digivizit/shared/components/containers/figma_container.dart';
-import 'package:digivizit/shared/components/hexagon/hexagon_widget.dart';
 
 enum ButtonLayoutType { standard, arrow, hexagon }
 
@@ -62,8 +58,8 @@ class CustomAppButton extends StatelessWidget {
     this.leadingIconPath,
     this.backgroundColor,
     this.borderColor,
-    this.textColor = AppColors.baseWhite,
-    this.iconColor = AppColors.baseWhite,
+    this.textColor,
+    this.iconColor,
     this.buttonHeight = 56,
     this.borderRadius = 16,
     this.textSize = 15,
@@ -129,8 +125,8 @@ class CustomAppButton extends StatelessWidget {
       borderColor: borderColor ?? AppColors.primary500,
       backgroundColor: backgroundColor,
       gradient: gradient,
-      textColor: textColor ?? AppColors.baseWhite,
-      iconColor: iconColor ?? AppColors.baseWhite,
+      textColor: textColor ?? AppColors.primary600,
+      iconColor: iconColor ?? AppColors.primary600,
       buttonHeight: buttonHeight,
       borderRadius: borderRadius,
       textSize: textSize,
@@ -349,43 +345,52 @@ class CustomAppButton extends StatelessWidget {
     required bool hasShadow,
     bool useFixedHeight = true,
   }) {
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      enabled: isActive,
       onTap: isActive ? onTap : null,
-      child: Container(
-        width: double.infinity,
-        height: useFixedHeight ? buttonHeight : null,
-        constraints: useFixedHeight
-            ? null
-            : BoxConstraints(minHeight: buttonHeight),
-        margin: outsidePadding,
-        decoration: ShapeDecoration(
-          color: gradient != null ? null : bgColor,
-          gradient: gradient,
-          shape: RoundedRectangleBorder(
-            side: hasBorder
-                ? BorderSide(
-                    width: 1.15,
-                    color:
-                        borderColor ??
-                        AppColors.baseWhite.withValues(alpha: 0.30),
-                  )
-                : BorderSide(color: Colors.transparent),
-            borderRadius: BorderRadius.circular(borderRadius),
+      child: AnimatedOpacity(
+        opacity: isActive ? 1 : 0.55,
+        duration: const Duration(milliseconds: 180),
+        child: GestureDetector(
+          onTap: isActive ? onTap : null,
+          child: Container(
+            width: double.infinity,
+            height: useFixedHeight ? buttonHeight : null,
+            constraints: useFixedHeight
+                ? null
+                : BoxConstraints(minHeight: buttonHeight),
+            margin: outsidePadding,
+            decoration: ShapeDecoration(
+              color: gradient != null ? null : bgColor,
+              gradient: gradient,
+              shape: RoundedRectangleBorder(
+                side: hasBorder
+                    ? BorderSide(
+                        color:
+                            borderColor ??
+                            (styleType == ButtonStyleType.filled
+                                ? bgColor
+                                : AppColors.hairline),
+                      )
+                    : BorderSide.none,
+                borderRadius: BorderRadius.circular(borderRadius),
+              ),
+              shadows: hasShadow
+                  ? [
+                      BoxShadow(
+                        color: bgColor.withValues(alpha: 0.24),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Padding(
+              padding: padding ?? appSizer.paddingSymmetric(horizontal: 24),
+              child: child,
+            ),
           ),
-          shadows: hasShadow
-              ? const [
-                  BoxShadow(
-                    color: Color(0x33000000),
-                    blurRadius: 30,
-                    offset: Offset(0, 10),
-                    spreadRadius: 0,
-                  ),
-                ]
-              : null,
-        ),
-        child: Padding(
-          padding: padding ?? appSizer.paddingSymmetric(horizontal: 24),
-          child: child,
         ),
       ),
     );
@@ -517,21 +522,29 @@ class CustomAppButton extends StatelessWidget {
               child ??
               Row(
                 children: [
-                  if (leadingIconPath != null)
-                    HexagonWidget.assetIcon(
-                      iconPath: leadingIconPath!,
-                      size: hexagonSize ?? 55.pxv,
-                      fillColor: hexagonFillColor ?? AppColors.buttonBgColor,
-                      borderColor: hexagonBorderColor ?? AppColors.borderColor,
-                      iconColor: hexagonIconColor ?? AppColors.baseWhite,
-                    ),
-                  if (leadingIcon != null)
-                    HexagonWidget.icon(
-                      icon: leadingIcon!,
-                      size: hexagonSize ?? 55.pxv,
-                      fillColor: hexagonFillColor ?? AppColors.buttonBgColor,
-                      borderColor: hexagonBorderColor ?? AppColors.borderColor,
-                      iconColor: hexagonIconColor ?? AppColors.baseWhite,
+                  if (leadingIconPath != null || leadingIcon != null)
+                    Container(
+                      width: hexagonSize ?? 52.pxv,
+                      height: hexagonSize ?? 52.pxv,
+                      padding: const EdgeInsets.all(13),
+                      decoration: BoxDecoration(
+                        color:
+                            hexagonFillColor ??
+                            colors.icnColor.withValues(alpha: 0.12),
+                        border: Border.all(
+                          color: hexagonBorderColor ?? AppColors.hairline,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: leadingIconPath != null
+                          ? Image.asset(
+                              leadingIconPath!,
+                              color: hexagonIconColor ?? colors.icnColor,
+                            )
+                          : Icon(
+                              leadingIcon,
+                              color: hexagonIconColor ?? colors.icnColor,
+                            ),
                     ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -554,24 +567,9 @@ class CustomAppButton extends StatelessWidget {
                     ),
                   ),
                   if (showArrow)
-                    Padding(
-                      padding: appSizer.paddingSymmetric(horizontal: 10.0),
-                      child: FigmaContainer(
-                        width: 34.pxh,
-                        height: 34.pxh,
-                        padding: appSizer.paddingAll(8.pxh),
-                        decoration: ShapeDecoration(
-                          color: Colors.white.withValues(alpha: 0.20),
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              width: 1.15,
-                              color: Colors.white.withValues(alpha: 0.30),
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Image.asset(IconPaths.arrowIcon),
-                      ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: ArrowButton(),
                     ),
                 ],
               ),
@@ -601,23 +599,23 @@ class CustomAppButton extends StatelessWidget {
               (!isActive ? AppColors.neutral500 : AppColors.primary500),
           txtColor: textColor ?? Colors.white,
           icnColor: iconColor ?? Colors.white,
-          hasBorder: true,
+          hasBorder: borderColor != null,
         );
 
       case ButtonStyleType.outlined:
         return (
-          bgColor: backgroundColor ?? Colors.transparent,
-          txtColor: textColor ?? AppColors.baseWhite,
-          icnColor: iconColor ?? AppColors.baseWhite,
+          bgColor: backgroundColor ?? AppColors.baseWhite,
+          txtColor: textColor ?? AppColors.primary600,
+          icnColor: iconColor ?? AppColors.primary600,
           hasBorder: true,
         );
 
       case ButtonStyleType.text:
         return (
           bgColor: Colors.transparent,
-          txtColor: textColor ?? AppColors.baseWhite,
-          icnColor: iconColor ?? AppColors.baseWhite,
-          hasBorder: true,
+          txtColor: textColor ?? AppColors.primary600,
+          icnColor: iconColor ?? AppColors.primary600,
+          hasBorder: false,
         );
     }
   }

@@ -172,13 +172,13 @@ class _FlippableBusinessCardState extends State<FlippableBusinessCard>
                         children: [
                           Icon(
                             Icons.qr_code_2_rounded,
-                            size: 16,
+                            size: 20,
                             color: AppColors.primary500.withValues(alpha: 0.8),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             'QR için dokun',
-                            style: AppFonts.xsSemibold.withColor(
+                            style: AppFonts.baseSemibold.withColor(
                               const Color(0xFF94A3B8),
                             ),
                           ),
@@ -320,25 +320,45 @@ class _FlippableBusinessCardState extends State<FlippableBusinessCard>
 
     if (chips.isEmpty) return const SizedBox.shrink();
 
-    return Wrap(spacing: 8, runSpacing: 8, children: chips);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var index = 0; index < chips.length; index++) ...[
+          chips[index],
+          if (index != chips.length - 1) const SizedBox(height: 8),
+        ],
+      ],
+    );
   }
 
   Widget _buildChip(IconData icon, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.primary500),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: AppFonts.xsSemibold.withColor(const Color(0xFF334155)),
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: AppColors.primary500.withValues(alpha: 0.11),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 18, color: AppColors.primary600),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppFonts.base2Semibold.withColor(const Color(0xFF334155)),
+            ),
           ),
         ],
       ),
