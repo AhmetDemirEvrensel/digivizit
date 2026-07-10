@@ -7,7 +7,13 @@ class SliverHeader extends StatelessWidget {
   final double collapsedFontSize;
   final double expandedFontSize;
 
-  const SliverHeader({super.key, required this.text, this.expandedHeight = 60.0, this.collapsedFontSize = 20, this.expandedFontSize = 20});
+  const SliverHeader({
+    super.key,
+    required this.text,
+    this.expandedHeight = 60.0,
+    this.collapsedFontSize = 20,
+    this.expandedFontSize = 20,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +25,15 @@ class SliverHeader extends StatelessWidget {
       flexibleSpace: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           // AppBar'ın scroll durumunu hesapla
-          final bool isCollapsed = constraints.biggest.height <= kToolbarHeight + MediaQuery.of(context).padding.top;
+          final bool isCollapsed =
+              constraints.biggest.height <=
+              kToolbarHeight + MediaQuery.of(context).padding.top;
 
           return FlexibleSpaceBar(
-            titlePadding: appSizer.paddingOnly(left: isCollapsed ? 16.0 : 23.0, bottom: 16.0),
+            titlePadding: appSizer.paddingOnly(
+              left: isCollapsed ? 16.0 : 23.0,
+              bottom: 16.0,
+            ),
             title: AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),
               style: appSizer.style(

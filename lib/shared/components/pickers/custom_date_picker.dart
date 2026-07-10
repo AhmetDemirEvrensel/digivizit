@@ -44,8 +44,16 @@ class CustomDatePicker {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.6),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(40))),
-      builder: (context) => _DatePickerContent(title: title, initialDate: selectedDate, firstDate: first, lastDate: last, mode: mode),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+      ),
+      builder: (context) => _DatePickerContent(
+        title: title,
+        initialDate: selectedDate,
+        firstDate: first,
+        lastDate: last,
+        mode: mode,
+      ),
     );
   }
 }
@@ -57,7 +65,13 @@ class _DatePickerContent extends StatefulWidget {
   final DateTime lastDate;
   final CustomDatePickerMode mode;
 
-  const _DatePickerContent({required this.title, required this.initialDate, required this.firstDate, required this.lastDate, required this.mode});
+  const _DatePickerContent({
+    required this.title,
+    required this.initialDate,
+    required this.firstDate,
+    required this.lastDate,
+    required this.mode,
+  });
 
   @override
   State<_DatePickerContent> createState() => _DatePickerContentState();
@@ -77,12 +91,28 @@ class _DatePickerContentState extends State<_DatePickerContent> {
   // Ay/Yıl seçici modları: 0 = takvim, 1 = ay seçici, 2 = yıl seçici
   int _pickerMode = 0;
 
-  final List<String> _months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  final List<String> _months = [
+    'Ocak',
+    'Şubat',
+    'Mart',
+    'Nisan',
+    'Mayıs',
+    'Haziran',
+    'Temmuz',
+    'Ağustos',
+    'Eylül',
+    'Ekim',
+    'Kasım',
+    'Aralık',
+  ];
 
   final List<String> _weekDays = ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pz'];
 
   // Yıl listesi
-  List<int> get _years => List.generate(widget.lastDate.year - widget.firstDate.year + 1, (i) => widget.firstDate.year + i);
+  List<int> get _years => List.generate(
+    widget.lastDate.year - widget.firstDate.year + 1,
+    (i) => widget.firstDate.year + i,
+  );
 
   // Saat listesi (0-23)
   List<int> get _hours => List.generate(24, (i) => i);
@@ -139,7 +169,11 @@ class _DatePickerContentState extends State<_DatePickerContent> {
   }
 
   bool _canGoPrevious() {
-    final firstMonth = DateTime(widget.firstDate.year, widget.firstDate.month, 1);
+    final firstMonth = DateTime(
+      widget.firstDate.year,
+      widget.firstDate.month,
+      1,
+    );
     final currentMonth = DateTime(_currentYear, _currentMonth, 1);
     return currentMonth.isAfter(firstMonth);
   }
@@ -177,12 +211,16 @@ class _DatePickerContentState extends State<_DatePickerContent> {
   }
 
   bool _isSelected(DateTime date) {
-    return date.year == _selectedDate.year && date.month == _selectedDate.month && date.day == _selectedDate.day;
+    return date.year == _selectedDate.year &&
+        date.month == _selectedDate.month &&
+        date.day == _selectedDate.day;
   }
 
   bool _isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year && date.month == now.month && date.day == now.day;
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
   }
 
   bool _isInRange(DateTime date) {
@@ -206,7 +244,13 @@ class _DatePickerContentState extends State<_DatePickerContent> {
       case CustomDatePickerMode.year:
         return DateTime(_currentYear, 1, 1);
       case CustomDatePickerMode.time:
-        return DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedHour, _selectedMinute);
+        return DateTime(
+          _selectedDate.year,
+          _selectedDate.month,
+          _selectedDate.day,
+          _selectedHour,
+          _selectedMinute,
+        );
     }
   }
 
@@ -220,7 +264,10 @@ class _DatePickerContentState extends State<_DatePickerContent> {
           decoration: BoxDecoration(
             color: AppColors.primary500.withValues(alpha: 0.15),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-            border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.1), width: 2),
+            border: Border.all(
+              color: AppColors.baseWhite.withValues(alpha: 0.1),
+              width: 2,
+            ),
           ),
           child: Padding(
             padding: appSizer.paddingSymmetric(horizontal: 24, vertical: 16),
@@ -231,12 +278,18 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                 FigmaContainer(
                   height: 4,
                   width: 40,
-                  decoration: BoxDecoration(color: AppColors.neutral500, borderRadius: BorderRadius.circular(2)),
+                  decoration: BoxDecoration(
+                    color: AppColors.neutral500,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
                 32.spacerV,
 
                 // Title
-                Text(widget.title, style: AppFonts.xl2Bold.copyWith(color: AppColors.baseWhite)),
+                Text(
+                  widget.title,
+                  style: AppFonts.xl2Bold.copyWith(color: AppColors.baseWhite),
+                ),
                 24.spacerV,
 
                 // Content based on mode
@@ -258,7 +311,9 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                     Expanded(
                       child: CustomAppButton(
                         text: _pickerMode == 0 ? 'Seç' : 'Tarihi Uygula',
-                        onTap: _pickerMode == 0 ? () => Navigator.pop(context, _getResultDate()) : () => setState(() => _pickerMode = 0),
+                        onTap: _pickerMode == 0
+                            ? () => Navigator.pop(context, _getResultDate())
+                            : () => setState(() => _pickerMode = 0),
                       ),
                     ),
                   ],
@@ -292,13 +347,27 @@ class _DatePickerContentState extends State<_DatePickerContent> {
       children: [
         _buildMonthNavigation(),
         16.spacerV,
-        if (_pickerMode == 0) ...[_buildWeekDaysHeader(), 8.spacerV, _buildCalendarGrid()] else ...[_buildMonthYearPicker()],
+        if (_pickerMode == 0) ...[
+          _buildWeekDaysHeader(),
+          8.spacerV,
+          _buildCalendarGrid(),
+        ] else ...[
+          _buildMonthYearPicker(),
+        ],
       ],
     );
   }
 
   Widget _buildWeekPicker() {
-    return Column(children: [_buildMonthNavigation(), 16.spacerV, _buildWeekDaysHeader(), 8.spacerV, _buildWeekCalendarGrid()]);
+    return Column(
+      children: [
+        _buildMonthNavigation(),
+        16.spacerV,
+        _buildWeekDaysHeader(),
+        8.spacerV,
+        _buildWeekCalendarGrid(),
+      ],
+    );
   }
 
   Widget _buildMonthOnlyPicker() {
@@ -310,7 +379,10 @@ class _DatePickerContentState extends State<_DatePickerContent> {
         // Yıl Navigasyonu
         FigmaContainer(
           padding: appSizer.paddingSymmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(color: AppColors.baseWhite.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)),
+          decoration: BoxDecoration(
+            color: AppColors.baseWhite.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -323,15 +395,23 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                     : null,
                 child: FigmaContainer(
                   padding: appSizer.paddingAll(8),
-                  decoration: BoxDecoration(color: AppColors.baseWhite.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+                  decoration: BoxDecoration(
+                    color: AppColors.baseWhite.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Icon(
                     Icons.chevron_left,
-                    color: _currentYear > widget.firstDate.year ? AppColors.baseWhite : AppColors.baseWhite.withValues(alpha: 0.3),
+                    color: _currentYear > widget.firstDate.year
+                        ? AppColors.baseWhite
+                        : AppColors.baseWhite.withValues(alpha: 0.3),
                     size: 24,
                   ),
                 ),
               ),
-              Text('$_currentYear', style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite)),
+              Text(
+                '$_currentYear',
+                style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite),
+              ),
               GestureDetector(
                 onTap: canGoNextYear
                     ? () => setState(() {
@@ -341,8 +421,17 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                     : null,
                 child: FigmaContainer(
                   padding: appSizer.paddingAll(8),
-                  decoration: BoxDecoration(color: AppColors.baseWhite.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-                  child: Icon(Icons.chevron_right, color: canGoNextYear ? AppColors.baseWhite : AppColors.neutral600, size: 24),
+                  decoration: BoxDecoration(
+                    color: AppColors.baseWhite.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: canGoNextYear
+                        ? AppColors.baseWhite
+                        : AppColors.neutral600,
+                    size: 24,
+                  ),
                 ),
               ),
             ],
@@ -359,7 +448,8 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                   _slideToRight = false;
                   _currentYear++;
                 });
-              } else if (details.primaryVelocity! > 100 && _currentYear > widget.firstDate.year) {
+              } else if (details.primaryVelocity! > 100 &&
+                  _currentYear > widget.firstDate.year) {
                 // Sağa kaydır = önceki yıl
                 setState(() {
                   _slideToRight = true;
@@ -371,10 +461,13 @@ class _DatePickerContentState extends State<_DatePickerContent> {
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (child, animation) {
-              final offsetAnimation = Tween<Offset>(
-                begin: Offset(_slideToRight ? -1.0 : 1.0, 0.0),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut));
+              final offsetAnimation =
+                  Tween<Offset>(
+                    begin: Offset(_slideToRight ? -1.0 : 1.0, 0.0),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                  );
 
               return SlideTransition(
                 position: offsetAnimation,
@@ -396,12 +489,15 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                 final monthIndex = index + 1;
                 final isSelected = monthIndex == _currentMonth;
                 // Gelecek ayları engelle
-                final isFutureMonth = _currentYear == now.year && monthIndex > now.month;
+                final isFutureMonth =
+                    _currentYear == now.year && monthIndex > now.month;
                 final isFutureYear = _currentYear > now.year;
                 final isDisabled = isFutureMonth || isFutureYear;
 
                 return GestureDetector(
-                  onTap: isDisabled ? null : () => setState(() => _currentMonth = monthIndex),
+                  onTap: isDisabled
+                      ? null
+                      : () => setState(() => _currentMonth = monthIndex),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
@@ -413,7 +509,14 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
-                      child: Text(_months[index], style: AppFonts.baseSemibold.copyWith(color: isDisabled ? AppColors.neutral600 : AppColors.baseWhite)),
+                      child: Text(
+                        _months[index],
+                        style: AppFonts.baseSemibold.copyWith(
+                          color: isDisabled
+                              ? AppColors.neutral600
+                              : AppColors.baseWhite,
+                        ),
+                      ),
                     ),
                   ),
                 );
@@ -428,14 +531,18 @@ class _DatePickerContentState extends State<_DatePickerContent> {
   Widget _buildYearOnlyPicker() {
     return Column(
       children: [
-        Text('Yıl Seçin', style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite)),
+        Text(
+          'Yıl Seçin',
+          style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite),
+        ),
         16.spacerV,
         SizedBox(
           height: 200,
           child: _buildWheelPicker(
             itemCount: _years.length,
             initialItem: _years.indexOf(_currentYear),
-            onSelectedItemChanged: (index) => setState(() => _currentYear = _years[index]),
+            onSelectedItemChanged: (index) =>
+                setState(() => _currentYear = _years[index]),
             itemBuilder: (index) => '${_years[index]}',
           ),
         ),
@@ -450,12 +557,18 @@ class _DatePickerContentState extends State<_DatePickerContent> {
     final int minuteItemCount = _minutes.length * loopMultiplier;
 
     // Başlangıç pozisyonunu ortaya al (döngünün ortasında başla)
-    final int hourInitialItem = (loopMultiplier ~/ 2) * _hours.length + _selectedHour;
-    final int minuteInitialItem = (loopMultiplier ~/ 2) * _minutes.length + _minutes.indexOf(_selectedMinute);
+    final int hourInitialItem =
+        (loopMultiplier ~/ 2) * _hours.length + _selectedHour;
+    final int minuteInitialItem =
+        (loopMultiplier ~/ 2) * _minutes.length +
+        _minutes.indexOf(_selectedMinute);
 
     return Column(
       children: [
-        Text('Saat Seçin', style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite)),
+        Text(
+          'Saat Seçin',
+          style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite),
+        ),
         16.spacerV,
         SizedBox(
           height: 200,
@@ -480,7 +593,10 @@ class _DatePickerContentState extends State<_DatePickerContent> {
               // Ayırıcı
               Padding(
                 padding: appSizer.paddingSymmetric(horizontal: 8),
-                child: Text(':', style: AppFonts.xl2Bold.copyWith(color: AppColors.baseWhite)),
+                child: Text(
+                  ':',
+                  style: AppFonts.xl2Bold.copyWith(color: AppColors.baseWhite),
+                ),
               ),
               // Dakika Seçici (Looping - 5 dakika katları)
               Expanded(
@@ -518,7 +634,10 @@ class _DatePickerContentState extends State<_DatePickerContent> {
         Center(
           child: FigmaContainer(
             height: 44,
-            decoration: BoxDecoration(color: AppColors.tertiary500.withValues(alpha: 0.35), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+              color: AppColors.tertiary500.withValues(alpha: 0.35),
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
         // Looping Wheel
@@ -533,7 +652,10 @@ class _DatePickerContentState extends State<_DatePickerContent> {
             childCount: itemCount,
             builder: (context, index) {
               return Center(
-                child: Text(itemBuilder(index), style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite)),
+                child: Text(
+                  itemBuilder(index),
+                  style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite),
+                ),
               );
             },
           ),
@@ -558,10 +680,13 @@ class _DatePickerContentState extends State<_DatePickerContent> {
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         transitionBuilder: (child, animation) {
-          final offsetAnimation = Tween<Offset>(
-            begin: Offset(_slideToRight ? -1.0 : 1.0, 0.0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut));
+          final offsetAnimation =
+              Tween<Offset>(
+                begin: Offset(_slideToRight ? -1.0 : 1.0, 0.0),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+              );
 
           return SlideTransition(
             position: offsetAnimation,
@@ -572,7 +697,11 @@ class _DatePickerContentState extends State<_DatePickerContent> {
           key: ValueKey('week-$_currentMonth-$_currentYear'),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7, mainAxisSpacing: 8, crossAxisSpacing: 8),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+          ),
           itemCount: days.length,
           itemBuilder: (context, index) {
             final date = days[index];
@@ -598,7 +727,9 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                       ? AppColors.tertiary500.withValues(alpha: 0.30)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
-                  border: isToday && !isInSelectedWeek ? Border.all(color: AppColors.tertiary500, width: 2) : null,
+                  border: isToday && !isInSelectedWeek
+                      ? Border.all(color: AppColors.tertiary500, width: 2)
+                      : null,
                 ),
                 child: Center(
                   child: Text(
@@ -623,7 +754,10 @@ class _DatePickerContentState extends State<_DatePickerContent> {
   Widget _buildMonthNavigation() {
     return FigmaContainer(
       padding: appSizer.paddingSymmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(color: AppColors.baseWhite.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(
+        color: AppColors.baseWhite.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -631,10 +765,15 @@ class _DatePickerContentState extends State<_DatePickerContent> {
             onTap: _pickerMode == 0 && _canGoPrevious() ? _previousMonth : null,
             child: FigmaContainer(
               padding: appSizer.paddingAll(8),
-              decoration: BoxDecoration(color: AppColors.baseWhite.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(
+                color: AppColors.baseWhite.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Icon(
                 Icons.chevron_left,
-                color: _pickerMode == 0 && _canGoPrevious() ? AppColors.baseWhite : AppColors.baseWhite.withValues(alpha: 0.3),
+                color: _pickerMode == 0 && _canGoPrevious()
+                    ? AppColors.baseWhite
+                    : AppColors.baseWhite.withValues(alpha: 0.3),
                 size: 24,
               ),
             ),
@@ -644,15 +783,26 @@ class _DatePickerContentState extends State<_DatePickerContent> {
             child: FigmaContainer(
               padding: appSizer.paddingSymmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: _pickerMode != 0 ? AppColors.tertiary500.withValues(alpha: 0.35) : Colors.transparent,
+                color: _pickerMode != 0
+                    ? AppColors.tertiary500.withValues(alpha: 0.35)
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('${_months[_currentMonth - 1]} $_currentYear', style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite)),
+                  Text(
+                    '${_months[_currentMonth - 1]} $_currentYear',
+                    style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite),
+                  ),
                   4.spacerH,
-                  Icon(_pickerMode == 0 ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up, color: AppColors.baseWhite, size: 20),
+                  Icon(
+                    _pickerMode == 0
+                        ? Icons.keyboard_arrow_down
+                        : Icons.keyboard_arrow_up,
+                    color: AppColors.baseWhite,
+                    size: 20,
+                  ),
                 ],
               ),
             ),
@@ -661,10 +811,15 @@ class _DatePickerContentState extends State<_DatePickerContent> {
             onTap: _pickerMode == 0 && _canGoNext() ? _nextMonth : null,
             child: FigmaContainer(
               padding: appSizer.paddingAll(8),
-              decoration: BoxDecoration(color: AppColors.baseWhite.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(
+                color: AppColors.baseWhite.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Icon(
                 Icons.chevron_right,
-                color: _pickerMode == 0 && _canGoNext() ? AppColors.baseWhite : AppColors.baseWhite.withValues(alpha: 0.3),
+                color: _pickerMode == 0 && _canGoNext()
+                    ? AppColors.baseWhite
+                    : AppColors.baseWhite.withValues(alpha: 0.3),
                 size: 24,
               ),
             ),
@@ -684,7 +839,8 @@ class _DatePickerContentState extends State<_DatePickerContent> {
             child: _buildWheelPicker(
               itemCount: 12,
               initialItem: _currentMonth - 1,
-              onSelectedItemChanged: (index) => setState(() => _currentMonth = index + 1),
+              onSelectedItemChanged: (index) =>
+                  setState(() => _currentMonth = index + 1),
               itemBuilder: (index) => _months[index],
             ),
           ),
@@ -694,7 +850,8 @@ class _DatePickerContentState extends State<_DatePickerContent> {
             child: _buildWheelPicker(
               itemCount: _years.length,
               initialItem: _years.indexOf(_currentYear),
-              onSelectedItemChanged: (index) => setState(() => _currentYear = _years[index]),
+              onSelectedItemChanged: (index) =>
+                  setState(() => _currentYear = _years[index]),
               itemBuilder: (index) => '${_years[index]}',
             ),
           ),
@@ -715,7 +872,10 @@ class _DatePickerContentState extends State<_DatePickerContent> {
         Center(
           child: FigmaContainer(
             height: 44,
-            decoration: BoxDecoration(color: AppColors.tertiary500.withValues(alpha: 0.35), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+              color: AppColors.tertiary500.withValues(alpha: 0.35),
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
         // Wheel
@@ -730,7 +890,10 @@ class _DatePickerContentState extends State<_DatePickerContent> {
             childCount: itemCount,
             builder: (context, index) {
               return Center(
-                child: Text(itemBuilder(index), style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite)),
+                child: Text(
+                  itemBuilder(index),
+                  style: AppFonts.lgBold.copyWith(color: AppColors.baseWhite),
+                ),
               );
             },
           ),
@@ -749,7 +912,9 @@ class _DatePickerContentState extends State<_DatePickerContent> {
               child: Text(
                 day,
                 textAlign: TextAlign.center,
-                style: AppFonts.smSemibold.copyWith(color: AppColors.neutral400),
+                style: AppFonts.smSemibold.copyWith(
+                  color: AppColors.neutral400,
+                ),
               ),
             ),
           )
@@ -773,10 +938,13 @@ class _DatePickerContentState extends State<_DatePickerContent> {
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         transitionBuilder: (child, animation) {
-          final offsetAnimation = Tween<Offset>(
-            begin: Offset(_slideToRight ? -1.0 : 1.0, 0.0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut));
+          final offsetAnimation =
+              Tween<Offset>(
+                begin: Offset(_slideToRight ? -1.0 : 1.0, 0.0),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+              );
 
           return SlideTransition(
             position: offsetAnimation,
@@ -787,7 +955,11 @@ class _DatePickerContentState extends State<_DatePickerContent> {
           key: ValueKey('$_currentMonth-$_currentYear'),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7, mainAxisSpacing: 8, crossAxisSpacing: 8),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+          ),
           itemCount: days.length,
           itemBuilder: (context, index) {
             final date = days[index];
@@ -798,7 +970,9 @@ class _DatePickerContentState extends State<_DatePickerContent> {
             final isInRange = _isInRange(date);
 
             return GestureDetector(
-              onTap: isInRange ? () => setState(() => _selectedDate = date) : null,
+              onTap: isInRange
+                  ? () => setState(() => _selectedDate = date)
+                  : null,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
@@ -808,7 +982,9 @@ class _DatePickerContentState extends State<_DatePickerContent> {
                       ? AppColors.tertiary500.withValues(alpha: 0.30)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
-                  border: isToday && !isSelected ? Border.all(color: AppColors.tertiary500, width: 2) : null,
+                  border: isToday && !isSelected
+                      ? Border.all(color: AppColors.tertiary500, width: 2)
+                      : null,
                 ),
                 child: Center(
                   child: Text(

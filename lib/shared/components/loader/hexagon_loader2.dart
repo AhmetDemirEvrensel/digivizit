@@ -30,7 +30,12 @@ class HexagonLoaderScreen2 extends StatefulWidget {
 class _HexagonLoaderScreen2State extends State<HexagonLoaderScreen2> {
   // Initial order of colors based on the image
   // 0: Primary (Blue), 1: Tertiary (Dark Blue), 2: Secondary (Red), 3: Grey (Grey)
-  final List<Color> _colors = [AppColors.primary500, AppColors.tertiary500, AppColors.secondary500, AppColors.greyText];
+  final List<Color> _colors = [
+    AppColors.primary500,
+    AppColors.tertiary500,
+    AppColors.secondary500,
+    AppColors.greyText,
+  ];
 
   // Current slot assignments for each color index
   // colorOrder[0] is the color index at slot 0
@@ -56,7 +61,9 @@ class _HexagonLoaderScreen2State extends State<HexagonLoaderScreen2> {
     });
 
     // Sonraki animasyonları periyodik olarak çalıştır
-    _timer = Timer.periodic(widget.animationSpeed + widget.pauseDuration, (timer) {
+    _timer = Timer.periodic(widget.animationSpeed + widget.pauseDuration, (
+      timer,
+    ) {
       if (mounted) {
         setState(() {
           final last = _colorOrder.removeLast();
@@ -77,7 +84,9 @@ class _HexagonLoaderScreen2State extends State<HexagonLoaderScreen2> {
     final hexSize = widget.size / 5;
     final spacing = hexSize * 0.4;
     final totalWidth = (hexSize * 4) + (spacing * 3);
-    final containerWidth = totalWidth + (hexSize * 0.8); // Added extra width for jump space and glow
+    final containerWidth =
+        totalWidth +
+        (hexSize * 0.8); // Added extra width for jump space and glow
 
     return Center(
       child: FigmaBox(
@@ -88,12 +97,26 @@ class _HexagonLoaderScreen2State extends State<HexagonLoaderScreen2> {
           clipBehavior: Clip.none, // Prevent clipping during jump
           children: [
             // Static Connection Bars
-            ...List.generate(3, (i) => _buildConnectionBar(i, hexSize, spacing, offset: hexSize * 0.4)),
+            ...List.generate(
+              3,
+              (i) => _buildConnectionBar(
+                i,
+                hexSize,
+                spacing,
+                offset: hexSize * 0.4,
+              ),
+            ),
 
             // Animated Hexagons
             ...List.generate(4, (colorIndex) {
               final currentSlot = _colorOrder.indexOf(colorIndex);
-              return _buildAnimatedHexagon(colorIndex: colorIndex, slot: currentSlot, hexSize: hexSize, spacing: spacing, offset: hexSize * 0.4);
+              return _buildAnimatedHexagon(
+                colorIndex: colorIndex,
+                slot: currentSlot,
+                hexSize: hexSize,
+                spacing: spacing,
+                offset: hexSize * 0.4,
+              );
             }),
           ],
         ),
@@ -101,7 +124,12 @@ class _HexagonLoaderScreen2State extends State<HexagonLoaderScreen2> {
     );
   }
 
-  Widget _buildConnectionBar(int index, double hexSize, double spacing, {required double offset}) {
+  Widget _buildConnectionBar(
+    int index,
+    double hexSize,
+    double spacing, {
+    required double offset,
+  }) {
     final x = offset + (hexSize / 2) + (index * (hexSize + spacing));
     return Positioned(
       left: x,
@@ -119,7 +147,10 @@ class _HexagonLoaderScreen2State extends State<HexagonLoaderScreen2> {
                 FigmaContainer(
                   width: double.infinity,
                   height: 2,
-                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.9), borderRadius: BorderRadius.circular(2)),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFCBD5E1),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
                 // Left vertical bar
                 Positioned(
@@ -128,7 +159,10 @@ class _HexagonLoaderScreen2State extends State<HexagonLoaderScreen2> {
                   bottom: 0,
                   child: FigmaContainer(
                     width: 2,
-                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.9), borderRadius: BorderRadius.circular(2)),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFCBD5E1),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
                 // Right vertical bar
@@ -138,7 +172,10 @@ class _HexagonLoaderScreen2State extends State<HexagonLoaderScreen2> {
                   bottom: 0,
                   child: FigmaContainer(
                     width: 2,
-                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.9), borderRadius: BorderRadius.circular(2)),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFCBD5E1),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
               ],
@@ -149,7 +186,13 @@ class _HexagonLoaderScreen2State extends State<HexagonLoaderScreen2> {
     );
   }
 
-  Widget _buildAnimatedHexagon({required int colorIndex, required int slot, required double hexSize, required double spacing, required double offset}) {
+  Widget _buildAnimatedHexagon({
+    required int colorIndex,
+    required int slot,
+    required double hexSize,
+    required double spacing,
+    required double offset,
+  }) {
     final x = offset + (slot * (hexSize + spacing));
     final color = _colors[colorIndex];
 
@@ -159,8 +202,22 @@ class _HexagonLoaderScreen2State extends State<HexagonLoaderScreen2> {
       left: x,
       top: (hexSize * 0.5), // Adjusted for height increase
       child: FigmaContainer(
-        decoration: BoxDecoration(boxShadow: [BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 15, spreadRadius: 1)]),
-        child: HexagonWidget(size: hexSize, fillColor: color, borderColor: Colors.white, borderWidth: 0.8, cornerRadius: hexSize * 0.1),
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.4),
+              blurRadius: 15,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: HexagonWidget(
+          size: hexSize,
+          fillColor: color,
+          borderColor: Colors.white,
+          borderWidth: 0.8,
+          cornerRadius: hexSize * 0.1,
+        ),
       ),
     );
   }

@@ -1,7 +1,10 @@
 import 'dart:ui';
 
 class AppConfig {
-  static List<Locale> get supportedLanguages => [Locale('tr', 'TR'), Locale('en', 'US')];
+  static List<Locale> get supportedLanguages => [
+    Locale('tr', 'TR'),
+    Locale('en', 'US'),
+  ];
   static bool isTestMode = true;
   static const String baseUrl = "https://dbc.hepta.com.tr/api/v2/";
   /* static String basicAuth =

@@ -44,8 +44,8 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
   bool _isPickingImage = false;
   bool _isUploading = false;
   bool _isSaving = false;
-  Color _topColor = const Color(0xFF0F3B57);
-  Color _bottomColor = const Color(0xFF071C2D);
+  final Color _topColor = const Color(0xFFF8F9FB);
+  final Color _bottomColor = const Color(0xFFFFFFFF);
 
   @override
   void initState() {
@@ -69,18 +69,6 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
     if (savedProfile != null) {
       _homeViewModel.setInitialProfile(savedProfile);
     }
-    _homeViewModel
-        .loadBackgroundColors(
-          topFallback: _topColor,
-          bottomFallback: _bottomColor,
-        )
-        .then((gradientColors) {
-          if (!mounted) return;
-          setState(() {
-            _topColor = gradientColors.topColor;
-            _bottomColor = gradientColors.bottomColor;
-          });
-        });
 
     _animationController.forward();
   }
@@ -117,7 +105,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                 Text(
                   'Kartvizit Tara',
                   style: AppFonts.xl3Bold.copyWith(
-                    color: AppColors.baseWhite,
+                    color: AppColors.ink,
                     letterSpacing: -0.5,
                   ),
                 ),
@@ -125,7 +113,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                 Text(
                   'Kartvizitin fotoğrafını çekin veya galeriden yükleyin. Tarama sonrasında bilgileri düzenleyip bağlantılarım listesine kaydedebilirsiniz.',
                   style: AppFonts.baseRegular.copyWith(
-                    color: AppColors.baseWhite.withValues(alpha: 0.78),
+                    color: AppColors.inkSoft,
                   ),
                 ),
                 FigmaBox(height: 24),
@@ -150,13 +138,14 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Görsel Seçimi', style: AppFonts.lgBold),
+          Text(
+            'Görsel Seçimi',
+            style: AppFonts.lgBold.withColor(AppColors.ink),
+          ),
           FigmaBox(height: 8),
           Text(
             'Kartvizit görselini seçmek için aşağıdaki seçeneklerden birini kullanabilirsiniz.',
-            style: AppFonts.baseRegular.copyWith(
-              color: AppColors.baseWhite.withValues(alpha: 0.7),
-            ),
+            style: AppFonts.baseRegular.copyWith(color: AppColors.inkSoft),
           ),
           FigmaBox(height: 18),
           Row(
@@ -186,9 +175,10 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                   ? null
                   : _sendOcrRequest,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2DD4BF),
-                foregroundColor: const Color(0xFF042F2E),
-                disabledBackgroundColor: Colors.white24,
+                backgroundColor: AppColors.primary500,
+                foregroundColor: AppColors.baseWhite,
+                disabledBackgroundColor: AppColors.surfaceAlt,
+                elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
@@ -203,9 +193,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                   : const Icon(Icons.cloud_upload_outlined),
               label: Text(
                 _isUploading ? 'Yükleniyor...' : 'Kartviziti Tara',
-                style: AppFonts.base2Bold.copyWith(
-                  color: const Color(0xFF042F2E),
-                ),
+                style: AppFonts.base2Bold.copyWith(color: AppColors.baseWhite),
               ),
             ),
           ),
@@ -225,19 +213,17 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
       child: Ink(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
         decoration: BoxDecoration(
-          color: AppColors.baseWhite.withValues(alpha: 0.08),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: AppColors.baseWhite.withValues(alpha: 0.12),
-          ),
+          border: Border.all(color: AppColors.hairline),
         ),
         child: Column(
           children: [
-            Icon(icon, color: const Color(0xFF7DD3FC), size: 28),
+            Icon(icon, color: AppColors.primary600, size: 28),
             FigmaBox(height: 10),
             Text(
               label,
-              style: AppFonts.baseSemibold,
+              style: AppFonts.baseSemibold.withColor(AppColors.ink),
               textAlign: TextAlign.center,
             ),
           ],
@@ -254,33 +240,29 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Seçilen Görsel', style: AppFonts.lgBold),
+          Text(
+            'Seçilen Görsel',
+            style: AppFonts.lgBold.withColor(AppColors.ink),
+          ),
           FigmaBox(height: 16),
           if (_selectedImage == null)
             Container(
               width: double.infinity,
               height: 220,
               decoration: BoxDecoration(
-                color: AppColors.baseWhite.withValues(alpha: 0.05),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.baseWhite.withValues(alpha: 0.1),
-                  style: BorderStyle.solid,
-                ),
+                border: Border.all(color: AppColors.hairline),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.credit_card,
-                    size: 54,
-                    color: AppColors.baseWhite.withValues(alpha: 0.35),
-                  ),
+                  Icon(Icons.credit_card, size: 54, color: AppColors.inkFaint),
                   FigmaBox(height: 12),
                   Text(
                     'Henüz bir kartvizit seçilmedi.',
                     style: AppFonts.baseRegular.copyWith(
-                      color: AppColors.baseWhite.withValues(alpha: 0.7),
+                      color: AppColors.inkSoft,
                     ),
                   ),
                 ],
@@ -318,15 +300,16 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                 ),
               ),
               const SizedBox(width: 10),
-              Text('Tarama Sonucu', style: AppFonts.lgBold),
+              Text(
+                'Tarama Sonucu',
+                style: AppFonts.lgBold.withColor(AppColors.ink),
+              ),
             ],
           ),
           FigmaBox(height: 8),
           Text(
             'Bilgileri kontrol edip gerekirse düzenleyin, ardından kaydedin.',
-            style: AppFonts.baseRegular.copyWith(
-              color: AppColors.baseWhite.withValues(alpha: 0.72),
-            ),
+            style: AppFonts.baseRegular.copyWith(color: AppColors.inkSoft),
           ),
           FigmaBox(height: 16),
           _buildFormField('Şirket', _companyController),
@@ -397,21 +380,23 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
-      style: AppFonts.base2Regular.copyWith(
-        color: AppColors.baseWhite.withValues(alpha: 0.92),
-      ),
+      style: AppFonts.base2Regular.copyWith(color: AppColors.ink),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: AppFonts.smSemibold.copyWith(
-          color: const Color(0xFF93C5FD),
-        ),
+        labelStyle: AppFonts.smSemibold.copyWith(color: AppColors.inkSoft),
         filled: true,
-        fillColor: AppColors.baseWhite.withValues(alpha: 0.05),
+        fillColor: AppColors.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: AppColors.baseWhite.withValues(alpha: 0.1),
-          ),
+          borderSide: const BorderSide(color: AppColors.hairline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.hairline),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.primary500, width: 1.5),
         ),
       ),
     );
@@ -419,14 +404,14 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
 
   BoxDecoration _cardDecoration() {
     return BoxDecoration(
-      color: const Color(0xFF081520).withValues(alpha: 0.56),
+      color: AppColors.baseWhite,
       borderRadius: BorderRadius.circular(28),
-      border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.1)),
+      border: Border.all(color: AppColors.hairline),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 0.16),
-          blurRadius: 28,
-          offset: const Offset(0, 14),
+          color: AppColors.ink.withValues(alpha: 0.05),
+          blurRadius: 24,
+          offset: const Offset(0, 10),
         ),
       ],
     );
@@ -520,10 +505,13 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
         .where((value) => value.trim().isNotEmpty)
         .toList();
     final firstListedEmail = listedEmails.isEmpty ? null : listedEmails.first;
-    _emailController.text = data?.email?.trim() ?? (firstListedEmail?.trim() ?? '');
+    _emailController.text =
+        data?.email?.trim() ?? (firstListedEmail?.trim() ?? '');
     _phoneController.text =
         data?.phone?.trim() ??
-        (data?.phoneList?.mobile?.trim() ?? data?.phoneList?.landline?.trim() ?? '');
+        (data?.phoneList?.mobile?.trim() ??
+            data?.phoneList?.landline?.trim() ??
+            '');
     _websiteController.text = data?.website?.trim() ?? '';
     _sectorController.text = data?.sector?.trim() ?? '';
     _addressController.text = data?.address?.trim() ?? '';
@@ -640,24 +628,23 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF10273B),
-          title: Text('Izin Gerekli', style: AppFonts.lgBold),
+          backgroundColor: AppColors.baseWhite,
+          title: Text(
+            'Izin Gerekli',
+            style: AppFonts.lgBold.withColor(AppColors.ink),
+          ),
           content: Text(
             source == ImageSource.camera
                 ? 'Kartvizit fotografi cekebilmek icin kamera izni gerekli.'
                 : 'Galeriden gorsel secmek icin fotograf arsivi izni gerekli.',
-            style: AppFonts.baseRegular.copyWith(
-              color: AppColors.baseWhite.withValues(alpha: 0.82),
-            ),
+            style: AppFonts.baseRegular.copyWith(color: AppColors.inkSoft),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
                 'Kapat',
-                style: AppFonts.baseSemibold.copyWith(
-                  color: AppColors.baseWhite.withValues(alpha: 0.72),
-                ),
+                style: AppFonts.baseSemibold.copyWith(color: AppColors.inkSoft),
               ),
             ),
             if (isPermanentlyDenied)
@@ -669,7 +656,7 @@ class _QrViewState extends State<QrView> with SingleTickerProviderStateMixin {
                 child: Text(
                   'Ayarlari Ac',
                   style: AppFonts.baseSemibold.copyWith(
-                    color: const Color(0xFF7DD3FC),
+                    color: AppColors.primary600,
                   ),
                 ),
               ),

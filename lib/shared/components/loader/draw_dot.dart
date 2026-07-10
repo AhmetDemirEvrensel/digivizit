@@ -7,9 +7,20 @@ class DrawDot extends StatelessWidget {
   final bool circular;
   final Color color;
 
-  const DrawDot.circular({super.key, required double dotSize, required this.color}) : width = dotSize, height = dotSize, circular = true;
+  const DrawDot.circular({
+    super.key,
+    required double dotSize,
+    required this.color,
+  }) : width = dotSize,
+       height = dotSize,
+       circular = true;
 
-  const DrawDot.elliptical({super.key, required this.width, required this.height, required this.color}) : circular = false;
+  const DrawDot.elliptical({
+    super.key,
+    required this.width,
+    required this.height,
+    required this.color,
+  }) : circular = false;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +30,9 @@ class DrawDot extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: circular ? BoxShape.circle : BoxShape.rectangle,
-        borderRadius: circular ? null : BorderRadius.all(Radius.elliptical(width, height)),
+        borderRadius: circular
+            ? null
+            : BorderRadius.all(Radius.elliptical(width, height)),
       ),
     );
   }

@@ -14,7 +14,10 @@ class ArrowButton extends StatelessWidget {
       decoration: ShapeDecoration(
         color: Colors.white.withValues(alpha: 0.20),
         shape: RoundedRectangleBorder(
-          side: BorderSide(width: 1.15, color: Colors.white.withValues(alpha: 0.30)),
+          side: BorderSide(
+            width: 1.15,
+            color: Colors.white.withValues(alpha: 0.30),
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
       ),

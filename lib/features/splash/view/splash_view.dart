@@ -7,6 +7,7 @@ import 'package:digivizit/core/constants/image_paths.dart';
 import 'package:digivizit/core/utils/app_sizer.dart';
 import 'package:digivizit/features/splash/view_model/splash_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class SplashView extends StatefulWidget {
@@ -71,117 +72,116 @@ class _SplashViewState extends State<SplashView>
   Widget build(BuildContext context) {
     appSizer = AppSizer.to;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF07111E),
-      body: Observer(
-        builder: (_) {
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              const DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF06101C),
-                      Color(0xFF0D1E31),
-                      Color(0xFF081520),
-                    ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF8F9FB),
+        body: Observer(
+          builder: (_) {
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFFFFFFFF),
+                        Color(0xFFF8F9FB),
+                        Color(0xFFEFF3F9),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              _buildAmbientOrb(
-                alignment: Alignment.topLeft,
-                color: AppColors.primary500.withValues(alpha: 0.26),
-                size: 260,
-                offset: const Offset(-70, -80),
-              ),
-              _buildAmbientOrb(
-                alignment: Alignment.topRight,
-                color: AppColors.tertiary400.withValues(alpha: 0.18),
-                size: 220,
-                offset: const Offset(80, -30),
-              ),
-              _buildAmbientOrb(
-                alignment: Alignment.bottomCenter,
-                color: AppColors.info500.withValues(alpha: 0.14),
-                size: 320,
-                offset: const Offset(0, 140),
-              ),
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 28,
-                    vertical: 28,
-                  ),
-                  child: Column(
-                    children: [
-                      const Spacer(),
-                      if (model.showContent)
-                        FadeTransition(
-                          opacity: _contentOpacityAnimation,
-                          child: SlideTransition(
-                            position: _contentSlideAnimation,
+                _buildAmbientOrb(
+                  alignment: Alignment.topLeft,
+                  color: AppColors.primary300.withValues(alpha: 0.35),
+                  size: 260,
+                  offset: const Offset(-70, -80),
+                ),
+                _buildAmbientOrb(
+                  alignment: Alignment.topRight,
+                  color: AppColors.tertiary300.withValues(alpha: 0.25),
+                  size: 220,
+                  offset: const Offset(80, -30),
+                ),
+                _buildAmbientOrb(
+                  alignment: Alignment.bottomCenter,
+                  color: AppColors.info300.withValues(alpha: 0.22),
+                  size: 320,
+                  offset: const Offset(0, 140),
+                ),
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                      vertical: 28,
+                    ),
+                    child: Column(
+                      children: [
+                        const Spacer(),
+                        if (model.showContent)
+                          FadeTransition(
+                            opacity: _contentOpacityAnimation,
+                            child: SlideTransition(
+                              position: _contentSlideAnimation,
+                              child: Column(
+                                children: [
+                                  _buildTagChip(),
+                                  const SizedBox(height: 18),
+                                  ScaleTransition(
+                                    scale: _logoScaleAnimation,
+                                    child: _buildLogoPanel(),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    'Kartvizit deneyimi hazırlanıyor',
+                                    textAlign: TextAlign.center,
+                                    style: AppFonts.xlSemibold.copyWith(
+                                      color: AppColors.ink,
+                                      letterSpacing: -0.4,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    'Bağlantılarınızı, QR paylaşımınızı ve dijital kartvizitinizi tek akışta yönetin.',
+                                    textAlign: TextAlign.center,
+                                    style: AppFonts.baseRegular.copyWith(
+                                      color: AppColors.inkSoft,
+                                      height: 1.55,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        const Spacer(),
+                        if (model.showContent)
+                          FadeTransition(
+                            opacity: _contentOpacityAnimation,
                             child: Column(
                               children: [
-                                _buildTagChip(),
-                                const SizedBox(height: 18),
-                                ScaleTransition(
-                                  scale: _logoScaleAnimation,
-                                  child: _buildLogoPanel(),
-                                ),
-                                const SizedBox(height: 24),
+                                _buildLoadingBar(),
+                                const SizedBox(height: 14),
                                 Text(
-                                  'Kartvizit deneyimi hazırlanıyor',
-                                  textAlign: TextAlign.center,
-                                  style: AppFonts.xlSemibold.copyWith(
-                                    color: AppColors.baseWhite,
-                                    letterSpacing: -0.4,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  'Bağlantılarınızı, QR paylaşımınızı ve dijital kartvizitinizi tek akışta yönetin.',
-                                  textAlign: TextAlign.center,
-                                  style: AppFonts.baseRegular.copyWith(
-                                    color: AppColors.baseWhite.withValues(
-                                      alpha: 0.74,
-                                    ),
-                                    height: 1.55,
+                                  'Sistem hazırlanıyor',
+                                  style: AppFonts.smSemibold.copyWith(
+                                    color: AppColors.inkFaint,
+                                    letterSpacing: 0.3,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      const Spacer(),
-                      if (model.showContent)
-                        FadeTransition(
-                          opacity: _contentOpacityAnimation,
-                          child: Column(
-                            children: [
-                              _buildLoadingBar(),
-                              const SizedBox(height: 14),
-                              Text(
-                                'Sistem hazırlanıyor',
-                                style: AppFonts.smSemibold.copyWith(
-                                  color: AppColors.baseWhite.withValues(
-                                    alpha: 0.62,
-                                  ),
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -215,14 +215,21 @@ class _SplashViewState extends State<SplashView>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.baseWhite.withValues(alpha: 0.08),
+        color: AppColors.baseWhite,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.12)),
+        border: Border.all(color: AppColors.hairline),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.ink.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Text(
         'HEPTA DIGITAL BUSINESS CARD',
         style: AppFonts.smBold.copyWith(
-          color: AppColors.baseWhite.withValues(alpha: 0.78),
+          color: AppColors.primary600,
           letterSpacing: 1.1,
         ),
       ),
@@ -236,20 +243,18 @@ class _SplashViewState extends State<SplashView>
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(34),
-        border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.16)),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.baseWhite.withValues(alpha: 0.14),
-            AppColors.baseWhite.withValues(alpha: 0.08),
-          ],
-        ),
+        border: Border.all(color: AppColors.hairline),
+        color: AppColors.baseWhite,
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary500.withValues(alpha: 0.18),
+            color: AppColors.ink.withValues(alpha: 0.08),
             blurRadius: 34,
-            offset: const Offset(0, 20),
+            offset: const Offset(0, 18),
+          ),
+          BoxShadow(
+            color: AppColors.primary500.withValues(alpha: 0.08),
+            blurRadius: 60,
+            offset: const Offset(0, 26),
           ),
         ],
       ),
@@ -259,7 +264,7 @@ class _SplashViewState extends State<SplashView>
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
             decoration: BoxDecoration(
-              color: AppColors.baseWhite,
+              color: AppColors.surfaceAlt,
               borderRadius: BorderRadius.circular(24),
             ),
             child: Image.asset(
@@ -276,7 +281,7 @@ class _SplashViewState extends State<SplashView>
                   height: 4,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(999),
-                    color: AppColors.baseWhite.withValues(alpha: 0.08),
+                    color: AppColors.surfaceAlt,
                   ),
                 ),
               ),
@@ -301,7 +306,7 @@ class _SplashViewState extends State<SplashView>
                   height: 4,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(999),
-                    color: AppColors.baseWhite.withValues(alpha: 0.08),
+                    color: AppColors.surfaceAlt,
                   ),
                 ),
               ),
@@ -317,7 +322,7 @@ class _SplashViewState extends State<SplashView>
       width: 146,
       height: 6,
       decoration: BoxDecoration(
-        color: AppColors.baseWhite.withValues(alpha: 0.09),
+        color: AppColors.surfaceAlt,
         borderRadius: BorderRadius.circular(999),
       ),
       child: Align(

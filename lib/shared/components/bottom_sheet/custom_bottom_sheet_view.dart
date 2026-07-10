@@ -161,7 +161,7 @@ class _CustomBottomSheetViewState extends State<CustomBottomSheetView> {
             widget.title!,
             textAlign: widget.centerAlign ? TextAlign.center : TextAlign.start,
             style: AppFonts.xl2Bold.copyWith(
-              color: widget.titleColor ?? AppColors.baseWhite,
+              color: widget.titleColor ?? AppColors.ink,
             ),
           ),
           FigmaBox(height: 20),
@@ -177,7 +177,7 @@ class _CustomBottomSheetViewState extends State<CustomBottomSheetView> {
                   ? TextAlign.center
                   : TextAlign.start,
               style: AppFonts.lgRegular.copyWith(
-                color: widget.textColor ?? AppColors.neutral300,
+                color: widget.textColor ?? AppColors.inkSoft,
               ),
             ),
           ),
@@ -231,7 +231,7 @@ class _CustomBottomSheetViewState extends State<CustomBottomSheetView> {
             height: 4,
             width: 40,
             decoration: BoxDecoration(
-              color: widget.viewTopBarColor ?? AppColors.neutral500,
+              color: widget.viewTopBarColor ?? AppColors.hairline,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -304,7 +304,7 @@ class CustomBottomSheet {
     bool btnTitleCase = true,
     bool useGlassmorphism = true,
     double blurSigma = 20,
-    double glassOpacity = 0.30,
+    double glassOpacity = 0.90,
     double glassBorderOpacity = 0.1,
     List<ButtonProperties>? buttons,
     List<ButtonProperties>? secondaryButtons,
@@ -344,7 +344,7 @@ class CustomBottomSheet {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(borderRadius)),
       ),
-      barrierColor: barrierColor ?? Colors.black.withValues(alpha: 0.6),
+      barrierColor: barrierColor ?? Colors.black.withValues(alpha: 0.35),
       backgroundColor: backgroundColor ?? Colors.transparent,
       isDismissible: isDismissible,
       isScrollControlled: true,
@@ -370,7 +370,7 @@ class CustomBottomSheet {
                 child: FigmaContainer(
                   decoration: BoxDecoration(
                     color: useGlassmorphism
-                        ? (backgroundColor ?? AppColors.primary500).withValues(
+                        ? (backgroundColor ?? AppColors.baseWhite).withValues(
                             alpha: glassOpacity,
                           )
                         : (backgroundColor ?? AppColors.baseWhite),
@@ -378,12 +378,7 @@ class CustomBottomSheet {
                       top: Radius.circular(borderRadius),
                     ),
                     border: useGlassmorphism
-                        ? Border.all(
-                            color: AppColors.baseWhite.withValues(
-                              alpha: glassBorderOpacity,
-                            ),
-                            width: 2,
-                          )
+                        ? Border.all(color: AppColors.hairline, width: 1)
                         : null,
                   ),
                   child: Padding(
@@ -467,7 +462,6 @@ class CustomBottomSheet {
   }) {
     CustomBottomSheet.customView(
       viewTopBar: true,
-      backgroundColor: AppColors.primary500.withValues(alpha: 0.15),
       title: title ?? 'İşlem Başarılı',
       hexagonIcon: Icons.check_circle_outline,
       hexagonColor: AppColors.positive600,
@@ -496,7 +490,6 @@ class CustomBottomSheet {
   }) {
     CustomBottomSheet.customView(
       viewTopBar: true,
-      backgroundColor: AppColors.primary500.withValues(alpha: 0.15),
       title: title ?? 'Servis Hatası',
       hexagonIcon: Icons.error_outline,
       hexagonColor: AppColors.negative700,
@@ -523,7 +516,6 @@ class CustomBottomSheet {
   }) {
     CustomBottomSheet.customView(
       viewTopBar: true,
-      backgroundColor: AppColors.primary500.withValues(alpha: 0.15),
       title: 'Bildriim',
       hexagonIcon: Icons.error_outline,
       hexagonColor: AppColors.negative700,
@@ -551,7 +543,6 @@ class CustomBottomSheet {
   }) {
     CustomBottomSheet.customView(
       viewTopBar: true,
-      backgroundColor: AppColors.primary500.withValues(alpha: 0.15),
       title: title ?? 'Uyarı',
       hexagonIcon: Icons.warning_amber_rounded,
       hexagonColor: AppColors.warning500,

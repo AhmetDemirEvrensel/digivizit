@@ -33,7 +33,15 @@ class CustomDialog extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDarkMode ? const Color(0xFF1E2736) : Colors.white,
           borderRadius: BorderRadius.circular(24),
-          boxShadow: [BoxShadow(color: isDarkMode ? const Color(0x66000000) : const Color(0x4C000000), blurRadius: 60, offset: const Offset(0, 20))],
+          boxShadow: [
+            BoxShadow(
+              color: isDarkMode
+                  ? const Color(0x66000000)
+                  : const Color(0x4C000000),
+              blurRadius: 60,
+              offset: const Offset(0, 20),
+            ),
+          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -46,7 +54,9 @@ class CustomDialog extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: isDarkMode ? [const Color(0xFF3D2020), const Color(0xFF4D2525)] : [const Color(0xFFFEE2E2), const Color(0xFFFECACA)],
+                  colors: isDarkMode
+                      ? [const Color(0xFF3D2020), const Color(0xFF4D2525)]
+                      : [const Color(0xFFFEE2E2), const Color(0xFFFECACA)],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -70,7 +80,9 @@ class CustomDialog extends StatelessWidget {
               description,
               textAlign: TextAlign.center,
               style: appSizer.style(
-                color: isDarkMode ? const Color(0xFFB0B8C4) : const Color(0xFF6B7280),
+                color: isDarkMode
+                    ? const Color(0xFFB0B8C4)
+                    : const Color(0xFF6B7280),
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 letterSpacing: -0.15,
@@ -82,20 +94,37 @@ class CustomDialog extends StatelessWidget {
               width: double.infinity,
               height: 52,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color(0xFFEF4444), Color(0xFFDC2626)]),
+                gradient: const LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                ),
                 borderRadius: BorderRadius.circular(14),
-                boxShadow: [BoxShadow(color: const Color(0x3FEF4444), blurRadius: 12, offset: const Offset(0, 4))],
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0x3FEF4444),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: ElevatedButton(
                 onPressed: onPressedConfirm,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
                 child: Text(
                   confirmText,
-                  style: appSizer.style(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700, letterSpacing: -0.15),
+                  style: appSizer.style(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.15,
+                  ),
                 ),
               ),
             ),
@@ -106,9 +135,13 @@ class CustomDialog extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: onPressedCancel,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isDarkMode ? const Color(0xFF2D3748) : const Color(0xFFF3F4F6),
+                  backgroundColor: isDarkMode
+                      ? const Color(0xFF2D3748)
+                      : const Color(0xFFF3F4F6),
                   shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
                 child: Text(
                   cancelText,

@@ -27,7 +27,8 @@ class CustomSnackbar extends StatefulWidget {
   State<CustomSnackbar> createState() => _CustomSnackbarState();
 }
 
-class _CustomSnackbarState extends State<CustomSnackbar> with SingleTickerProviderStateMixin {
+class _CustomSnackbarState extends State<CustomSnackbar>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
   late Animation<Offset> _slideAnimation;
@@ -35,8 +36,14 @@ class _CustomSnackbarState extends State<CustomSnackbar> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
-    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
     _slideAnimation = Tween<Offset>(
       begin: widget.isTopPosition ? const Offset(0, -1) : const Offset(0, 1),
       end: Offset.zero,
@@ -61,14 +68,14 @@ class _CustomSnackbarState extends State<CustomSnackbar> with SingleTickerProvid
     super.dispose();
   }
 
-  Color _getBackgroundColor() {
+  Color _getAccentColor() {
     switch (widget.status) {
       case SnackbarStatusEnum.success:
-        return Colors.green.withValues(alpha: 1);
+        return const Color(0xFF16A34A);
       case SnackbarStatusEnum.error:
-        return Colors.red.withValues(alpha: 1);
+        return const Color(0xFFDC2626);
       case SnackbarStatusEnum.warning:
-        return Colors.orange.withValues(alpha: 1);
+        return const Color(0xFFD97706);
     }
   }
 
@@ -98,27 +105,47 @@ class _CustomSnackbarState extends State<CustomSnackbar> with SingleTickerProvid
           child: Material(
             color: Colors.transparent,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(18.0),
               child: FigmaContainer(
                 margin: appSizer.paddingSymmetric(horizontal: 16.0),
-                padding: appSizer.paddingAll(16.0),
+                padding: appSizer.paddingAll(14.0),
                 decoration: BoxDecoration(
-                  color: _getBackgroundColor(),
-                  borderRadius: BorderRadius.circular(16.0),
-                  boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 6.0, offset: Offset(0, 3))],
+                  color: AppColors.baseWhite,
+                  borderRadius: BorderRadius.circular(18.0),
+                  border: Border.all(color: AppColors.hairline),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.ink.withValues(alpha: 0.12),
+                      blurRadius: 24.0,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
-                child: Stack(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Positioned.fill(child: Opacity(opacity: 0.2, child: buildBubbleBackground())),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(_getIcon(), color: AppColors.baseWhite, size: 28),
-                        FigmaBox(width: 12),
-                        Expanded(
-                          child: Text(widget.message, style: appSizer.style(color: AppColors.baseWhite)),
+                    FigmaContainer(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: _getAccentColor().withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        _getIcon(),
+                        color: _getAccentColor(),
+                        size: 22,
+                      ),
+                    ),
+                    FigmaBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        widget.message,
+                        style: appSizer.style(
+                          color: AppColors.ink,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
@@ -170,7 +197,10 @@ void showCustomSnackbarOverlay({
   }
 
   // Use the root overlay context
-  OverlayState? overlayState = Navigator.of(AppSettings.instance.context!, rootNavigator: true).overlay;
+  OverlayState? overlayState = Navigator.of(
+    AppSettings.instance.context!,
+    rootNavigator: true,
+  ).overlay;
 
   // Create a new overlay entry for the snackbar
   late OverlayEntry overlayEntry;

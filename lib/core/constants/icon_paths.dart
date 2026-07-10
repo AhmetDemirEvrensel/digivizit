@@ -50,7 +50,8 @@ class IconPaths {
   static String eskiVardiyalar = "eski_vardiyalar".toIconPng;
   static String periyodikToplamlar = "periyodik_toplamlar".toIconPng;
   static String satisRaporu = "satis_raporu".toIconPng;
-  static String yillikSatisKarsilastirma = "yillik_satis_karsilastirma".toIconPng;
+  static String yillikSatisKarsilastirma =
+      "yillik_satis_karsilastirma".toIconPng;
 
   static String facebook = "facebook".toIconPng;
   static String instagram = "instagram".toIconPng;

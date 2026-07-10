@@ -3,11 +3,13 @@ import 'package:digivizit/core/constants/app_fonts.dart';
 import 'package:digivizit/core/models/business_cards/contacts_response.dart';
 import 'package:digivizit/core/navigation/navigation_args.dart';
 import 'package:digivizit/core/navigation/navigation_enums.dart';
-import 'package:digivizit/core/providers/app_settings.dart';
 import 'package:digivizit/features/home/viewmodel/home_view_model.dart';
 import 'package:digivizit/shared/components/base_design/base_design.dart';
+import 'package:digivizit/shared/components/buttons/pressable_scale.dart';
 import 'package:digivizit/shared/components/containers/figma_box.dart';
+import 'package:digivizit/shared/components/loader/shimmer_box.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 
 class ContactsView extends StatefulWidget {
@@ -18,51 +20,39 @@ class ContactsView extends StatefulWidget {
   State<ContactsView> createState() => _ContactsViewState();
 }
 
-class _ContactsViewState extends State<ContactsView>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
+class _ContactsViewState extends State<ContactsView> {
+  static const _ink = Color(0xFF0F172A);
+  static const _inkSoft = Color(0xFF64748B);
+  static const _hairline = Color(0xFFE2E8F0);
+
+  /// Baş-harf avatarları için isimden hash'lenerek seçilen pastel paleti.
+  static const List<(Color, Color)> _avatarPalette = [
+    (Color(0xFFDBEAFE), Color(0xFF2563EB)),
+    (Color(0xFFDCFCE7), Color(0xFF16A34A)),
+    (Color(0xFFFEF3C7), Color(0xFFD97706)),
+    (Color(0xFFFCE7F3), Color(0xFFDB2777)),
+    (Color(0xFFEDE9FE), Color(0xFF7C3AED)),
+    (Color(0xFFCCFBF1), Color(0xFF0D9488)),
+    (Color(0xFFFFE4E6), Color(0xFFE11D48)),
+  ];
+
   String _searchQuery = '';
   String _selectedFilter = 'All';
+  bool _searchFocused = false;
   final HomeViewModel _homeViewModel = HomeViewModel();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _searchFocusNode = FocusNode();
   late BusinessCardListResponse _contactsResponse;
 
-  Color _topColor = AppColors.info900;
-  Color _bottomColor = AppColors.info950;
   @override
   void initState() {
     super.initState();
     _contactsResponse = widget.contactsResponse;
     _homeViewModel.getContactsResponse = _contactsResponse;
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-    final savedProfile = AppSettings.instance.profile;
-    if (savedProfile != null) {
-      _homeViewModel.setInitialProfile(savedProfile);
-    }
-
-    _homeViewModel
-        .loadBackgroundColors(
-          topFallback: _topColor,
-          bottomFallback: _bottomColor,
-        )
-        .then((gradientColors) {
-          if (!mounted) return;
-
-          setState(() {
-            _topColor = gradientColors.topColor;
-            _bottomColor = gradientColors.bottomColor;
-          });
-        });
-    _animationController.forward();
     _scrollController.addListener(_onScroll);
+    _searchFocusNode.addListener(() {
+      setState(() => _searchFocused = _searchFocusNode.hasFocus);
+    });
   }
 
   void _onScroll() {
@@ -97,7 +87,7 @@ class _ContactsViewState extends State<ContactsView>
   @override
   void dispose() {
     _scrollController.dispose();
-    _animationController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -122,120 +112,153 @@ class _ContactsViewState extends State<ContactsView>
     }).toList();
 
     return BaseDesign(
-      topColor: _topColor,
-      bottomColor: _bottomColor,
+      topColor: const Color(0xFFF8F9FB),
+      bottomColor: const Color(0xFFFFFFFF),
       isScrollable: false,
       children: [
-        FadeTransition(
-          opacity: _fadeAnimation,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FigmaBox(height: 75),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FigmaBox(height: 68),
 
-              // Başlık
-              Text(
-                'Bağlantılarım',
-                style: AppFonts.baseBold.copyWith(
-                  fontSize: 28,
-                  color: AppColors.baseWhite,
-                  letterSpacing: -0.5,
+            Text('Bağlantılarım', style: AppFonts.xl2Bold.withColor(_ink))
+                .animate()
+                .fadeIn(duration: 400.ms)
+                .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
+            const SizedBox(height: 4),
+            Text(
+                  '${contacts.length} kayıtlı kartvizit',
+                  style: AppFonts.smRegular.withColor(_inkSoft),
+                )
+                .animate(delay: 60.ms)
+                .fadeIn(duration: 400.ms)
+                .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
+            FigmaBox(height: 20),
+
+            _buildSearchBar()
+                .animate(delay: 120.ms)
+                .fadeIn(duration: 400.ms)
+                .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
+            FigmaBox(height: 14),
+
+            _buildFilterChips(filters)
+                .animate(delay: 180.ms)
+                .fadeIn(duration: 400.ms)
+                .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
+            FigmaBox(height: 18),
+
+            if (filteredContacts.isEmpty)
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.contact_page_outlined,
+                        size: 44,
+                        color: _inkSoft.withValues(alpha: 0.5),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Bağlantı bulunamadı',
+                        style: AppFonts.base2Semibold.withColor(_inkSoft),
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn(duration: 350.ms),
+              )
+            else
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.62,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.only(bottom: 120),
+                  itemCount:
+                      filteredContacts.length +
+                      (_homeViewModel.isLoadingMoreContacts ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index >= filteredContacts.length) {
+                      return const Padding(
+                        padding: EdgeInsets.only(bottom: 14),
+                        child: ShimmerBox(
+                          height: 84,
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        ),
+                      );
+                    }
+                    final contact = filteredContacts[index];
+                    final card = _buildContactCard(contact, index);
+
+                    // Sadece ilk görünen satırlara giriş animasyonu —
+                    // sayfalama ile gelenler animasyonsuz eklenir.
+                    if (index < 10) {
+                      return card
+                          .animate(delay: (240 + index * 45).ms)
+                          .fadeIn(duration: 380.ms)
+                          .slideX(
+                            begin: 0.05,
+                            end: 0,
+                            curve: Curves.easeOutCubic,
+                          );
+                    }
+                    return card;
+                  },
                 ),
               ),
-              FigmaBox(height: 24),
-
-              // Arama Kutusu
-              _buildSearchBar(),
-              FigmaBox(height: 20),
-
-              // Filtre Butonları
-              _buildFilterButtons(filters),
-              FigmaBox(height: 20),
-              if (filteredContacts.isEmpty)
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  child: Center(
-                    child: Text(
-                      'Baglanti bulunamadi',
-                      style: AppFonts.baseSemibold.copyWith(
-                        fontSize: 15,
-                        color: AppColors.baseWhite.withValues(alpha: 0.72),
-                      ),
-                    ),
-                  ),
-                )
-              else
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: EdgeInsets.zero,
-                    itemCount:
-                        filteredContacts.length +
-                        (_homeViewModel.isLoadingMoreContacts ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index >= filteredContacts.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        );
-                      }
-                      final contact = filteredContacts[index];
-                      return _buildContactCard(contact);
-                    },
-                  ),
-                ),
-
-              // Alt boşluk (bottom nav için)
-              FigmaBox(height: 100),
-            ],
-          ),
+          ],
         ),
       ],
     );
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+      padding: const EdgeInsets.symmetric(horizontal: 18),
       decoration: BoxDecoration(
-        color: AppColors.baseWhite.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.baseWhite,
+        borderRadius: BorderRadius.circular(999),
         border: Border.all(
-          color: AppColors.baseWhite.withValues(alpha: 0.15),
-          width: 1,
+          color: _searchFocused ? AppColors.primary500 : _hairline,
+          width: _searchFocused ? 1.6 : 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: _searchFocused
+                ? AppColors.primary500.withValues(alpha: 0.12)
+                : _ink.withValues(alpha: 0.04),
+            blurRadius: _searchFocused ? 18 : 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Icon(
-            Icons.search,
-            color: AppColors.baseWhite.withValues(alpha: 0.5),
-            size: 22,
+            Icons.search_rounded,
+            color: _searchFocused ? AppColors.primary500 : _inkSoft,
+            size: 21,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: TextField(
+              focusNode: _searchFocusNode,
               onChanged: (value) {
                 setState(() {
                   _searchQuery = value;
                 });
               },
-              style: AppFonts.baseRegular.copyWith(
-                fontSize: 15,
-                color: AppColors.baseWhite,
-              ),
+              style: AppFonts.base2Regular.withColor(_ink),
               decoration: InputDecoration(
-                hintText: 'Ara ...',
-                hintStyle: AppFonts.baseRegular.copyWith(
-                  fontSize: 15,
-                  color: AppColors.baseWhite.withValues(alpha: 0.5),
+                hintText: 'İsim, firma veya sektör ara...',
+                hintStyle: AppFonts.base2Regular.withColor(
+                  _inkSoft.withValues(alpha: 0.7),
                 ),
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
           ),
@@ -262,60 +285,52 @@ class _ContactsViewState extends State<ContactsView>
     return ['All', ...uniqueSectors];
   }
 
-  Widget _buildFilterButtons(List<String> filters) {
+  Widget _buildFilterChips(List<String> filters) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: filters.map((filter) {
           final isSelected = _selectedFilter == filter;
+          final label = filter == 'All' ? 'Tümü' : filter;
+
           return Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(right: 10),
             child: GestureDetector(
               onTap: () {
                 setState(() {
                   _selectedFilter = filter;
                 });
               },
-              child: Container(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutBack,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 10,
+                  vertical: 9,
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Color(0xFF3B82F6)
-                      : AppColors.baseWhite.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                      ? AppColors.primary500
+                      : AppColors.baseWhite,
+                  borderRadius: BorderRadius.circular(999),
                   border: Border.all(
-                    color: isSelected
-                        ? Color(0xFF3B82F6)
-                        : AppColors.baseWhite.withValues(alpha: 0.15),
-                    width: 1,
+                    color: isSelected ? AppColors.primary500 : _hairline,
                   ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppColors.primary500.withValues(alpha: 0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (filter != 'All') ...[
-                      Icon(
-                        Icons.label,
-                        size: 16,
-                        color: isSelected
-                            ? AppColors.baseWhite
-                            : AppColors.baseWhite.withValues(alpha: 0.7),
-                      ),
-                      const SizedBox(width: 6),
-                    ],
-                    Text(
-                      filter,
-                      style: AppFonts.baseSemibold.copyWith(
-                        fontSize: 13,
-                        color: isSelected
-                            ? AppColors.baseWhite
-                            : AppColors.baseWhite.withValues(alpha: 0.7),
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  label,
+                  style: AppFonts.smSemibold.withColor(
+                    isSelected ? AppColors.baseWhite : _inkSoft,
+                  ),
                 ),
               ),
             ),
@@ -325,11 +340,28 @@ class _ContactsViewState extends State<ContactsView>
     );
   }
 
-  Widget _buildContactCard(BusinessCardListItem contact) {
-    final name = contact.name;
-    final sector = contact.sectorText;
+  (Color, Color) _avatarColorsFor(String name) {
+    final hash = name.codeUnits.fold<int>(0, (acc, code) => acc + code);
+    return _avatarPalette[hash % _avatarPalette.length];
+  }
 
-    return GestureDetector(
+  String _initialsOf(String name) {
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) return '?';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
+
+  Widget _buildContactCard(BusinessCardListItem contact, int index) {
+    final name = contact.name;
+    final sector = contact.sectorValue;
+    final (avatarBg, avatarFg) = _avatarColorsFor(name);
+
+    return PressableScale(
       onTap: () async {
         final changed = await Get.toNamed(
           NavigationEnums.contactDetail.rawValue,
@@ -340,79 +372,65 @@ class _ContactsViewState extends State<ContactsView>
         }
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppColors.baseWhite.withValues(alpha: 0.08),
+          color: AppColors.baseWhite,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: AppColors.baseWhite.withValues(alpha: 0.1),
-            width: 1,
-          ),
+          border: Border.all(color: _hairline),
+          boxShadow: [
+            BoxShadow(
+              color: _ink.withValues(alpha: 0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            // Avatar
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: AppColors.baseWhite.withValues(alpha: 0.2),
-                  width: 2,
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: (contact.thumbnail?.trim().isNotEmpty ?? false)
-                    ? Image.network(
-                        contact.thumbnail!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return _contactAvatarFallback();
-                        },
-                      )
-                    : _contactAvatarFallback(),
-              ),
-            ),
-            const SizedBox(width: 16),
-
-            // Bilgiler
+            _buildAvatar(contact, name, avatarBg, avatarFg),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // İsim
                   Text(
                     name,
-                    style: AppFonts.baseBold.copyWith(
-                      fontSize: 16,
-                      color: AppColors.baseWhite,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  // Şirket
-                  Text(
-                    contact.company,
-                    style: AppFonts.baseRegular.copyWith(
-                      fontSize: 13,
-                      color: AppColors.baseWhite.withValues(alpha: 0.7),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  // Sektör
-                  Text(
-                    sector,
-                    style: AppFonts.baseRegular.copyWith(
-                      fontSize: 12,
-                      color: AppColors.baseWhite.withValues(alpha: 0.6),
-                    ),
-                    maxLines: 2,
+                    style: AppFonts.base2Bold.withColor(_ink),
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 3),
+                  Text(
+                    contact.company,
+                    style: AppFonts.smRegular.withColor(_inkSoft),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (sector != null && sector.isNotEmpty) ...[
+                    const SizedBox(height: 7),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: avatarBg.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      child: Text(
+                        sector,
+                        style: AppFonts.xsSemibold.withColor(avatarFg),
+                      ),
+                    ),
+                  ],
                 ],
               ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: _inkSoft.withValues(alpha: 0.35),
+              size: 15,
             ),
           ],
         ),
@@ -420,10 +438,43 @@ class _ContactsViewState extends State<ContactsView>
     );
   }
 
-  Widget _contactAvatarFallback() {
+  Widget _buildAvatar(
+    BusinessCardListItem contact,
+    String name,
+    Color avatarBg,
+    Color avatarFg,
+  ) {
+    final thumbnail = contact.thumbnail?.trim() ?? '';
+    final hasThumb = (contact.hasImage ?? false) && thumbnail.isNotEmpty;
+
     return Container(
-      color: Color(0xFF1E3A8A),
-      child: Icon(Icons.person, color: AppColors.baseWhite, size: 30),
+      width: 54,
+      height: 54,
+      decoration: BoxDecoration(
+        color: avatarBg,
+        borderRadius: BorderRadius.circular(17),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: hasThumb
+          ? Image.network(
+              thumbnail,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return const ShimmerBox(
+                  borderRadius: BorderRadius.all(Radius.circular(17)),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) =>
+                  _buildInitials(name, avatarFg),
+            )
+          : _buildInitials(name, avatarFg),
+    );
+  }
+
+  Widget _buildInitials(String name, Color color) {
+    return Center(
+      child: Text(_initialsOf(name), style: AppFonts.lgBold.withColor(color)),
     );
   }
 }

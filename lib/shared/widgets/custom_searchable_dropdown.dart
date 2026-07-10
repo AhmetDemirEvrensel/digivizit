@@ -26,7 +26,8 @@ class CustomSearchableDropdown extends StatefulWidget {
   });
 
   @override
-  State<CustomSearchableDropdown> createState() => _CustomSearchableDropdownState();
+  State<CustomSearchableDropdown> createState() =>
+      _CustomSearchableDropdownState();
 }
 
 class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
@@ -65,11 +66,23 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
               onTap: widget.onTap,
               child: Container(
                 width: double.infinity,
-                padding: appSizer.paddingSymmetric(horizontal: 16, vertical: 16),
+                padding: appSizer.paddingSymmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF3B82F6).withAlpha(30) : (isDarkMode ? const Color(0xFF2D3748) : const Color(0xCCF3F4F6)),
+                  color: isSelected
+                      ? const Color(0xFF3B82F6).withAlpha(30)
+                      : (isDarkMode
+                            ? const Color(0xFF2D3748)
+                            : const Color(0xCCF3F4F6)),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: isSelected ? const Color(0xFF3B82F6).withAlpha(70) : Colors.transparent, width: 1.19),
+                  border: Border.all(
+                    color: isSelected
+                        ? const Color(0xFF3B82F6).withAlpha(70)
+                        : Colors.transparent,
+                    width: 1.19,
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -79,8 +92,12 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
                         widget.selectedItem ?? widget.placeholder,
                         style: appSizer.style(
                           color: isSelected
-                              ? (isDarkMode ? Colors.white : const Color(0xFF374151))
-                              : (isDarkMode ? const Color(0xFF8B95A5) : const Color(0xFF99A1AE)),
+                              ? (isDarkMode
+                                    ? Colors.white
+                                    : const Color(0xFF374151))
+                              : (isDarkMode
+                                    ? const Color(0xFF8B95A5)
+                                    : const Color(0xFF99A1AE)),
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.23,
@@ -98,14 +115,24 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
                             borderRadius: BorderRadius.circular(8),
                             color: const Color(0xFF3B82F6).withAlpha(30),
                           ),
-                          child: const Icon(Icons.close, color: Color(0xFF155DFC), size: 20),
+                          child: const Icon(
+                            Icons.close,
+                            color: Color(0xFF155DFC),
+                            size: 20,
+                          ),
                         ),
                       )
                     else
                       AnimatedRotation(
                         turns: widget.isExpanded ? 0.5 : 0,
                         duration: const Duration(milliseconds: 200),
-                        child: Icon(Icons.keyboard_arrow_down_rounded, color: isDarkMode ? const Color(0xFF8B95A5) : const Color(0xFF99A1AE), size: 24),
+                        child: Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: isDarkMode
+                              ? const Color(0xFF8B95A5)
+                              : const Color(0xFF99A1AE),
+                          size: 24,
+                        ),
                       ),
                   ],
                 ),
@@ -118,15 +145,23 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
                   ? Container(
                       height: _calculateHeight(widget.items, _searchQuery),
                       decoration: BoxDecoration(
-                        color: isDarkMode ? const Color(0xFF2D3748) : const Color(0x99F3F4F6),
+                        color: isDarkMode
+                            ? const Color(0xFF2D3748)
+                            : const Color(0x99F3F4F6),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: isDarkMode ? const Color(0xFF3D4A5C) : const Color(0xCCE5E7EB), width: 1.19),
+                        border: Border.all(
+                          color: isDarkMode
+                              ? const Color(0xFF3D4A5C)
+                              : const Color(0xCCE5E7EB),
+                          width: 1.19,
+                        ),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Column(
                           children: [
-                            if (widget.items.length > 5) _buildSearchBar(isDarkMode),
+                            if (widget.items.length > 5)
+                              _buildSearchBar(isDarkMode),
                             Expanded(child: _buildList(isDarkMode)),
                           ],
                         ),
@@ -145,31 +180,68 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
       padding: appSizer.paddingSymmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: isDarkMode ? const Color(0xFF1E2736) : const Color(0xFFF9FAFB),
-        border: Border(bottom: BorderSide(color: isDarkMode ? const Color(0xFF3D4A5C) : const Color(0xCCE5E7EB), width: 1.19)),
+        border: Border(
+          bottom: BorderSide(
+            color: isDarkMode
+                ? const Color(0xFF3D4A5C)
+                : const Color(0xCCE5E7EB),
+            width: 1.19,
+          ),
+        ),
       ),
       child: TextField(
         controller: _searchController,
         onChanged: (value) => setState(() => _searchQuery = value),
-        style: appSizer.style(color: isDarkMode ? Colors.white : const Color(0xFF374151), fontSize: 14, fontWeight: FontWeight.w500),
+        style: appSizer.style(
+          color: isDarkMode ? Colors.white : const Color(0xFF374151),
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
         decoration: InputDecoration(
-          hintStyle: appSizer.style(color: isDarkMode ? const Color(0xFF8B95A5) : const Color(0xFF99A1AE), fontSize: 14, fontWeight: FontWeight.w500),
-          prefixIcon: Icon(Icons.search, color: isDarkMode ? const Color(0xFF8B95A5) : const Color(0xFF99A1AE), size: 20),
+          hintStyle: appSizer.style(
+            color: isDarkMode
+                ? const Color(0xFF8B95A5)
+                : const Color(0xFF99A1AE),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: isDarkMode
+                ? const Color(0xFF8B95A5)
+                : const Color(0xFF99A1AE),
+            size: 20,
+          ),
           suffixIcon: _searchQuery.isNotEmpty
               ? GestureDetector(
                   onTap: () {
                     _searchController.clear();
                     setState(() => _searchQuery = '');
                   },
-                  child: Icon(Icons.close, color: isDarkMode ? const Color(0xFF8B95A5) : const Color(0xFF99A1AE), size: 18),
+                  child: Icon(
+                    Icons.close,
+                    color: isDarkMode
+                        ? const Color(0xFF8B95A5)
+                        : const Color(0xFF99A1AE),
+                    size: 18,
+                  ),
                 )
               : null,
           isDense: true,
-          contentPadding: appSizer.paddingSymmetric(horizontal: 12, vertical: 10),
+          contentPadding: appSizer.paddingSymmetric(
+            horizontal: 12,
+            vertical: 10,
+          ),
           filled: true,
           fillColor: isDarkMode ? const Color(0xFF2D3748) : Colors.white,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: isDarkMode ? const Color(0xFF3D4A5C) : const Color(0xCCE5E7EB), width: 1),
+            borderSide: BorderSide(
+              color: isDarkMode
+                  ? const Color(0xFF3D4A5C)
+                  : const Color(0xCCE5E7EB),
+              width: 1,
+            ),
           ),
         ),
       ),
@@ -177,13 +249,23 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
   }
 
   Widget _buildList(bool isDarkMode) {
-    final filteredItems = _searchQuery.isEmpty ? widget.items : widget.items.where((item) => item.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+    final filteredItems = _searchQuery.isEmpty
+        ? widget.items
+        : widget.items
+              .where(
+                (item) =>
+                    item.toLowerCase().contains(_searchQuery.toLowerCase()),
+              )
+              .toList();
 
     if (filteredItems.isEmpty) {
       return Center(
         child: Padding(
           padding: appSizer.paddingAll(16),
-          child: Text('Bir Hata Oluştu', style: AppFonts.baseSemibold.copyWith(color: AppColors.baseBlack)),
+          child: Text(
+            'Bir Hata Oluştu',
+            style: AppFonts.baseSemibold.copyWith(color: AppColors.baseBlack),
+          ),
         ),
       );
     }
@@ -191,7 +273,11 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
     return ListView.separated(
       padding: EdgeInsets.zero,
       itemCount: filteredItems.length,
-      separatorBuilder: (context, index) => Divider(height: 1, thickness: 1.19, color: isDarkMode ? const Color(0xFF3D4A5C) : const Color(0x7FE5E7EB)),
+      separatorBuilder: (context, index) => Divider(
+        height: 1,
+        thickness: 1.19,
+        color: isDarkMode ? const Color(0xFF3D4A5C) : const Color(0x7FE5E7EB),
+      ),
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () => widget.onItemTap(filteredItems[index]),
@@ -199,7 +285,11 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
             padding: appSizer.paddingSymmetric(horizontal: 16, vertical: 14),
             child: Text(
               filteredItems[index],
-              style: appSizer.style(color: isDarkMode ? Colors.white : const Color(0xFF374151), fontSize: 15, fontWeight: FontWeight.w600),
+              style: appSizer.style(
+                color: isDarkMode ? Colors.white : const Color(0xFF374151),
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         );
@@ -208,7 +298,11 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
   }
 
   double _calculateHeight(List<String> items, String query) {
-    final filteredCount = query.isEmpty ? items.length : items.where((i) => i.toLowerCase().contains(query.toLowerCase())).length;
+    final filteredCount = query.isEmpty
+        ? items.length
+        : items
+              .where((i) => i.toLowerCase().contains(query.toLowerCase()))
+              .length;
     if (filteredCount == 0) return 80;
 
     double height = (filteredCount * 47.0) + ((filteredCount - 1) * 1.19);

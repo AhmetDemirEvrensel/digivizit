@@ -52,7 +52,9 @@ class HexagonWidget extends StatelessWidget {
     return HexagonWidget(
       key: key,
       size: size,
-      fillColor: isChecked ? (checkedColor ?? AppColors.primary500) : uncheckedColor,
+      fillColor: isChecked
+          ? (checkedColor ?? AppColors.primary500)
+          : uncheckedColor,
       gradientColors: isChecked ? gradientColors : null,
       borderColor: borderColor ?? AppColors.neutral300,
       borderWidth: 1.5,
@@ -95,7 +97,12 @@ class HexagonWidget extends StatelessWidget {
       onTap: onTap,
       boxShadow: boxShadow,
       rotate: rotate,
-      child: Image.asset(iconPath, width: effectiveIconSize, height: effectiveIconSize, color: iconColor),
+      child: Image.asset(
+        iconPath,
+        width: effectiveIconSize,
+        height: effectiveIconSize,
+        color: iconColor,
+      ),
     );
   }
 
@@ -119,7 +126,8 @@ class HexagonWidget extends StatelessWidget {
     return HexagonWidget(
       key: key,
       size: size,
-      fillColor: fillColor ?? (gradientColors == null ? AppColors.primary500 : null),
+      fillColor:
+          fillColor ?? (gradientColors == null ? AppColors.primary500 : null),
       gradientColors: fillColor != null ? null : gradientColors,
       borderColor: borderColor,
       borderWidth: borderWidth ?? 1.15,
@@ -170,7 +178,9 @@ class HexagonWidget extends StatelessWidget {
       size: Size(size, size),
       painter: _HexagonPainter(
         fillColor: fillColor,
-        gradient: gradientColors == null ? null : LinearGradient(colors: gradientColors!),
+        gradient: gradientColors == null
+            ? null
+            : LinearGradient(colors: gradientColors!),
         borderColor: borderColor,
         borderWidth: borderWidth,
         cornerRadius: cornerRadius,
@@ -211,8 +221,17 @@ class _HexagonPainter extends CustomPainter {
   final double cornerRadius;
   final bool rotate;
 
-  _HexagonPainter({this.fillColor, this.gradient, this.borderColor, this.borderWidth = 1.5, this.cornerRadius = 3.0, this.rotate = false})
-    : assert(fillColor == null || gradient == null, 'Cannot provide both fillColor and gradient');
+  _HexagonPainter({
+    this.fillColor,
+    this.gradient,
+    this.borderColor,
+    this.borderWidth = 1.5,
+    this.cornerRadius = 3.0,
+    this.rotate = false,
+  }) : assert(
+         fillColor == null || gradient == null,
+         'Cannot provide both fillColor and gradient',
+       );
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -282,7 +301,12 @@ class _HexagonPainter extends CustomPainter {
       }
 
       // Add rounded corner using quadratic bezier
-      path.quadraticBezierTo(current.dx, current.dy, cornerEnd.dx, cornerEnd.dy);
+      path.quadraticBezierTo(
+        current.dx,
+        current.dy,
+        cornerEnd.dx,
+        cornerEnd.dy,
+      );
     }
 
     path.close();

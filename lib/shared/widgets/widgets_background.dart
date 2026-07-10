@@ -9,7 +9,6 @@ import 'package:digivizit/shared/components/containers/figma_container.dart';
 import 'package:digivizit/shared/components/hexagon/hexagon_widget.dart';
 import 'package:flutter/material.dart';
 
-
 class WidgetsBackground extends StatelessWidget {
   const WidgetsBackground({
     super.key,
@@ -48,7 +47,10 @@ class WidgetsBackground extends StatelessWidget {
       constraints: height == null
           ? BoxConstraints(
               maxHeight: hasButtons
-                  ? MediaQuery.of(context).size.height - (bottomPadding ?? (Platform.isIOS ? 280 : 400)).toInt().pxv
+                  ? MediaQuery.of(context).size.height -
+                        (bottomPadding ?? (Platform.isIOS ? 280 : 400))
+                            .toInt()
+                            .pxv
                   : MediaQuery.of(context).size.height / 1.2,
             )
           : BoxConstraints.tightFor(height: height),
@@ -57,10 +59,21 @@ class WidgetsBackground extends StatelessWidget {
       decoration: ShapeDecoration(
         color: Colors.white.withValues(alpha: moreGlass ?? false ? 0.30 : 0.15),
         shape: RoundedRectangleBorder(
-          side: BorderSide(width: 1.15, color: Colors.white.withValues(alpha: moreGlass ?? false ? 0.30 : 0.15)),
+          side: BorderSide(
+            width: 1.15,
+            color: Colors.white.withValues(
+              alpha: moreGlass ?? false ? 0.30 : 0.15,
+            ),
+          ),
           borderRadius: BorderRadius.circular(24),
         ),
-        shadows: const [BoxShadow(color: Color(0x3F253D84), blurRadius: 60, offset: Offset(0, 20))],
+        shadows: const [
+          BoxShadow(
+            color: Color(0x3F253D84),
+            blurRadius: 60,
+            offset: Offset(0, 20),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -79,10 +92,18 @@ class WidgetsBackground extends StatelessWidget {
                         iconPath: icon!,
                         size: 54,
                         fillColor: AppColors.secondary500,
-                        borderColor: AppColors.baseWhite.withValues(alpha: 0.15),
+                        borderColor: AppColors.baseWhite.withValues(
+                          alpha: 0.15,
+                        ),
                         iconColor: Colors.white,
                         cornerRadius: 4,
-                        boxShadow: [BoxShadow(color: AppColors.baseBlack.withValues(alpha: 0.15), blurRadius: 16, offset: const Offset(0, 4))],
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.baseBlack.withValues(alpha: 0.15),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
                       FigmaBox(width: 12),
                     ],
@@ -92,8 +113,14 @@ class WidgetsBackground extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (title != null) ...[Text(title!, style: AppFonts.xlBold), FigmaBox(height: 2)],
-                          if (subtitle != null) ...[Text(subtitle!, style: AppFonts.base2Regular), FigmaBox(height: 2)],
+                          if (title != null) ...[
+                            Text(title!, style: AppFonts.xlBold),
+                            FigmaBox(height: 2),
+                          ],
+                          if (subtitle != null) ...[
+                            Text(subtitle!, style: AppFonts.base2Regular),
+                            FigmaBox(height: 2),
+                          ],
                         ],
                       ),
                     ),
@@ -102,15 +129,23 @@ class WidgetsBackground extends StatelessWidget {
                 ),
                 isShortcut ?? false ? FigmaBox(height: 10) : SizedBox.shrink(),
                 isShortcut ?? false
-                    ? Text('Kisayol bilgisini goster : ${model!.animasyonCheck ? 'Açık' : 'Kapalı'}', style: AppFonts.base2Semibold)
+                    ? Text(
+                        'Kisayol bilgisini goster : ${model!.animasyonCheck ? 'Açık' : 'Kapalı'}',
+                        style: AppFonts.base2Semibold,
+                      )
                     : SizedBox.shrink(),
                 isShortcut ?? false ? FigmaBox(height: 10) : SizedBox.shrink(),
-                isShortcut ?? false ? Divider(color: AppColors.primary500) : SizedBox.shrink(),
+                isShortcut ?? false
+                    ? Divider(color: AppColors.primary500)
+                    : SizedBox.shrink(),
               ],
             ),
           ),
           Flexible(
-            child: SingleChildScrollView(padding: appSizer.paddingSymmetric(horizontal: 12.0), child: _buildChildren()),
+            child: SingleChildScrollView(
+              padding: appSizer.paddingSymmetric(horizontal: 12.0),
+              child: _buildChildren(),
+            ),
           ),
         ],
       ),
@@ -118,6 +153,10 @@ class WidgetsBackground extends StatelessWidget {
   }
 
   Widget _buildChildren() {
-    return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [children]);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [children],
+    );
   }
 }

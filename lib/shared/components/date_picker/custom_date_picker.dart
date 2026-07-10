@@ -13,7 +13,14 @@ class CustomDatePickerButton extends StatelessWidget {
   final String hintText;
   final IconData icon;
 
-  const CustomDatePickerButton({super.key, this.title, this.selectedDate, this.onTap, this.hintText = 'Tarih Seç', this.icon = Icons.calendar_today});
+  const CustomDatePickerButton({
+    super.key,
+    this.title,
+    this.selectedDate,
+    this.onTap,
+    this.hintText = 'Tarih Seç',
+    this.icon = Icons.calendar_today,
+  });
 
   bool get _isSelected => selectedDate != null;
 
@@ -23,7 +30,11 @@ class CustomDatePickerButton extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 12.pxv,
       children: [
-        if (title != null) Text(title!, style: AppFonts.base2Semibold.withColor(AppColors.baseBlack)),
+        if (title != null)
+          Text(
+            title!,
+            style: AppFonts.base2Semibold.withColor(AppColors.baseBlack),
+          ),
         _buildPickerButton(),
       ],
     );
@@ -35,9 +46,16 @@ class CustomDatePickerButton extends StatelessWidget {
       child: FigmaContainer(
         padding: appSizer.paddingSymmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: _isSelected ? const Color(0xFF3B82F6).withAlpha(30) : AppColors.neutral100,
+          color: _isSelected
+              ? const Color(0xFF3B82F6).withAlpha(30)
+              : AppColors.neutral100,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: _isSelected ? AppColors.primary500.withValues(alpha: 0.5) : Colors.transparent, width: 1.19),
+          border: Border.all(
+            color: _isSelected
+                ? AppColors.primary500.withValues(alpha: 0.5)
+                : Colors.transparent,
+            width: 1.19,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,7 +64,9 @@ class CustomDatePickerButton extends StatelessWidget {
               child: Text(
                 selectedDate ?? hintText,
                 style: appSizer.style(
-                  color: _isSelected ? AppColors.baseBlack : AppColors.neutral500,
+                  color: _isSelected
+                      ? AppColors.baseBlack
+                      : AppColors.neutral500,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.23,

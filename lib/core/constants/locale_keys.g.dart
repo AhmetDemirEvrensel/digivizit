@@ -2,7 +2,7 @@
 
 // ignore_for_file: constant_identifier_names
 
-abstract class  LocaleKeys {
+abstract class LocaleKeys {
   static const login_subtitle = 'login.subtitle';
   static const login_username = 'login.username';
   static const login_usernameWarning = 'login.usernameWarning';
@@ -12,8 +12,10 @@ abstract class  LocaleKeys {
   static const login_password = 'login.password';
   static const login_login = 'login.login';
   static const login_validation_both_empty = 'login.validation_both_empty';
-  static const login_validation_username_empty = 'login.validation_username_empty';
-  static const login_validation_password_empty = 'login.validation_password_empty';
+  static const login_validation_username_empty =
+      'login.validation_username_empty';
+  static const login_validation_password_empty =
+      'login.validation_password_empty';
   static const login_login_failed = 'login.login_failed';
   static const login = 'login';
   static const fleets_title = 'fleets.title';
@@ -35,17 +37,22 @@ abstract class  LocaleKeys {
   static const car_details_status_label = 'car_details.status_label';
   static const car_details_status_problem = 'car_details.status_problem';
   static const car_details_status_idle = 'car_details.status_idle';
-  static const car_details_status_no_connection = 'car_details.status_no_connection';
-  static const car_details_status_ignition_on = 'car_details.status_ignition_on';
-  static const car_details_status_ignition_off = 'car_details.status_ignition_off';
+  static const car_details_status_no_connection =
+      'car_details.status_no_connection';
+  static const car_details_status_ignition_on =
+      'car_details.status_ignition_on';
+  static const car_details_status_ignition_off =
+      'car_details.status_ignition_off';
   static const car_details_status_movieCar = 'car_details.status_movieCar';
   static const car_details_status_speedOver = 'car_details.status_speedOver';
   static const car_details_status_idling = 'car_details.status_idling';
   static const car_details_status_unknown = 'car_details.status_unknown';
   static const car_details_location_label = 'car_details.location_label';
-  static const car_details_location_not_found = 'car_details.location_not_found';
+  static const car_details_location_not_found =
+      'car_details.location_not_found';
   static const car_details_description_label = 'car_details.description_label';
-  static const car_details_description_not_found = 'car_details.description_not_found';
+  static const car_details_description_not_found =
+      'car_details.description_not_found';
   static const car_details_driver_label = 'car_details.driver_label';
   static const car_details_driver_not_found = 'car_details.driver_not_found';
   static const car_details_group_label = 'car_details.group_label';
@@ -59,7 +66,8 @@ abstract class  LocaleKeys {
   static const car_details_live_watch = 'car_details.live_watch';
   static const car_details_report = 'car_details.report';
   static const car_details_instant_location = 'car_details.instant_location';
-  static const car_details_instant_location_success = 'car_details.instant_location_success';
+  static const car_details_instant_location_success =
+      'car_details.instant_location_success';
   static const car_details_success_title = 'car_details.success_title';
   static const car_details_start_vehicle = 'car_details.start_vehicle';
   static const car_details_lock_vehicle = 'car_details.lock_vehicle';
@@ -67,30 +75,41 @@ abstract class  LocaleKeys {
   static const car_details_lock_description = 'car_details.lock_description';
   static const car_details_lock_confirm = 'car_details.lock_confirm';
   static const car_details_lock_cancel = 'car_details.lock_cancel';
-  static const car_details_locking_in_progress = 'car_details.locking_in_progress';
+  static const car_details_locking_in_progress =
+      'car_details.locking_in_progress';
   static const car_details_processing_title = 'car_details.processing_title';
   static const car_details_timeout_title = 'car_details.timeout_title';
   static const car_details_timeout_message = 'car_details.timeout_message';
-  static const car_details_ignition_off_warning = 'car_details.ignition_off_warning';
+  static const car_details_ignition_off_warning =
+      'car_details.ignition_off_warning';
   static const car_details_warning_title = 'car_details.warning_title';
   static const car_details_start_in_progress = 'car_details.start_in_progress';
   static const car_details = 'car_details';
   static const car_live_watch_vehicle = 'car_live_watch.vehicle';
-  static const car_live_watch_vehicle_not_found = 'car_live_watch.vehicle_not_found';
-  static const car_live_watch_address_not_found = 'car_live_watch.address_not_found';
-  static const car_live_watch_map_theme_retro = 'car_live_watch.map_theme_retro';
-  static const car_live_watch_map_theme_silver = 'car_live_watch.map_theme_silver';
-  static const car_live_watch_map_theme_satellite = 'car_live_watch.map_theme_satellite';
-  static const car_live_watch_map_theme_standard = 'car_live_watch.map_theme_standard';
+  static const car_live_watch_vehicle_not_found =
+      'car_live_watch.vehicle_not_found';
+  static const car_live_watch_address_not_found =
+      'car_live_watch.address_not_found';
+  static const car_live_watch_map_theme_retro =
+      'car_live_watch.map_theme_retro';
+  static const car_live_watch_map_theme_silver =
+      'car_live_watch.map_theme_silver';
+  static const car_live_watch_map_theme_satellite =
+      'car_live_watch.map_theme_satellite';
+  static const car_live_watch_map_theme_standard =
+      'car_live_watch.map_theme_standard';
   static const car_live_watch_map_mode_map = 'car_live_watch.map_mode_map';
-  static const car_live_watch_map_mode_street = 'car_live_watch.map_mode_street';
+  static const car_live_watch_map_mode_street =
+      'car_live_watch.map_mode_street';
   static const car_live_watch = 'car_live_watch';
   static const car_locked_warning_title = 'car_locked_warning.title';
-  static const car_locked_warning_description = 'car_locked_warning.description';
+  static const car_locked_warning_description =
+      'car_locked_warning.description';
   static const car_locked_warning = 'car_locked_warning';
   static const communication_title = 'communication.title';
   static const communication_address_title = 'communication.address_title';
-  static const communication_address_subtitle = 'communication.address_subtitle';
+  static const communication_address_subtitle =
+      'communication.address_subtitle';
   static const communication_phone_title = 'communication.phone_title';
   static const communication_phone_subtitle = 'communication.phone_subtitle';
   static const communication_phone_error = 'communication.phone_error';
@@ -104,7 +123,8 @@ abstract class  LocaleKeys {
   static const communication = 'communication';
   static const others_title = 'others.title';
   static const others_communication_title = 'others.communication_title';
-  static const others_communication_description = 'others.communication_description';
+  static const others_communication_description =
+      'others.communication_description';
   static const others_settings_title = 'others.settings_title';
   static const others_settings_description = 'others.settings_description';
   static const others_logout_title = 'others.logout_title';
@@ -117,14 +137,17 @@ abstract class  LocaleKeys {
   static const action_report_empty = 'action_report.empty';
   static const action_report_animation_start = 'action_report.animation_start';
   static const action_report_animation_stop = 'action_report.animation_stop';
-  static const action_report_pagination_date_label = 'action_report.pagination_date_label';
-  static const action_report_group_duplicates = 'action_report.group_duplicates';
+  static const action_report_pagination_date_label =
+      'action_report.pagination_date_label';
+  static const action_report_group_duplicates =
+      'action_report.group_duplicates';
   static const action_report_show_duplicates = 'action_report.show_duplicates';
   static const action_report = 'action_report';
   static const kilometer_report_title = 'kilometer_report.title';
   static const kilometer_report_empty = 'kilometer_report.empty';
   static const kilometer_report_info_title = 'kilometer_report.info_title';
-  static const kilometer_report_date_range_separator = 'kilometer_report.date_range_separator';
+  static const kilometer_report_date_range_separator =
+      'kilometer_report.date_range_separator';
   static const kilometer_report = 'kilometer_report';
   static const nvu_report_title = 'nvu_report.title';
   static const nvu_report_empty = 'nvu_report.empty';
@@ -138,11 +161,16 @@ abstract class  LocaleKeys {
   static const reports_select_date_prompt = 'reports.select_date_prompt';
   static const reports_select_time_prompt = 'reports.select_time_prompt';
   static const reports_invalid_date_range = 'reports.invalid_date_range';
-  static const reports_action_report_description = 'reports.action_report_description';
-  static const reports_kilometer_report_description = 'reports.kilometer_report_description';
-  static const reports_total_work_report_title = 'reports.total_work_report_title';
-  static const reports_total_work_report_description = 'reports.total_work_report_description';
-  static const reports_nvu_report_description = 'reports.nvu_report_description';
+  static const reports_action_report_description =
+      'reports.action_report_description';
+  static const reports_kilometer_report_description =
+      'reports.kilometer_report_description';
+  static const reports_total_work_report_title =
+      'reports.total_work_report_title';
+  static const reports_total_work_report_description =
+      'reports.total_work_report_description';
+  static const reports_nvu_report_description =
+      'reports.nvu_report_description';
   static const reports_unknown_fleet = 'reports.unknown_fleet';
   static const reports_unknown_plate = 'reports.unknown_plate';
   static const reports_date_picker_cancel = 'reports.date_picker_cancel';
@@ -156,7 +184,8 @@ abstract class  LocaleKeys {
   static const total_work_report_empty = 'total_work_report.empty';
   static const total_work_report = 'total_work_report';
   static const loading_progress_loading = 'loading_progress.loading';
-  static const loading_progress_records_found = 'loading_progress.records_found';
+  static const loading_progress_records_found =
+      'loading_progress.records_found';
   static const loading_progress = 'loading_progress';
   static const date_time_picker_start_label = 'date_time_picker.start_label';
   static const date_time_picker_end_label = 'date_time_picker.end_label';
@@ -174,14 +203,20 @@ abstract class  LocaleKeys {
   static const work_time_summary_work = 'work_time_summary.work';
   static const work_time_summary_stop = 'work_time_summary.stop';
   static const work_time_summary_distance = 'work_time_summary.distance';
-  static const work_time_summary_distance_unit = 'work_time_summary.distance_unit';
-  static const work_time_summary_instant_stop = 'work_time_summary.instant_stop';
-  static const work_time_summary_excessive_speed = 'work_time_summary.excessive_speed';
-  static const work_time_summary_excessive_idle = 'work_time_summary.excessive_idle';
+  static const work_time_summary_distance_unit =
+      'work_time_summary.distance_unit';
+  static const work_time_summary_instant_stop =
+      'work_time_summary.instant_stop';
+  static const work_time_summary_excessive_speed =
+      'work_time_summary.excessive_speed';
+  static const work_time_summary_excessive_idle =
+      'work_time_summary.excessive_idle';
   static const work_time_summary = 'work_time_summary';
-  static const report_header_card_start_label = 'report_header_card.start_label';
+  static const report_header_card_start_label =
+      'report_header_card.start_label';
   static const report_header_card_end_label = 'report_header_card.end_label';
-  static const report_header_card_duration_label = 'report_header_card.duration_label';
+  static const report_header_card_duration_label =
+      'report_header_card.duration_label';
   static const report_header_card = 'report_header_card';
   static const car_details_card_gps = 'car_details_card.gps';
   static const car_details_card_gps_fix = 'car_details_card.gps_fix';
@@ -276,10 +311,13 @@ abstract class  LocaleKeys {
   static const general_choose_date = 'general.choose_date';
   static const general_errors_system_error = 'general.errors.system_error';
   static const general_errors_error_occured = 'general.errors.error_occured';
-  static const general_errors_error_occured_try_again = 'general.errors.error_occured_try_again';
+  static const general_errors_error_occured_try_again =
+      'general.errors.error_occured_try_again';
   static const general_errors_session_end = 'general.errors.session_end';
-  static const general_errors_no_internet_connection = 'general.errors.no_internet_connection';
-  static const general_errors_unexpected_response = 'general.errors.unexpected_response';
+  static const general_errors_no_internet_connection =
+      'general.errors.no_internet_connection';
+  static const general_errors_unexpected_response =
+      'general.errors.unexpected_response';
   static const general_errors = 'general.errors';
   static const general = 'general';
   static const navigation_home = 'navigation.home';
@@ -287,5 +325,4 @@ abstract class  LocaleKeys {
   static const navigation_reports = 'navigation.reports';
   static const navigation_others = 'navigation.others';
   static const navigation = 'navigation';
-
 }

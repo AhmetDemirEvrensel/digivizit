@@ -215,13 +215,21 @@ class _CustomTextFieldState extends State<CustomTextField> {
           showErrors: (control) => false,
           keyboardType: widget.keyboardType,
           readOnly: widget.readOnly,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10), _PhoneNumberFormatter()],
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(10),
+            _PhoneNumberFormatter(),
+          ],
           style: AppFonts.baseRegular.copyWith(color: AppColors.baseBlack),
           decoration: _buildInputDecoration(
             suffixIcon: widget.readOnly
                 ? const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Icon(Icons.lock_outline, size: 18, color: AppColors.neutral500),
+                    child: Icon(
+                      Icons.lock_outline,
+                      size: 18,
+                      color: AppColors.neutral500,
+                    ),
                   )
                 : null,
           ),
@@ -243,11 +251,20 @@ class _CustomTextFieldState extends State<CustomTextField> {
           showErrors: (control) => false,
           keyboardType: widget.keyboardType,
           obscureText: _obscureText,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10)],
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(10),
+          ],
           style: AppFonts.baseRegular.copyWith(color: AppColors.baseBlack),
           decoration: _buildInputDecoration(
             suffixIcon: IconButton(
-              icon: Icon(_obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 20, color: AppColors.neutral500),
+              icon: Icon(
+                _obscureText
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                size: 20,
+                color: AppColors.neutral500,
+              ),
               onPressed: () => setState(() => _obscureText = !_obscureText),
             ),
           ),
@@ -308,7 +325,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
           validationMessages: widget.validationMessages,
           keyboardType: widget.keyboardType,
           textCapitalization: TextCapitalization.characters,
-          inputFormatters: [LengthLimitingTextInputFormatter(12) /* TurkishPlateFormatter() */],
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(12) /* TurkishPlateFormatter() */,
+          ],
           style: AppFonts.baseRegular.copyWith(color: AppColors.baseBlack),
           decoration: _buildInputDecoration(),
         ),
@@ -319,7 +338,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
   // ------------------ Common Widgets ------------------ //
 
   Widget _buildLabel() {
-    return Text(widget.label ?? '', style: AppFonts.lgSemibold.copyWith(letterSpacing: 0.20).withColor(widget.labelColor ?? AppColors.baseWhite));
+    return Text(
+      widget.label ?? '',
+      style: AppFonts.lgSemibold
+          .copyWith(letterSpacing: 0.20)
+          .withColor(widget.labelColor ?? AppColors.baseWhite),
+    );
   }
 
   InputDecoration _buildInputDecoration({Widget? suffixIcon}) {
@@ -327,7 +351,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
       filled: true,
       fillColor: AppColors.baseWhite,
       hintText: widget.hintText,
-      hintStyle: AppFonts.baseRegular.copyWith(color: const Color(0xFFD1D5DB), fontSize: 15),
+      hintStyle: AppFonts.baseRegular.copyWith(
+        color: const Color(0xFFD1D5DB),
+        fontSize: 15,
+      ),
       prefixIcon: _buildPrefixIcon(),
       prefixIconConstraints: const BoxConstraints(minWidth: 42, minHeight: 42),
       suffixIcon: suffixIcon,
@@ -336,7 +363,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
       enabledBorder: _buildOutlineInputBorder(const Color(0xFFE5E7EB)),
       focusedBorder: _buildOutlineInputBorder(AppColors.primary500, width: 1.5),
       errorBorder: _buildOutlineInputBorder(AppColors.negative500),
-      focusedErrorBorder: _buildOutlineInputBorder(AppColors.negative500, width: 1.5),
+      focusedErrorBorder: _buildOutlineInputBorder(
+        AppColors.negative500,
+        width: 1.5,
+      ),
     );
   }
 
@@ -348,7 +378,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
     );
   }
 
-  OutlineInputBorder _buildOutlineInputBorder(Color color, {double width = 1.15}) {
+  OutlineInputBorder _buildOutlineInputBorder(
+    Color color, {
+    double width = 1.15,
+  }) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(width: width, color: color),
@@ -359,7 +392,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
 /// Custom formatter to display phone number as: 5XX XXX XX XX
 class _PhoneNumberFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final text = newValue.text;
     if (text.isEmpty) return newValue;
 

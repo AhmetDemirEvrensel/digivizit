@@ -13,7 +13,19 @@ import 'package:digivizit/shared/components/containers/figma_container.dart';
 import 'package:digivizit/shared/components/hexagon/water_wave_hexagon.dart';
 import 'package:flutter/material.dart';
 
-enum CustomInfoCardType { small, wide, full, product, mechanic, tank, tankDetail, unitPrice, info, statusInfo, checkboxInfo }
+enum CustomInfoCardType {
+  small,
+  wide,
+  full,
+  product,
+  mechanic,
+  tank,
+  tankDetail,
+  unitPrice,
+  info,
+  statusInfo,
+  checkboxInfo,
+}
 
 class CustomInfoCard extends StatelessWidget {
   final String title;
@@ -74,8 +86,19 @@ class CustomInfoCard extends StatelessWidget {
     this.isActive = false,
   });
 
-  factory CustomInfoCard.small({Key? key, required String title, required String subtitle, required String iconPath}) {
-    return CustomInfoCard._(key: key, title: title, subtitle: subtitle, iconPath: iconPath, type: CustomInfoCardType.small);
+  factory CustomInfoCard.small({
+    Key? key,
+    required String title,
+    required String subtitle,
+    required String iconPath,
+  }) {
+    return CustomInfoCard._(
+      key: key,
+      title: title,
+      subtitle: subtitle,
+      iconPath: iconPath,
+      type: CustomInfoCardType.small,
+    );
   }
 
   factory CustomInfoCard.wide({
@@ -97,8 +120,19 @@ class CustomInfoCard extends StatelessWidget {
     );
   }
 
-  factory CustomInfoCard.full({Key? key, required String title, required String subtitle, required String iconPath}) {
-    return CustomInfoCard._(key: key, title: title, subtitle: subtitle, iconPath: iconPath, type: CustomInfoCardType.full);
+  factory CustomInfoCard.full({
+    Key? key,
+    required String title,
+    required String subtitle,
+    required String iconPath,
+  }) {
+    return CustomInfoCard._(
+      key: key,
+      title: title,
+      subtitle: subtitle,
+      iconPath: iconPath,
+      type: CustomInfoCardType.full,
+    );
   }
 
   factory CustomInfoCard.product({
@@ -162,8 +196,21 @@ class CustomInfoCard extends StatelessWidget {
     );
   }
 
-  factory CustomInfoCard.mechanic({Key? key, required String title, required String subtitle, required String iconPath, required String heading}) {
-    return CustomInfoCard._(heading: heading, key: key, title: title, subtitle: subtitle, iconPath: iconPath, type: CustomInfoCardType.mechanic);
+  factory CustomInfoCard.mechanic({
+    Key? key,
+    required String title,
+    required String subtitle,
+    required String iconPath,
+    required String heading,
+  }) {
+    return CustomInfoCard._(
+      heading: heading,
+      key: key,
+      title: title,
+      subtitle: subtitle,
+      iconPath: iconPath,
+      type: CustomInfoCardType.mechanic,
+    );
   }
 
   factory CustomInfoCard.tankDetail({
@@ -244,13 +291,39 @@ class CustomInfoCard extends StatelessWidget {
     );
   }
 
-  factory CustomInfoCard.statusInfo({Key? key, required String title, String? iconPath, String? status, bool? isActive}) {
-    return CustomInfoCard._(key: key, title: title, subtitle: '', iconPath: iconPath, status: status, isActive: isActive, type: CustomInfoCardType.statusInfo);
+  factory CustomInfoCard.statusInfo({
+    Key? key,
+    required String title,
+    String? iconPath,
+    String? status,
+    bool? isActive,
+  }) {
+    return CustomInfoCard._(
+      key: key,
+      title: title,
+      subtitle: '',
+      iconPath: iconPath,
+      status: status,
+      isActive: isActive,
+      type: CustomInfoCardType.statusInfo,
+    );
   }
 
   /// Checkbox'lı yetki kartı - hexagon checkbox ile
-  factory CustomInfoCard.checkboxInfo({Key? key, required String title, required bool isChecked, required VoidCallback onChanged}) {
-    return CustomInfoCard._(key: key, title: title, subtitle: '', isActive: isChecked, onTap: onChanged, type: CustomInfoCardType.checkboxInfo);
+  factory CustomInfoCard.checkboxInfo({
+    Key? key,
+    required String title,
+    required bool isChecked,
+    required VoidCallback onChanged,
+  }) {
+    return CustomInfoCard._(
+      key: key,
+      title: title,
+      subtitle: '',
+      isActive: isChecked,
+      onTap: onChanged,
+      type: CustomInfoCardType.checkboxInfo,
+    );
   }
 
   @override
@@ -281,7 +354,10 @@ class CustomInfoCard extends StatelessWidget {
             _buildHexagonIcon(),
             FigmaBox(width: 5),
             Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildTitle(title), _buildSubtitle(subtitle)]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [_buildTitle(title), _buildSubtitle(subtitle)],
+              ),
             ),
           ],
         ),
@@ -302,9 +378,18 @@ class CustomInfoCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_buildTitle(title), _buildSubtitle(subtitle)]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [_buildTitle(title), _buildSubtitle(subtitle)],
+                ),
                 FigmaBox(height: 4),
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_buildTitle(secondTitle ?? ''), _buildSubtitle(secondSubtitle ?? '')]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildTitle(secondTitle ?? ''),
+                    _buildSubtitle(secondSubtitle ?? ''),
+                  ],
+                ),
               ],
             ),
           ),
@@ -317,7 +402,15 @@ class CustomInfoCard extends StatelessWidget {
 
   Widget _buildFullCard() {
     return _buildCardContainer(
-      child: Row(children: [_buildHexagonIcon(), FigmaBox(width: 12), _buildTitle(title), const Spacer(), _buildSubtitle(subtitle, isLarge: true)]),
+      child: Row(
+        children: [
+          _buildHexagonIcon(),
+          FigmaBox(width: 12),
+          _buildTitle(title),
+          const Spacer(),
+          _buildSubtitle(subtitle, isLarge: true),
+        ],
+      ),
     );
   }
 
@@ -339,7 +432,13 @@ class CustomInfoCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Heading
-                Text(heading ?? '', style: AppFonts.lg2Bold.copyWith(color: Colors.white, letterSpacing: -0.3)),
+                Text(
+                  heading ?? '',
+                  style: AppFonts.lg2Bold.copyWith(
+                    color: Colors.white,
+                    letterSpacing: -0.3,
+                  ),
+                ),
                 // Row 1: title - subtitle
                 _buildProductRow(title, subtitle),
                 _buildDivider(),
@@ -362,8 +461,20 @@ class CustomInfoCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: AppFonts.smSemibold.copyWith(color: Colors.white, letterSpacing: 0.5)),
-          Text(value, style: AppFonts.lg2Semibold.copyWith(color: Colors.white, letterSpacing: -0.5)),
+          Text(
+            label,
+            style: AppFonts.smSemibold.copyWith(
+              color: Colors.white,
+              letterSpacing: 0.5,
+            ),
+          ),
+          Text(
+            value,
+            style: AppFonts.lg2Semibold.copyWith(
+              color: Colors.white,
+              letterSpacing: -0.5,
+            ),
+          ),
         ],
       ),
     );
@@ -372,7 +483,9 @@ class CustomInfoCard extends StatelessWidget {
   Widget _buildDivider() {
     return Container(
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: const Color(0x4CBABABA), width: 1)),
+        border: Border(
+          bottom: BorderSide(color: const Color(0x4CBABABA), width: 1),
+        ),
       ),
     );
   }
@@ -394,7 +507,13 @@ class CustomInfoCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Heading
-                Text(heading ?? '', style: AppFonts.lg2Bold.copyWith(color: Colors.white, letterSpacing: -0.3)),
+                Text(
+                  heading ?? '',
+                  style: AppFonts.lg2Bold.copyWith(
+                    color: Colors.white,
+                    letterSpacing: -0.3,
+                  ),
+                ),
                 // Row 1: title - subtitle
                 _buildProductRow(title, subtitle),
               ],
@@ -418,7 +537,11 @@ class CustomInfoCard extends StatelessWidget {
             spacing: 5,
             children: [
               Text('Tank No: $tankNo', style: AppFonts.baseSemibold),
-              _buildAnimatedHexagonIcon(size: 65, level: level!, waterColor: waterColor ?? Colors.blue),
+              _buildAnimatedHexagonIcon(
+                size: 65,
+                level: level!,
+                waterColor: waterColor ?? Colors.blue,
+              ),
               Text(status ?? '', style: AppFonts.baseBold),
             ],
           ),
@@ -430,7 +553,13 @@ class CustomInfoCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Heading
-                Text(heading ?? '', style: AppFonts.lg2Bold.copyWith(color: Colors.white, letterSpacing: -0.3)),
+                Text(
+                  heading ?? '',
+                  style: AppFonts.lg2Bold.copyWith(
+                    color: Colors.white,
+                    letterSpacing: -0.3,
+                  ),
+                ),
                 // Row 1: title - subtitle
                 _buildProductRow(title, subtitle),
                 _buildDivider(),
@@ -495,7 +624,10 @@ class CustomInfoCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(heading ?? '', style: AppFonts.lg2Bold.copyWith(letterSpacing: -0.3)),
+                  Text(
+                    heading ?? '',
+                    style: AppFonts.lg2Bold.copyWith(letterSpacing: -0.3),
+                  ),
                   _buildProductRow(title, subtitle),
                 ],
               ),
@@ -546,18 +678,28 @@ class CustomInfoCard extends StatelessWidget {
             children: [
               if (iconPath != null) _buildHexagonIcon(),
               const FigmaBox(width: 10),
-              Text(title, style: AppFonts.baseBold.copyWith(color: Colors.white)),
+              Text(
+                title,
+                style: AppFonts.baseBold.copyWith(color: Colors.white),
+              ),
             ],
           ),
           if (isActive != null) ...[
             FigmaContainer(
               padding: appSizer.paddingSymmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: isActive! ? AppColors.positive700 : AppColors.negative700,
+                color: isActive!
+                    ? AppColors.positive700
+                    : AppColors.negative700,
                 borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: AppColors.baseWhite.withValues(alpha: 0.30)),
+                border: Border.all(
+                  color: AppColors.baseWhite.withValues(alpha: 0.30),
+                ),
               ),
-              child: Text(status ?? (isActive! ? 'Aktif' : 'Pasif'), style: AppFonts.smSemibold.copyWith(color: AppColors.baseWhite)),
+              child: Text(
+                status ?? (isActive! ? 'Aktif' : 'Pasif'),
+                style: AppFonts.smSemibold.copyWith(color: AppColors.baseWhite),
+              ),
             ),
           ],
         ],
@@ -583,7 +725,10 @@ class CustomInfoCard extends StatelessWidget {
           children: [
             // Yetki ismi
             Expanded(
-              child: Text(title, style: AppFonts.baseBold.copyWith(color: AppColors.primary500)),
+              child: Text(
+                title,
+                style: AppFonts.baseBold.copyWith(color: AppColors.primary500),
+              ),
             ),
             // Hexagon Checkbox
             AnimatedHexagonCheckbox(
@@ -592,7 +737,9 @@ class CustomInfoCard extends StatelessWidget {
               onChanged: onTap,
               checkedColor: AppColors.primary500,
               uncheckedColor: Colors.white.withValues(alpha: 0.1),
-              borderColor: isChecked ? AppColors.primary500 : Colors.white.withValues(alpha: 0.3),
+              borderColor: isChecked
+                  ? AppColors.primary500
+                  : Colors.white.withValues(alpha: 0.3),
               checkColor: Colors.white,
             ),
           ],
@@ -603,7 +750,11 @@ class CustomInfoCard extends StatelessWidget {
 
   // ------------------ Common Widgets ------------------ //
 
-  Widget _buildCardContainer({required Widget child, bool? isGlass, Function()? onTap}) {
+  Widget _buildCardContainer({
+    required Widget child,
+    bool? isGlass,
+    Function()? onTap,
+  }) {
     return isGlass ?? false
         ? ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -611,12 +762,23 @@ class CustomInfoCard extends StatelessWidget {
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: FigmaContainer(
                 decoration: BoxDecoration(
-                  border: Border.all(color: borderColor ?? Colors.white.withValues(alpha: 0.30), width: 1.15),
+                  border: Border.all(
+                    color: borderColor ?? Colors.white.withValues(alpha: 0.30),
+                    width: 1.15,
+                  ),
                   borderRadius: BorderRadius.circular(16),
-                  color: backgroundColor ?? AppColors.positive600.withValues(alpha: 0.75),
+                  color:
+                      backgroundColor ??
+                      AppColors.positive600.withValues(alpha: 0.75),
                 ),
                 child: Center(
-                  child: Padding(padding: appSizer.paddingSymmetric(horizontal: 8, vertical: 4), child: child),
+                  child: Padding(
+                    padding: appSizer.paddingSymmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    child: child,
+                  ),
                 ),
               ),
             ),
@@ -625,19 +787,38 @@ class CustomInfoCard extends StatelessWidget {
             onTap: onTap,
             child: FigmaContainer(
               decoration: BoxDecoration(
-                border: Border.all(color: borderColor ?? Colors.white.withValues(alpha: 0.30), width: 1.15),
+                border: Border.all(
+                  color: borderColor ?? Colors.white.withValues(alpha: 0.30),
+                  width: 1.15,
+                ),
                 borderRadius: BorderRadius.circular(16),
                 color: backgroundColor,
-                gradient: backgroundColor == null ? LinearGradient(colors: [AppColors.tertiary500, AppColors.primary500]) : null,
+                gradient: backgroundColor == null
+                    ? LinearGradient(
+                        colors: [AppColors.tertiary500, AppColors.primary500],
+                      )
+                    : null,
               ),
               child: Center(
-                child: Padding(padding: appSizer.paddingSymmetric(horizontal: 8, vertical: 4), child: child),
+                child: Padding(
+                  padding: appSizer.paddingSymmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  child: child,
+                ),
               ),
             ),
           );
   }
 
-  Widget _buildHexagonIcon({double? size, double? width, double? height, String? iconPath, Color? hexagonIconColor}) {
+  Widget _buildHexagonIcon({
+    double? size,
+    double? width,
+    double? height,
+    String? iconPath,
+    Color? hexagonIconColor,
+  }) {
     return HexagonWidget.custom(
       size: size ?? hexagonSize ?? 45,
       fillColor: hexagonFillColor ?? Colors.white.withValues(alpha: 0.15),
@@ -652,8 +833,17 @@ class CustomInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAnimatedHexagonIcon({double? size, required double level, required Color waterColor}) {
-    return WaterWaveHexagon(size: size ?? 65, level: level, text: '%${(level * 100).toStringAsFixed(1)}', waterColor: waterColor);
+  Widget _buildAnimatedHexagonIcon({
+    double? size,
+    required double level,
+    required Color waterColor,
+  }) {
+    return WaterWaveHexagon(
+      size: size ?? 65,
+      level: level,
+      text: '%${(level * 100).toStringAsFixed(1)}',
+      waterColor: waterColor,
+    );
   }
 
   Widget _buildTitle(String text, {TextStyle? style}) {
@@ -663,7 +853,11 @@ class CustomInfoCard extends StatelessWidget {
   Widget _buildSubtitle(String text, {bool isLarge = false, TextStyle? style}) {
     return Text(
       text,
-      style: style ?? (isLarge ? AppFonts.lg2Bold.copyWith(color: Colors.white) : AppFonts.base2Bold.copyWith(color: Colors.white)),
+      style:
+          style ??
+          (isLarge
+              ? AppFonts.lg2Bold.copyWith(color: Colors.white)
+              : AppFonts.base2Bold.copyWith(color: Colors.white)),
       textAlign: TextAlign.left,
     );
   }

@@ -9,19 +9,29 @@ class WaterWaveHexagon extends StatefulWidget {
   final String text;
   final Color? waterColor;
 
-  const WaterWaveHexagon({super.key, required this.size, required this.level, required this.text, this.waterColor});
+  const WaterWaveHexagon({
+    super.key,
+    required this.size,
+    required this.level,
+    required this.text,
+    this.waterColor,
+  });
 
   @override
   State<WaterWaveHexagon> createState() => _WaterWaveHexagonState();
 }
 
-class _WaterWaveHexagonState extends State<WaterWaveHexagon> with SingleTickerProviderStateMixin {
+class _WaterWaveHexagonState extends State<WaterWaveHexagon>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
   }
 
   @override
@@ -47,7 +57,12 @@ class _WaterWaveHexagonState extends State<WaterWaveHexagon> with SingleTickerPr
           child: SizedBox(
             width: widget.size,
             height: widget.size,
-            child: Center(child: Text(widget.text, style: AppFonts.baseSemibold.copyWith(fontSize: 15))),
+            child: Center(
+              child: Text(
+                widget.text,
+                style: AppFonts.baseSemibold.copyWith(fontSize: 15),
+              ),
+            ),
           ),
         );
       },
@@ -96,7 +111,11 @@ class _WaterHexagonPainter extends CustomPainter {
 
     wavePath.moveTo(0, baseline);
     for (double x = 0; x <= size.width; x++) {
-      final y = baseline + math.sin((x / size.width * 2 * math.pi) + (progress * 2 * math.pi)) * waveHeight * 0.5;
+      final y =
+          baseline +
+          math.sin((x / size.width * 2 * math.pi) + (progress * 2 * math.pi)) *
+              waveHeight *
+              0.5;
       wavePath.lineTo(x, y);
     }
     wavePath.lineTo(size.width, size.height);
@@ -154,7 +173,12 @@ class _WaterHexagonPainter extends CustomPainter {
       } else {
         path.lineTo(cornerStart.dx, cornerStart.dy);
       }
-      path.quadraticBezierTo(current.dx, current.dy, cornerEnd.dx, cornerEnd.dy);
+      path.quadraticBezierTo(
+        current.dx,
+        current.dy,
+        cornerEnd.dx,
+        cornerEnd.dy,
+      );
     }
 
     path.close();
@@ -163,7 +187,8 @@ class _WaterHexagonPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _WaterHexagonPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.waterLevel != waterLevel;
+    return oldDelegate.progress != progress ||
+        oldDelegate.waterLevel != waterLevel;
   }
 }
 

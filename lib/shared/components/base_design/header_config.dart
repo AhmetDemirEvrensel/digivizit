@@ -23,7 +23,14 @@ class HeaderConfig {
 
   final double? fontSize;
 
-  const HeaderConfig({this.left, this.center, this.right, this.height, this.topPadding, this.fontSize});
+  const HeaderConfig({
+    this.left,
+    this.center,
+    this.right,
+    this.height,
+    this.topPadding,
+    this.fontSize,
+  });
 
   /// Sadece back button olan header
   factory HeaderConfig.withBackButton({
@@ -39,11 +46,16 @@ class HeaderConfig {
       left: HeaderItem.backButton(
         text: title,
         subtitle: subtitle,
-        onTap: onBackPressed ?? () => Navigator.pop(AppSettings.instance.context!),
+        onTap:
+            onBackPressed ?? () => Navigator.pop(AppSettings.instance.context!),
         color: color ?? Colors.white,
       ),
       right: right ?? HeaderItem.icon(iconWidget: Image.network('')),
-      center: center ?? (title == null ? HeaderItem.image(imagePath: IconPaths.appIcon2) : null),
+      center:
+          center ??
+          (title == null
+              ? HeaderItem.image(imagePath: IconPaths.appIcon2)
+              : null),
       fontSize: fontSize,
     );
   }
@@ -67,11 +79,24 @@ class HeaderConfig {
         child: Stack(
           children: [
             // Sol taraf
-            if (left != null) Positioned(left: 0, top: 0, bottom: 0, child: Center(child: left!.build(context))),
+            if (left != null)
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: Center(child: left!.build(context)),
+              ),
             // Orta
-            if (center != null) Positioned.fill(child: Center(child: center!.build(context))),
+            if (center != null)
+              Positioned.fill(child: Center(child: center!.build(context))),
             // Sağ taraf
-            if (right != null) Positioned(right: 0, top: 0, bottom: 0, child: Center(child: right!.build(context))),
+            if (right != null)
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 0,
+                child: Center(child: right!.build(context)),
+              ),
           ],
         ),
       ),

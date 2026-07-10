@@ -37,7 +37,9 @@ class FigmaContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final adaptiveColor = color != null ? (isDarkMode ? (darkModeColor ?? color) : color) : null;
+    final adaptiveColor = color != null
+        ? (isDarkMode ? (darkModeColor ?? color) : color)
+        : null;
 
     return Container(
       alignment: alignment,
@@ -45,8 +47,12 @@ class FigmaContainer extends StatelessWidget {
       color: adaptiveColor,
       decoration: decoration,
       foregroundDecoration: foregroundDecoration,
-      width: width != null && width != double.infinity ? AppSizer.to.px(width!, Axis.horizontal) : width,
-      height: height != null && height != double.infinity ? AppSizer.to.px(height!, Axis.vertical) : height,
+      width: width != null && width != double.infinity
+          ? AppSizer.to.px(width!, Axis.horizontal)
+          : width,
+      height: height != null && height != double.infinity
+          ? AppSizer.to.px(height!, Axis.vertical)
+          : height,
       constraints: constraints,
       margin: margin,
       transform: transform,

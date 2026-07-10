@@ -19,8 +19,7 @@ abstract class MeetingRequestViewModelBase with Store {
   int _currentPage = 1;
   bool isLoadingMoreAppointments = false;
 
-  bool get hasMoreAppointments =>
-      appointments?.data?.meta?.hasMore ?? false;
+  bool get hasMoreAppointments => appointments?.data?.meta?.hasMore ?? false;
 
   @action
   Future<void> getAppointmentRequests() async {

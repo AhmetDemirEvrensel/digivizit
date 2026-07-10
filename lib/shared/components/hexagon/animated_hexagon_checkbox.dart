@@ -28,10 +28,12 @@ class AnimatedHexagonCheckbox extends StatefulWidget {
   });
 
   @override
-  State<AnimatedHexagonCheckbox> createState() => _AnimatedHexagonCheckboxState();
+  State<AnimatedHexagonCheckbox> createState() =>
+      _AnimatedHexagonCheckboxState();
 }
 
-class _AnimatedHexagonCheckboxState extends State<AnimatedHexagonCheckbox> with SingleTickerProviderStateMixin {
+class _AnimatedHexagonCheckboxState extends State<AnimatedHexagonCheckbox>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _checkAnimation;
@@ -39,9 +41,15 @@ class _AnimatedHexagonCheckboxState extends State<AnimatedHexagonCheckbox> with 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(duration: widget.animationDuration, vsync: this);
+    _controller = AnimationController(
+      duration: widget.animationDuration,
+      vsync: this,
+    );
 
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+    _scaleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
     _checkAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -83,7 +91,9 @@ class _AnimatedHexagonCheckboxState extends State<AnimatedHexagonCheckbox> with 
           return CustomPaint(
             size: Size(widget.size, widget.size),
             painter: _HexagonPainter(
-              fillColor: widget.isChecked ? (widget.checkedColor ?? AppColors.primary500) : widget.uncheckedColor,
+              fillColor: widget.isChecked
+                  ? (widget.checkedColor ?? AppColors.primary500)
+                  : widget.uncheckedColor,
               borderColor: widget.borderColor ?? AppColors.neutral300,
               borderWidth: 1.5,
               cornerRadius: widget.cornerRadius,
@@ -96,7 +106,11 @@ class _AnimatedHexagonCheckboxState extends State<AnimatedHexagonCheckbox> with 
                   scale: _scaleAnimation.value,
                   child: CustomPaint(
                     size: Size(widget.size * 0.5, widget.size * 0.5),
-                    painter: _CheckPainter(progress: _checkAnimation.value, color: widget.checkColor ?? AppColors.baseWhite, strokeWidth: 2.5),
+                    painter: _CheckPainter(
+                      progress: _checkAnimation.value,
+                      color: widget.checkColor ?? AppColors.baseWhite,
+                      strokeWidth: 2.5,
+                    ),
                   ),
                 ),
               ),
@@ -114,7 +128,11 @@ class _CheckPainter extends CustomPainter {
   final Color color;
   final double strokeWidth;
 
-  _CheckPainter({required this.progress, required this.color, this.strokeWidth = 2.0});
+  _CheckPainter({
+    required this.progress,
+    required this.color,
+    this.strokeWidth = 2.0,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -138,8 +156,12 @@ class _CheckPainter extends CustomPainter {
     final endY = size.height * 0.25;
 
     // Total path length calculation
-    final firstSegmentLength = math.sqrt(math.pow(midX - startX, 2) + math.pow(midY - startY, 2));
-    final secondSegmentLength = math.sqrt(math.pow(endX - midX, 2) + math.pow(endY - midY, 2));
+    final firstSegmentLength = math.sqrt(
+      math.pow(midX - startX, 2) + math.pow(midY - startY, 2),
+    );
+    final secondSegmentLength = math.sqrt(
+      math.pow(endX - midX, 2) + math.pow(endY - midY, 2),
+    );
     final totalLength = firstSegmentLength + secondSegmentLength;
 
     final drawLength = totalLength * progress;
@@ -169,7 +191,9 @@ class _CheckPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _CheckPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.color != color || oldDelegate.strokeWidth != strokeWidth;
+    return oldDelegate.progress != progress ||
+        oldDelegate.color != color ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }
 
@@ -179,7 +203,12 @@ class _HexagonPainter extends CustomPainter {
   final double borderWidth;
   final double cornerRadius;
 
-  _HexagonPainter({this.fillColor, this.borderColor, this.borderWidth = 1.5, this.cornerRadius = 3.0});
+  _HexagonPainter({
+    this.fillColor,
+    this.borderColor,
+    this.borderWidth = 1.5,
+    this.cornerRadius = 3.0,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -242,7 +271,12 @@ class _HexagonPainter extends CustomPainter {
       }
 
       // Add rounded corner using quadratic bezier
-      path.quadraticBezierTo(current.dx, current.dy, cornerEnd.dx, cornerEnd.dy);
+      path.quadraticBezierTo(
+        current.dx,
+        current.dy,
+        cornerEnd.dx,
+        cornerEnd.dy,
+      );
     }
 
     path.close();

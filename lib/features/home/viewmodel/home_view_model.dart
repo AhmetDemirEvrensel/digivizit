@@ -49,8 +49,7 @@ abstract class HomeViewModelBase with Store {
     return '';
   }
 
-  bool get hasMoreContacts =>
-      getContactsResponse?.data?.meta?.hasMore ?? false;
+  bool get hasMoreContacts => getContactsResponse?.data?.meta?.hasMore ?? false;
 
   String? get qrPhotoUrl {
     final candidates = [

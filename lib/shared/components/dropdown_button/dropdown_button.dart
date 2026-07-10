@@ -42,7 +42,8 @@ class CustomDropdownButton extends StatelessWidget {
     if (itemCount == 0) {
       calculatedHeight = emptyStateHeight;
     } else {
-      calculatedHeight = (itemCount * itemHeight) + ((itemCount - 1) * separatorHeight);
+      calculatedHeight =
+          (itemCount * itemHeight) + ((itemCount - 1) * separatorHeight);
     }
 
     if (_showSearch) {
@@ -57,7 +58,11 @@ class CustomDropdownButton extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (title != null) Text(title!, style: AppFonts.base2Semibold.withColor(AppColors.baseBlack)),
+        if (title != null)
+          Text(
+            title!,
+            style: AppFonts.base2Semibold.withColor(AppColors.baseBlack),
+          ),
         10.spacerV,
         // Dropdown Button
         GestureDetector(
@@ -73,11 +78,23 @@ class CustomDropdownButton extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                FigmaBox(width: 203, child: Text(contentText, style: AppFonts.base2Semibold.withColor(AppColors.baseBlack))),
+                FigmaBox(
+                  width: 203,
+                  child: Text(
+                    contentText,
+                    style: AppFonts.base2Semibold.withColor(
+                      AppColors.baseBlack,
+                    ),
+                  ),
+                ),
                 AnimatedRotation(
                   turns: isExpanded ? 0.5 : 0,
                   duration: const Duration(milliseconds: 200),
-                  child: Icon(Icons.keyboard_arrow_down_rounded, color: const Color(0xFF99A1AE), size: 24),
+                  child: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: const Color(0xFF99A1AE),
+                    size: 24,
+                  ),
                 ),
               ],
             ),
@@ -85,7 +102,11 @@ class CustomDropdownButton extends StatelessWidget {
         ),
         10.spacerV,
         // Dropdown List
-        AnimatedSize(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut, child: isExpanded ? _buildExpandedList() : const SizedBox.shrink()),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: isExpanded ? _buildExpandedList() : const SizedBox.shrink(),
+        ),
       ],
     );
   }
@@ -113,7 +134,11 @@ class CustomDropdownButton extends StatelessWidget {
           child: Text(
             'reports.vehicle_not_found'.tr,
             textAlign: TextAlign.center,
-            style: appSizer.style(color: const Color(0xFF99A1AE), fontSize: 14, fontWeight: FontWeight.w500),
+            style: appSizer.style(
+              color: const Color(0xFF99A1AE),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       );
@@ -124,7 +149,13 @@ class CustomDropdownButton extends StatelessWidget {
       shrinkWrap: true,
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: items.length,
-      separatorBuilder: (context, index) => Divider(height: 1, thickness: 1.19, color: const Color(0x7FE5E7EB), indent: 0, endIndent: 0),
+      separatorBuilder: (context, index) => Divider(
+        height: 1,
+        thickness: 1.19,
+        color: const Color(0x7FE5E7EB),
+        indent: 0,
+        endIndent: 0,
+      ),
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () => onItemTap(items[index]),
@@ -132,7 +163,12 @@ class CustomDropdownButton extends StatelessWidget {
             padding: appSizer.paddingSymmetric(horizontal: 16, vertical: 14),
             child: Text(
               items[index],
-              style: appSizer.style(color: const Color(0xFF374151), fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: -0.23),
+              style: appSizer.style(
+                color: const Color(0xFF374151),
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.23,
+              ),
             ),
           ),
         );

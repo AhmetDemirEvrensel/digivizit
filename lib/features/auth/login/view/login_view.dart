@@ -64,8 +64,8 @@ class _LoginViewState extends State<LoginView>
   Widget build(BuildContext context) {
     return BaseDesign(
       pinnedHeader: false,
-      topColor: const Color(0xFF0A1835),
-      bottomColor: const Color(0xFF07111F),
+      topColor: const Color(0xFFF8F9FB),
+      bottomColor: const Color(0xFFFFFFFF),
       backgroundWidget: _buildBackground(),
       children: [
         FadeTransition(
@@ -108,7 +108,7 @@ class _LoginViewState extends State<LoginView>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF11254A), Color(0xFF0C1830), Color(0xFF060C18)],
+              colors: [Color(0xFFFFFFFF), Color(0xFFF8F9FB), Color(0xFFEFF3F9)],
             ),
           ),
         ),
@@ -117,7 +117,7 @@ class _LoginViewState extends State<LoginView>
           right: -60,
           child: _buildGlow(
             size: 280,
-            color: AppColors.primary400.withValues(alpha: 0.24),
+            color: AppColors.primary300.withValues(alpha: 0.30),
           ),
         ),
         Positioned(
@@ -125,7 +125,7 @@ class _LoginViewState extends State<LoginView>
           left: -90,
           child: _buildGlow(
             size: 220,
-            color: AppColors.tertiary400.withValues(alpha: 0.16),
+            color: AppColors.tertiary300.withValues(alpha: 0.22),
           ),
         ),
         Positioned(
@@ -133,7 +133,7 @@ class _LoginViewState extends State<LoginView>
           right: 20,
           child: _buildGlow(
             size: 260,
-            color: AppColors.primary700.withValues(alpha: 0.22),
+            color: AppColors.info300.withValues(alpha: 0.24),
           ),
         ),
         Positioned.fill(
@@ -143,9 +143,9 @@ class _LoginViewState extends State<LoginView>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  AppColors.baseWhite.withValues(alpha: 0.04),
+                  AppColors.baseWhite.withValues(alpha: 0.4),
                   Colors.transparent,
-                  AppColors.baseBlack.withValues(alpha: 0.24),
+                  AppColors.baseWhite.withValues(alpha: 0.4),
                 ],
               ),
             ),
@@ -176,15 +176,12 @@ class _LoginViewState extends State<LoginView>
           height: 76,
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: AppColors.baseWhite.withValues(alpha: 0.10),
+            color: AppColors.baseWhite,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: AppColors.baseWhite.withValues(alpha: 0.18),
-              width: 1.15,
-            ),
+            border: Border.all(color: AppColors.hairline, width: 1),
             boxShadow: [
               BoxShadow(
-                color: AppColors.baseBlack.withValues(alpha: 0.12),
+                color: AppColors.ink.withValues(alpha: 0.07),
                 blurRadius: 24,
                 offset: const Offset(0, 10),
               ),
@@ -197,7 +194,7 @@ class _LoginViewState extends State<LoginView>
           'Hos Geldiniz',
           textAlign: TextAlign.center,
           style: AppFonts.xl3Bold.copyWith(
-            color: AppColors.baseWhite,
+            color: AppColors.ink,
             height: 1.1,
             letterSpacing: -0.6,
           ),
@@ -206,9 +203,7 @@ class _LoginViewState extends State<LoginView>
         Text(
           'Devam etmek icin giris yapin',
           textAlign: TextAlign.center,
-          style: AppFonts.lgRegular.withColor(
-            AppColors.baseWhite.withValues(alpha: 0.74),
-          ),
+          style: AppFonts.lgRegular.withColor(AppColors.inkSoft),
         ),
       ],
     );
@@ -222,22 +217,12 @@ class _LoginViewState extends State<LoginView>
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.baseWhite.withValues(alpha: 0.14),
-                AppColors.baseWhite.withValues(alpha: 0.06),
-              ],
-            ),
+            color: AppColors.baseWhite,
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(
-              color: AppColors.baseWhite.withValues(alpha: 0.16),
-              width: 1.15,
-            ),
+            border: Border.all(color: AppColors.hairline, width: 1),
             boxShadow: [
               BoxShadow(
-                color: AppColors.baseBlack.withValues(alpha: 0.14),
+                color: AppColors.ink.withValues(alpha: 0.08),
                 blurRadius: 32,
                 offset: const Offset(0, 14),
               ),
@@ -251,11 +236,9 @@ class _LoginViewState extends State<LoginView>
               FigmaContainer(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: AppColors.secondary900.withValues(alpha: 0.30),
+                  color: AppColors.surface,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: AppColors.baseWhite.withValues(alpha: 0.08),
-                  ),
+                  border: Border.all(color: AppColors.hairline),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,11 +249,12 @@ class _LoginViewState extends State<LoginView>
                       hintText: 'ornek@exponot.com',
                       keyboardType: TextInputType.emailAddress,
                       prefixIcon: Icons.alternate_email_rounded,
+                      labelColor: AppColors.ink,
                     ),
                     FigmaBox(height: 18),
                     CustomTextField.password(
                       formControlName: 'password',
-                      labelColor: AppColors.baseWhite,
+                      labelColor: AppColors.ink,
                     ),
                     FigmaBox(height: 18),
                     _buildRememberMeAndForgetPassword(),
@@ -327,7 +311,7 @@ class _LoginViewState extends State<LoginView>
               Text(
                 'Giris',
                 style: AppFonts.xlBold.copyWith(
-                  color: AppColors.baseWhite,
+                  color: AppColors.ink,
                   height: 1.1,
                   letterSpacing: -0.4,
                 ),
@@ -335,9 +319,7 @@ class _LoginViewState extends State<LoginView>
               const SizedBox(height: 8),
               Text(
                 'Email ve sifre ile devam edin',
-                style: AppFonts.baseRegular.withColor(
-                  AppColors.baseWhite.withValues(alpha: 0.64),
-                ),
+                style: AppFonts.baseRegular.withColor(AppColors.inkSoft),
               ),
             ],
           ),
@@ -361,18 +343,16 @@ class _LoginViewState extends State<LoginView>
                       onChanged: model.toggleRememberMe,
                       cornerRadius: 2,
                       isChecked: model.rememberMe,
-                      checkedColor: AppColors.baseWhite,
-                      checkColor: AppColors.primary500,
-                      borderColor: AppColors.baseWhite,
+                      checkedColor: AppColors.primary500,
+                      checkColor: AppColors.baseWhite,
+                      borderColor: AppColors.inkFaint,
                       size: 26,
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         'Beni Hatirla',
-                        style: AppFonts.baseRegular.withColor(
-                          AppColors.baseWhite.withValues(alpha: 0.84),
-                        ),
+                        style: AppFonts.baseRegular.withColor(AppColors.ink),
                       ),
                     ),
                   ],
@@ -385,7 +365,7 @@ class _LoginViewState extends State<LoginView>
           onTap: _showForgotPasswordSheet,
           child: Text(
             'Sifremi Unuttum?',
-            style: AppFonts.baseBold.withColor(AppColors.primary200),
+            style: AppFonts.baseBold.withColor(AppColors.primary600),
           ),
         ),
       ],
@@ -402,19 +382,23 @@ class _LoginViewState extends State<LoginView>
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
-      style: AppFonts.baseRegular.copyWith(color: AppColors.baseWhite),
+      style: AppFonts.baseRegular.copyWith(color: AppColors.ink),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: AppFonts.baseRegular.copyWith(
-          color: AppColors.baseWhite.withValues(alpha: 0.6),
-        ),
+        labelStyle: AppFonts.baseRegular.copyWith(color: AppColors.inkSoft),
         filled: true,
-        fillColor: AppColors.baseWhite.withValues(alpha: 0.06),
+        fillColor: AppColors.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: AppColors.baseWhite.withValues(alpha: 0.12),
-          ),
+          borderSide: const BorderSide(color: AppColors.hairline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.hairline),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.primary500, width: 1.5),
         ),
       ),
     );
@@ -427,7 +411,7 @@ class _LoginViewState extends State<LoginView>
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF111827),
+      backgroundColor: AppColors.baseWhite,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -447,14 +431,12 @@ class _LoginViewState extends State<LoginView>
                 children: [
                   Text(
                     'Sifremi Unuttum',
-                    style: AppFonts.xlBold.copyWith(color: AppColors.baseWhite),
+                    style: AppFonts.xlBold.copyWith(color: AppColors.ink),
                   ),
                   FigmaBox(height: 8),
                   Text(
                     'Kayitli e-posta adresinizi girin, sifre sifirlama baglantisi gonderelim.',
-                    style: AppFonts.baseRegular.withColor(
-                      AppColors.baseWhite.withValues(alpha: 0.7),
-                    ),
+                    style: AppFonts.baseRegular.withColor(AppColors.inkSoft),
                   ),
                   FigmaBox(height: 16),
                   _buildSheetField(
@@ -520,7 +502,7 @@ class _LoginViewState extends State<LoginView>
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF111827),
+      backgroundColor: AppColors.baseWhite,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -541,16 +523,12 @@ class _LoginViewState extends State<LoginView>
                   children: [
                     Text(
                       'Sifre Sifirla',
-                      style: AppFonts.xlBold.copyWith(
-                        color: AppColors.baseWhite,
-                      ),
+                      style: AppFonts.xlBold.copyWith(color: AppColors.ink),
                     ),
                     FigmaBox(height: 8),
                     Text(
                       'E-postaniza gelen kodu ve yeni sifrenizi girin.',
-                      style: AppFonts.baseRegular.withColor(
-                        AppColors.baseWhite.withValues(alpha: 0.7),
-                      ),
+                      style: AppFonts.baseRegular.withColor(AppColors.inkSoft),
                     ),
                     FigmaBox(height: 16),
                     _buildSheetField(
@@ -636,7 +614,9 @@ class _LoginViewState extends State<LoginView>
                                   );
                                 }
                               },
-                        text: isSubmitting ? 'Gonderiliyor...' : 'Sifreyi Guncelle',
+                        text: isSubmitting
+                            ? 'Gonderiliyor...'
+                            : 'Sifreyi Guncelle',
                         gradient: const LinearGradient(
                           colors: [Color(0xFF60A5FA), Color(0xFF2563EB)],
                         ),
@@ -663,7 +643,6 @@ class _LoginViewState extends State<LoginView>
 
     CustomBottomSheet.customView(
       viewTopBar: true,
-      backgroundColor: AppColors.primary500.withValues(alpha: 0.15),
       title: 'Kayıt Başarılı',
       hexagonIcon: Icons.done_rounded,
       hexagonColor: AppColors.tertiary500,

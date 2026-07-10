@@ -31,8 +31,8 @@ class _ContactDetailViewState extends State<ContactDetailView>
   bool _isContactInfoExpanded = false;
   bool _isNotesExpanded = false;
   final TextEditingController _noteController = TextEditingController();
-  Color _topColor = const Color(0xFFFFFFFF);
-  Color _bottomColor = const Color(0xFFFFFFFF);
+  final Color _topColor = const Color(0xFFF8F9FB);
+  final Color _bottomColor = const Color(0xFFFFFFFF);
   BusinessCardDetailData? _detail;
   bool _isLoadingDetail = true;
   int _currentImageIndex = 0;
@@ -64,20 +64,6 @@ class _ContactDetailViewState extends State<ContactDetailView>
     if (savedProfile != null) {
       _homeViewModel.setInitialProfile(savedProfile);
     }
-
-    _homeViewModel
-        .loadBackgroundColors(
-          topFallback: _topColor,
-          bottomFallback: _bottomColor,
-        )
-        .then((gradientColors) {
-          if (!mounted) return;
-
-          setState(() {
-            _topColor = gradientColors.topColor;
-            _bottomColor = gradientColors.bottomColor;
-          });
-        });
 
     _animationController.forward();
     _loadDetail();
@@ -218,7 +204,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF111827),
+      backgroundColor: AppColors.baseWhite,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -239,7 +225,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                   'Kartviziti Düzenle',
                   style: AppFonts.baseBold.copyWith(
                     fontSize: 18,
-                    color: AppColors.baseWhite,
+                    color: AppColors.ink,
                   ),
                 ),
                 FigmaBox(height: 16),
@@ -295,19 +281,23 @@ class _ContactDetailViewState extends State<ContactDetailView>
   Widget _buildEditField(String label, TextEditingController controller) {
     return TextField(
       controller: controller,
-      style: AppFonts.baseRegular.copyWith(color: AppColors.baseWhite),
+      style: AppFonts.baseRegular.copyWith(color: AppColors.ink),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: AppFonts.baseRegular.copyWith(
-          color: AppColors.baseWhite.withValues(alpha: 0.6),
-        ),
+        labelStyle: AppFonts.baseRegular.copyWith(color: AppColors.inkSoft),
         filled: true,
-        fillColor: AppColors.baseWhite.withValues(alpha: 0.05),
+        fillColor: AppColors.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: AppColors.baseWhite.withValues(alpha: 0.1),
-          ),
+          borderSide: const BorderSide(color: AppColors.hairline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.hairline),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary500, width: 1.5),
         ),
       ),
     );
@@ -373,7 +363,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     widget.contact.name,
                     style: AppFonts.baseBold.copyWith(
                       fontSize: 28,
-                      color: AppColors.baseWhite,
+                      color: AppColors.ink,
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -382,7 +372,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     widget.contact.company,
                     style: AppFonts.baseRegular.copyWith(
                       fontSize: 16,
-                      color: AppColors.baseWhite.withValues(alpha: 0.7),
+                      color: AppColors.inkSoft,
                     ),
                   ),
                   FigmaBox(height: 16),
@@ -424,16 +414,20 @@ class _ContactDetailViewState extends State<ContactDetailView>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.baseWhite.withValues(alpha: 0.1),
+              color: AppColors.baseWhite,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: AppColors.baseWhite.withValues(alpha: 0.2),
-                width: 1,
-              ),
+              border: Border.all(color: AppColors.hairline, width: 1),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.ink.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
             child: Icon(
               Icons.arrow_back_ios_new,
-              color: AppColors.baseWhite,
+              color: AppColors.ink,
               size: 18,
             ),
           ),
@@ -446,16 +440,20 @@ class _ContactDetailViewState extends State<ContactDetailView>
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.baseWhite.withValues(alpha: 0.1),
+                color: AppColors.baseWhite,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppColors.baseWhite.withValues(alpha: 0.2),
-                  width: 1,
-                ),
+                border: Border.all(color: AppColors.hairline, width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.ink.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: Icon(
                 Icons.edit_outlined,
-                color: AppColors.baseWhite,
+                color: AppColors.primary600,
                 size: 18,
               ),
             ),
@@ -492,12 +490,9 @@ class _ContactDetailViewState extends State<ContactDetailView>
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.baseWhite.withValues(alpha: 0.08),
+        color: AppColors.baseWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.baseWhite.withValues(alpha: 0.1),
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.hairline, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,7 +503,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
               'Taranan Kartvizit',
               style: AppFonts.baseSemibold.copyWith(
                 fontSize: 14,
-                color: AppColors.baseWhite,
+                color: AppColors.ink,
               ),
             ),
           ),
@@ -523,7 +518,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                       fit: BoxFit.cover,
                     )
                   : null,
-              color: AppColors.baseWhite.withValues(alpha: 0.05),
+              color: AppColors.surface,
             ),
             child: Align(
               alignment: Alignment.topRight,
@@ -564,7 +559,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                       decoration: BoxDecoration(
                         color: _currentImageIndex == index
                             ? Color(0xFF3B82F6)
-                            : AppColors.baseWhite.withValues(alpha: 0.3),
+                            : AppColors.hairline,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -598,12 +593,12 @@ class _ContactDetailViewState extends State<ContactDetailView>
         curve: Curves.easeInOut,
         padding: appSizer.paddingAll(20),
         decoration: BoxDecoration(
-          color: AppColors.baseWhite.withValues(alpha: 0.08),
+          color: AppColors.baseWhite,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _isContactInfoExpanded
-                ? const Color(0xFF60A5FA).withValues(alpha: 0.3)
-                : AppColors.baseWhite.withValues(alpha: 0.1),
+                ? const Color(0xFF60A5FA).withValues(alpha: 0.5)
+                : AppColors.hairline,
             width: 1.5,
           ),
         ),
@@ -625,7 +620,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                   'Bağlantı Bilgileri',
                   style: AppFonts.baseBold.copyWith(
                     fontSize: 18,
-                    color: AppColors.baseWhite,
+                    color: AppColors.ink,
                   ),
                 ),
                 const Spacer(),
@@ -788,12 +783,9 @@ class _ContactDetailViewState extends State<ContactDetailView>
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppColors.baseWhite.withValues(alpha: 0.05),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppColors.baseWhite.withValues(alpha: 0.1),
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.hairline, width: 1),
         ),
         child: Row(
           crossAxisAlignment: isMultiline
@@ -822,7 +814,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     label,
                     style: AppFonts.baseRegular.copyWith(
                       fontSize: 12,
-                      color: AppColors.baseWhite.withValues(alpha: 0.6),
+                      color: AppColors.inkSoft,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -830,7 +822,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     value,
                     style: AppFonts.baseSemibold.copyWith(
                       fontSize: 14,
-                      color: AppColors.baseWhite,
+                      color: AppColors.ink,
                     ),
                     maxLines: isMultiline ? 2 : 1,
                     overflow: TextOverflow.ellipsis,
@@ -850,12 +842,12 @@ class _ContactDetailViewState extends State<ContactDetailView>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.baseWhite.withValues(alpha: 0.08),
+        color: AppColors.baseWhite,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _isNotesExpanded
-              ? const Color(0xFF60A5FA).withValues(alpha: 0.3)
-              : AppColors.baseWhite.withValues(alpha: 0.1),
+              ? const Color(0xFF60A5FA).withValues(alpha: 0.5)
+              : AppColors.hairline,
           width: 1.5,
         ),
       ),
@@ -886,7 +878,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                   'Notlarım',
                   style: AppFonts.baseBold.copyWith(
                     fontSize: 16,
-                    color: AppColors.baseWhite,
+                    color: AppColors.ink,
                   ),
                 ),
                 const Spacer(),
@@ -911,32 +903,28 @@ class _ContactDetailViewState extends State<ContactDetailView>
                 child: TextField(
                   controller: _noteController,
                   style: AppFonts.baseRegular.copyWith(
-                    color: AppColors.baseWhite,
+                    color: AppColors.ink,
                     fontSize: 14,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Add a note...',
+                    hintText: 'Not ekle...',
                     hintStyle: AppFonts.baseRegular.copyWith(
-                      color: AppColors.baseWhite.withValues(alpha: 0.4),
+                      color: AppColors.inkFaint,
                       fontSize: 14,
                     ),
                     filled: true,
-                    fillColor: AppColors.baseWhite.withValues(alpha: 0.05),
+                    fillColor: AppColors.surface,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: AppColors.baseWhite.withValues(alpha: 0.1),
-                      ),
+                      borderSide: const BorderSide(color: AppColors.hairline),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: AppColors.baseWhite.withValues(alpha: 0.1),
-                      ),
+                      borderSide: const BorderSide(color: AppColors.hairline),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -985,20 +973,16 @@ class _ContactDetailViewState extends State<ContactDetailView>
               children: notes.reversed
                   .take(4)
                   .map(
-                    (note) => _wrapWithDismissible(
-                      note,
-                      _buildActivityItem(note),
-                    ),
+                    (note) =>
+                        _wrapWithDismissible(note, _buildActivityItem(note)),
                   )
                   .toList(),
             ),
             secondChild: Column(
               children: notes.reversed
                   .map(
-                    (note) => _wrapWithDismissible(
-                      note,
-                      _buildActivityItem(note),
-                    ),
+                    (note) =>
+                        _wrapWithDismissible(note, _buildActivityItem(note)),
                   )
                   .toList(),
             ),
@@ -1067,12 +1051,9 @@ class _ContactDetailViewState extends State<ContactDetailView>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.baseWhite.withValues(alpha: 0.05),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.baseWhite.withValues(alpha: 0.1),
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.hairline, width: 1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1100,14 +1081,14 @@ class _ContactDetailViewState extends State<ContactDetailView>
                     Icon(
                       Icons.calendar_today,
                       size: 12,
-                      color: AppColors.baseWhite.withValues(alpha: 0.5),
+                      color: AppColors.inkFaint,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       note.createdAt ?? '',
                       style: AppFonts.baseRegular.copyWith(
                         fontSize: 12,
-                        color: AppColors.baseWhite.withValues(alpha: 0.5),
+                        color: AppColors.inkFaint,
                       ),
                     ),
                   ],
@@ -1117,7 +1098,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                   note.note ?? '',
                   style: AppFonts.baseRegular.copyWith(
                     fontSize: 13,
-                    color: AppColors.baseWhite.withValues(alpha: 0.9),
+                    color: AppColors.ink,
                   ),
                 ),
               ],
@@ -1134,12 +1115,9 @@ class _ContactDetailViewState extends State<ContactDetailView>
     return FigmaContainer(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.baseWhite.withValues(alpha: 0.08),
+        color: AppColors.baseWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.baseWhite.withValues(alpha: 0.1),
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.hairline, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1159,7 +1137,7 @@ class _ContactDetailViewState extends State<ContactDetailView>
                 'Etiketler & Sektör',
                 style: AppFonts.baseBold.copyWith(
                   fontSize: 16,
-                  color: AppColors.baseWhite,
+                  color: AppColors.ink,
                 ),
               ),
             ],

@@ -63,7 +63,10 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
         : (profileData?.department?.name?.trim().isNotEmpty == true
               ? profileData!.department!.name!.trim()
               : 'Unvan belirtilmedi');
-    final statusText = _statusLabel(appointment.status, appointment.statusLabel);
+    final statusText = _statusLabel(
+      appointment.status,
+      appointment.statusLabel,
+    );
     final statusColor = _statusColor(appointment.status);
     final appointmentDateTime = _appointmentDateTime(appointment.preferredDate);
     final createdAt = _appointmentDateTime(appointment.createdAt);
@@ -78,21 +81,24 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
     final department = profileData?.department?.name?.trim() ?? '';
     final timeTone = _meetingVisualTone(appointmentDateTime);
     final photoUrl = profileData?.photoUrl?.trim() ?? '';
-    final canRespond = (appointment.status?.trim().toLowerCase() ==
-        'talep edildi');
+    final canRespond =
+        (appointment.status?.trim().toLowerCase() == 'talep edildi');
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1E),
+      backgroundColor: const Color(0xFFF8F9FB),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1C1C1E),
+        backgroundColor: const Color(0xFFF8F9FB),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF0F172A)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Gorusme Talebi Detayi',
-          style: AppFonts.baseBold.copyWith(fontSize: 18, color: Colors.white),
+          style: AppFonts.baseBold.copyWith(
+            fontSize: 18,
+            color: const Color(0xFF0F172A),
+          ),
         ),
       ),
       body: Container(
@@ -101,9 +107,9 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.lerp(timeTone.cardColor, const Color(0xFF1C1C1E), 0.12)!,
-              const Color(0xFF1C1C1E),
-              const Color(0xFF141416),
+              Color.lerp(timeTone.cardColor, const Color(0xFFF8F9FB), 0.3)!,
+              const Color(0xFFF8F9FB),
+              const Color(0xFFFFFFFF),
             ],
             stops: const [0, 0.38, 1],
           ),
@@ -302,9 +308,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
       });
     } else {
       CustomBottomSheet.errorView(
-        text: isApprove
-            ? 'Talep onaylanamadi.'
-            : 'Talep reddedilemedi.',
+        text: isApprove ? 'Talep onaylanamadi.' : 'Talep reddedilemedi.',
       );
     }
   }
@@ -364,22 +368,20 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
               if (department.isNotEmpty)
                 _buildMetaChip(
                   label: department,
-                  color: Colors.white.withValues(alpha: 0.9),
-                  backgroundColor: Colors.white.withValues(alpha: 0.08),
+                  color: const Color(0xFF475569),
+                  backgroundColor: const Color(0xFFF1F5F9),
                 ),
             ],
           ),
           const SizedBox(height: 18),
-          Center(
-            child: _buildProfileAvatar(requesterName, photoUrl, timeTone),
-          ),
+          Center(child: _buildProfileAvatar(requesterName, photoUrl, timeTone)),
           const SizedBox(height: 16),
           Text(
             requesterName,
             textAlign: TextAlign.center,
             style: AppFonts.baseBold.copyWith(
               fontSize: 24,
-              color: Colors.white,
+              color: const Color(0xFF0F172A),
             ),
           ),
           const SizedBox(height: 6),
@@ -388,7 +390,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
             textAlign: TextAlign.center,
             style: AppFonts.baseRegular.copyWith(
               fontSize: 16,
-              color: Colors.white.withValues(alpha: 0.72),
+              color: const Color(0xFF64748B),
             ),
           ),
           const SizedBox(height: 4),
@@ -505,9 +507,9 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.08),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -518,7 +520,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
               label,
               style: AppFonts.baseSemibold.copyWith(
                 fontSize: 13,
-                color: Colors.white,
+                color: const Color(0xFF0F172A),
               ),
             ),
           ],
@@ -557,7 +559,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
             label,
             style: AppFonts.baseRegular.copyWith(
               fontSize: 12,
-              color: Colors.white.withValues(alpha: 0.68),
+              color: const Color(0xFF64748B),
             ),
           ),
           const SizedBox(height: 6),
@@ -565,7 +567,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
             value,
             style: AppFonts.baseBold.copyWith(
               fontSize: 15,
-              color: Colors.white,
+              color: const Color(0xFF0F172A),
             ),
           ),
         ],
@@ -587,9 +589,9 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF252527),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -611,7 +613,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
                     title,
                     style: AppFonts.baseRegular.copyWith(
                       fontSize: 13,
-                      color: Colors.white.withValues(alpha: 0.62),
+                      color: const Color(0xFF64748B),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -619,7 +621,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
                     content,
                     style: AppFonts.baseSemibold.copyWith(
                       fontSize: 15,
-                      color: Colors.white,
+                      color: const Color(0xFF0F172A),
                       height: 1.4,
                     ),
                   ),
@@ -630,7 +632,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
               const SizedBox(width: 8),
               Icon(
                 Icons.open_in_new_rounded,
-                color: Colors.white.withValues(alpha: 0.35),
+                color: const Color(0xFFCBD5E1),
                 size: 18,
               ),
             ],
@@ -652,8 +654,8 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.lerp(timeTone.panelColor, const Color(0xFF252527), 0.5)!,
-            const Color(0xFF252527),
+            Color.lerp(timeTone.panelColor, Colors.white, 0.45)!,
+            Colors.white,
           ],
         ),
         borderRadius: BorderRadius.circular(22),
@@ -681,7 +683,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
                 'Gorusme Notu',
                 style: AppFonts.baseBold.copyWith(
                   fontSize: 16,
-                  color: Colors.white,
+                  color: const Color(0xFF0F172A),
                 ),
               ),
             ],
@@ -691,7 +693,7 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
             note,
             style: AppFonts.baseRegular.copyWith(
               fontSize: 15,
-              color: Colors.white.withValues(alpha: 0.78),
+              color: const Color(0xFF475569),
               height: 1.6,
             ),
           ),
@@ -791,41 +793,41 @@ class _MeetingRequestDetailViewState extends State<MeetingRequestDetailView> {
         return const _MeetingVisualTone(
           label: 'Gecmis',
           icon: Icons.history_toggle_off_rounded,
-          accentColor: Color(0xFFFF7B72),
-          cardColor: Color(0xFF332428),
-          panelColor: Color(0xFF442A31),
-          borderColor: Color(0x66FF7B72),
-          softColor: Color(0x29FF7B72),
+          accentColor: Color(0xFFE11D48),
+          cardColor: Color(0xFFFFF1F2),
+          panelColor: Color(0xFFFFE4E6),
+          borderColor: Color(0xFFFECDD3),
+          softColor: Color(0x26E11D48),
         );
       case _MeetingTimeState.today:
         return const _MeetingVisualTone(
           label: 'Bugun',
           icon: Icons.flash_on_rounded,
-          accentColor: Color(0xFF64D2FF),
-          cardColor: Color(0xFF202F3A),
-          panelColor: Color(0xFF233D4A),
-          borderColor: Color(0x6664D2FF),
-          softColor: Color(0x2964D2FF),
+          accentColor: Color(0xFF0284C7),
+          cardColor: Color(0xFFF0F9FF),
+          panelColor: Color(0xFFE0F2FE),
+          borderColor: Color(0xFFBAE6FD),
+          softColor: Color(0x260284C7),
         );
       case _MeetingTimeState.upcoming:
         return const _MeetingVisualTone(
           label: 'Planli',
           icon: Icons.schedule_rounded,
-          accentColor: Color(0xFFFFC857),
-          cardColor: Color(0xFF342C1F),
-          panelColor: Color(0xFF413421),
-          borderColor: Color(0x66FFC857),
-          softColor: Color(0x29FFC857),
+          accentColor: Color(0xFFD97706),
+          cardColor: Color(0xFFFFFBEB),
+          panelColor: Color(0xFFFEF3C7),
+          borderColor: Color(0xFFFDE68A),
+          softColor: Color(0x26D97706),
         );
       case _MeetingTimeState.unknown:
         return const _MeetingVisualTone(
           label: 'Belirsiz',
           icon: Icons.help_outline_rounded,
-          accentColor: Color(0xFF8E8E93),
-          cardColor: Color(0xFF2C2C2E),
-          panelColor: Color(0xFF343437),
-          borderColor: Color(0x338E8E93),
-          softColor: Color(0x1F8E8E93),
+          accentColor: Color(0xFF64748B),
+          cardColor: Color(0xFFF8FAFC),
+          panelColor: Color(0xFFF1F5F9),
+          borderColor: Color(0xFFE2E8F0),
+          softColor: Color(0x1F64748B),
         );
     }
   }

@@ -6,13 +6,18 @@ class HexagonLoaderScreen extends StatefulWidget {
   final double size;
   final Duration swapDuration;
 
-  const HexagonLoaderScreen({super.key, this.size = 220, this.swapDuration = const Duration(milliseconds: 700)});
+  const HexagonLoaderScreen({
+    super.key,
+    this.size = 220,
+    this.swapDuration = const Duration(milliseconds: 700),
+  });
 
   @override
   State<HexagonLoaderScreen> createState() => _HexagonLoaderScreenState();
 }
 
-class _HexagonLoaderScreenState extends State<HexagonLoaderScreen> with SingleTickerProviderStateMixin {
+class _HexagonLoaderScreenState extends State<HexagonLoaderScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   // Hexagon renkleri (resimden alınan)
@@ -33,9 +38,10 @@ class _HexagonLoaderScreenState extends State<HexagonLoaderScreen> with SingleTi
   void initState() {
     super.initState();
     _colorIndices = [0, 1, 2, 3];
-    _controller = AnimationController(vsync: this, duration: widget.swapDuration)
-      ..addStatusListener(_onAnimationStatus)
-      ..forward();
+    _controller =
+        AnimationController(vsync: this, duration: widget.swapDuration)
+          ..addStatusListener(_onAnimationStatus)
+          ..forward();
   }
 
   void _onAnimationStatus(AnimationStatus status) {
@@ -98,7 +104,13 @@ class _HexagonSwapPainter extends CustomPainter {
   final int swapPair;
   final double hexSize;
 
-  _HexagonSwapPainter({required this.progress, required this.colors, required this.colorIndices, required this.swapPair, required this.hexSize});
+  _HexagonSwapPainter({
+    required this.progress,
+    required this.colors,
+    required this.colorIndices,
+    required this.swapPair,
+    required this.hexSize,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -108,7 +120,10 @@ class _HexagonSwapPainter extends CustomPainter {
     final startX = (size.width - totalWidth) / 2 + hexSize / 2;
 
     // Her hexagon'ın temel pozisyonları
-    final basePositions = List.generate(4, (i) => Offset(startX + i * spacing, centerY));
+    final basePositions = List.generate(
+      4,
+      (i) => Offset(startX + i * spacing, centerY),
+    );
 
     // Hexagonları çiz
     for (int i = 0; i < 4; i++) {
@@ -140,7 +155,12 @@ class _HexagonSwapPainter extends CustomPainter {
     _drawConnectors(canvas, basePositions);
   }
 
-  Offset _getCircularSwapPosition(Offset pos1, Offset pos2, bool isFirst, double t) {
+  Offset _getCircularSwapPosition(
+    Offset pos1,
+    Offset pos2,
+    bool isFirst,
+    double t,
+  ) {
     // İki pozisyon arasındaki merkez
     final centerX = (pos1.dx + pos2.dx) / 2;
     final centerY = pos1.dy;

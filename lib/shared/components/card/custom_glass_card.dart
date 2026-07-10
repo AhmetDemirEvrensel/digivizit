@@ -146,7 +146,16 @@ class CustomGlassCard extends StatelessWidget {
     GlassType glassType = GlassType.plate,
     String? plate,
   }) {
-    return CustomGlassCard._(key: key, model: model, title: title, isCenter: isCenter, moreGlass: moreGlass, glassType: glassType, plate: plate, child: child);
+    return CustomGlassCard._(
+      key: key,
+      model: model,
+      title: title,
+      isCenter: isCenter,
+      moreGlass: moreGlass,
+      glassType: glassType,
+      plate: plate,
+      child: child,
+    );
   }
 
   @override
@@ -168,7 +177,10 @@ class CustomGlassCard extends StatelessWidget {
           decoration: ShapeDecoration(
             color: Colors.white.withValues(alpha: moreGlass ? 0.50 : 0.15),
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.15, color: Colors.white.withValues(alpha: 0.30)),
+              side: BorderSide(
+                width: 1.15,
+                color: Colors.white.withValues(alpha: 0.30),
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
           ),
@@ -178,9 +190,16 @@ class CustomGlassCard extends StatelessWidget {
                 width: double.infinity,
                 padding: appSizer.paddingAll(14),
                 decoration: ShapeDecoration(
-                  gradient: LinearGradient(colors: gradient ?? [AppColors.primary500, AppColors.tertiary500]),
+                  gradient: LinearGradient(
+                    colors:
+                        gradient ??
+                        [AppColors.primary500, AppColors.tertiary500],
+                  ),
                   shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
                   ),
                 ),
                 child: Row(
@@ -188,10 +207,18 @@ class CustomGlassCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: isCenter ?? false ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                        crossAxisAlignment: isCenter ?? false
+                            ? CrossAxisAlignment.center
+                            : CrossAxisAlignment.start,
                         children: [
-                          Text(title, style: isCenter ?? false ? AppFonts.baseBold : AppFonts.base2Bold),
-                          if (subtitle != null) Text(subtitle!, style: AppFonts.base2Regular),
+                          Text(
+                            title,
+                            style: isCenter ?? false
+                                ? AppFonts.baseBold
+                                : AppFonts.base2Bold,
+                          ),
+                          if (subtitle != null)
+                            Text(subtitle!, style: AppFonts.base2Regular),
                         ],
                       ),
                     ),
@@ -216,7 +243,10 @@ class CustomGlassCard extends StatelessWidget {
           decoration: ShapeDecoration(
             color: Colors.white.withValues(alpha: moreGlass ? 0.30 : 0.15),
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.15, color: Colors.white.withValues(alpha: 0.30)),
+              side: BorderSide(
+                width: 1.15,
+                color: Colors.white.withValues(alpha: 0.30),
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
           ),
@@ -226,9 +256,14 @@ class CustomGlassCard extends StatelessWidget {
                 width: double.infinity,
                 padding: appSizer.paddingAll(14),
                 decoration: ShapeDecoration(
-                  gradient: LinearGradient(colors: [AppColors.primary500, AppColors.tertiary500]),
+                  gradient: LinearGradient(
+                    colors: [AppColors.primary500, AppColors.tertiary500],
+                  ),
                   shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
                   ),
                 ),
                 child: isCenter ?? false
@@ -241,15 +276,22 @@ class CustomGlassCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(title, style: AppFonts.lgBold),
-                              Text(subtitle ?? '', style: AppFonts.base2Regular),
+                              Text(
+                                subtitle ?? '',
+                                style: AppFonts.base2Regular,
+                              ),
                             ],
                           ),
                           HexagonWidget.assetIcon(
                             iconPath: IconPaths.increase,
                             size: 55.pxv,
                             iconColor: AppColors.baseWhite,
-                            fillColor: AppColors.baseWhite.withValues(alpha: 0.30),
-                            borderColor: AppColors.baseWhite.withValues(alpha: 0.15),
+                            fillColor: AppColors.baseWhite.withValues(
+                              alpha: 0.30,
+                            ),
+                            borderColor: AppColors.baseWhite.withValues(
+                              alpha: 0.15,
+                            ),
                           ),
                         ],
                       ),
@@ -271,7 +313,10 @@ class CustomGlassCard extends StatelessWidget {
           decoration: ShapeDecoration(
             color: Colors.white.withValues(alpha: moreGlass ? 0.50 : 0.15),
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.15, color: Colors.white.withValues(alpha: 0.30)),
+              side: BorderSide(
+                width: 1.15,
+                color: Colors.white.withValues(alpha: 0.30),
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
           ),
@@ -280,9 +325,14 @@ class CustomGlassCard extends StatelessWidget {
               FigmaContainer(
                 width: double.infinity,
                 decoration: ShapeDecoration(
-                  gradient: LinearGradient(colors: [AppColors.primary500, AppColors.tertiary500]),
+                  gradient: LinearGradient(
+                    colors: [AppColors.primary500, AppColors.tertiary500],
+                  ),
                   shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
                   ),
                 ),
                 child: Column(
@@ -297,21 +347,43 @@ class CustomGlassCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(title, style: AppFonts.lgBold),
-                              Text(subtitle ?? '', style: AppFonts.base2Regular),
+                              Text(
+                                subtitle ?? '',
+                                style: AppFonts.base2Regular,
+                              ),
                             ],
                           ),
                           selectedPeriod ?? false
                               ? FigmaContainer(
-                                  padding: appSizer.paddingSymmetric(horizontal: 12.pxh, vertical: 8.pxv),
+                                  padding: appSizer.paddingSymmetric(
+                                    horizontal: 12.pxh,
+                                    vertical: 8.pxv,
+                                  ),
                                   decoration: ShapeDecoration(
-                                    color: AppColors.baseWhite.withValues(alpha: 0.30),
+                                    color: AppColors.baseWhite.withValues(
+                                      alpha: 0.30,
+                                    ),
                                     shape: RoundedRectangleBorder(
-                                      side: BorderSide(width: 1.15, color: AppColors.baseWhite.withValues(alpha: 0.30)),
+                                      side: BorderSide(
+                                        width: 1.15,
+                                        color: AppColors.baseWhite.withValues(
+                                          alpha: 0.30,
+                                        ),
+                                      ),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    shadows: const [BoxShadow(color: Color(0x4C146DA0), blurRadius: 8, offset: Offset(0, 2))],
+                                    shadows: const [
+                                      BoxShadow(
+                                        color: Color(0x4C146DA0),
+                                        blurRadius: 8,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
-                                  child: Text(time ?? '00:00', style: AppFonts.baseBold),
+                                  child: Text(
+                                    time ?? '00:00',
+                                    style: AppFonts.baseBold,
+                                  ),
                                 )
                               : SizedBox.shrink(),
                         ],
@@ -320,7 +392,12 @@ class CustomGlassCard extends StatelessWidget {
                     5.spacerV,
                     FigmaContainer(
                       decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: AppColors.baseWhite.withValues(alpha: 0.30), width: 2.15)),
+                        border: Border(
+                          bottom: BorderSide(
+                            color: AppColors.baseWhite.withValues(alpha: 0.30),
+                            width: 2.15,
+                          ),
+                        ),
                       ),
                     ),
                     10.spacerV,
@@ -328,20 +405,39 @@ class CustomGlassCard extends StatelessWidget {
                       padding: appSizer.paddingSymmetric(horizontal: 16),
                       child: Row(
                         children: [
-                          Expanded(flex: 3, child: Text(productName ?? '', style: AppFonts.baseBold)),
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              productName ?? '',
+                              style: AppFonts.baseBold,
+                            ),
+                          ),
                           Expanded(
                             flex: 1,
-                            child: Center(child: Text(total ?? '', style: AppFonts.baseBold)),
+                            child: Center(
+                              child: Text(
+                                total ?? '',
+                                style: AppFonts.baseBold,
+                              ),
+                            ),
                           ),
                           Expanded(
                             flex: 2,
-                            child: Center(child: Text(liter ?? '', style: AppFonts.baseBold)),
+                            child: Center(
+                              child: Text(
+                                liter ?? '',
+                                style: AppFonts.baseBold,
+                              ),
+                            ),
                           ),
                           Expanded(
                             flex: 2,
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: Text(price ?? '', style: AppFonts.baseBold),
+                              child: Text(
+                                price ?? '',
+                                style: AppFonts.baseBold,
+                              ),
                             ),
                           ),
                         ],
@@ -368,7 +464,10 @@ class CustomGlassCard extends StatelessWidget {
           decoration: ShapeDecoration(
             color: Colors.white.withValues(alpha: moreGlass ? 0.50 : 0.15),
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.15, color: Colors.white.withValues(alpha: 0.30)),
+              side: BorderSide(
+                width: 1.15,
+                color: Colors.white.withValues(alpha: 0.30),
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
           ),
@@ -378,26 +477,51 @@ class CustomGlassCard extends StatelessWidget {
                 width: double.infinity,
                 padding: appSizer.paddingAll(14),
                 decoration: ShapeDecoration(
-                  gradient: LinearGradient(colors: [AppColors.tertiary500, AppColors.primary500]),
+                  gradient: LinearGradient(
+                    colors: [AppColors.tertiary500, AppColors.primary500],
+                  ),
                   shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
                   ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: Text(title, style: AppFonts.base2Bold.withColor(AppColors.baseWhite))),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: AppFonts.base2Bold.withColor(
+                          AppColors.baseWhite,
+                        ),
+                      ),
+                    ),
                     if (plate != null)
                       FigmaContainer(
-                        padding: appSizer.paddingSymmetric(horizontal: 10, vertical: 4),
+                        padding: appSizer.paddingSymmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: ShapeDecoration(
                           color: AppColors.baseWhite.withValues(alpha: 0.30),
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(width: 1, color: AppColors.baseWhite.withValues(alpha: 0.30)),
+                            side: BorderSide(
+                              width: 1,
+                              color: AppColors.baseWhite.withValues(
+                                alpha: 0.30,
+                              ),
+                            ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: Text(plate!, style: AppFonts.baseBold.withColor(AppColors.baseWhite)),
+                        child: Text(
+                          plate!,
+                          style: AppFonts.baseBold.withColor(
+                            AppColors.baseWhite,
+                          ),
+                        ),
                       ),
                   ],
                 ),

@@ -4,6 +4,14 @@ class AppColors {
   static const Color background = Color(0xFFF8F9FB);
   static const Color darkModeColor = Color(0xFF181E2C);
 
+  // Açık tema tasarım tokenları (Blinq-esinli yeniden tasarım)
+  static const Color ink = Color(0xFF0F172A); // birincil metin
+  static const Color inkSoft = Color(0xFF64748B); // ikincil metin
+  static const Color inkFaint = Color(0xFF94A3B8); // ipucu/pasif metin
+  static const Color hairline = Color(0xFFE2E8F0); // ince sınırlar
+  static const Color surface = Color(0xFFF8F9FB); // sayfa zemini (üst)
+  static const Color surfaceAlt = Color(0xFFF1F5F9); // dolgu/ikincil zemin
+
   static const Color baseWhite = Color(0xFFFFFFFF);
   static const Color baseBlack = Color(0xFF030712);
   static const Color neutral50 = Color(0xFFF7F8F8);

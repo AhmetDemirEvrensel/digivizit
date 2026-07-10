@@ -8,19 +8,29 @@ class WaterWaveBackground extends StatefulWidget {
   final double waveHeightFactor;
   final Widget? child;
 
-  const WaterWaveBackground({super.key, required this.level, required this.waterColor, this.waveHeightFactor = 0.05, this.child});
+  const WaterWaveBackground({
+    super.key,
+    required this.level,
+    required this.waterColor,
+    this.waveHeightFactor = 0.05,
+    this.child,
+  });
 
   @override
   State<WaterWaveBackground> createState() => _WaterWaveBackgroundState();
 }
 
-class _WaterWaveBackgroundState extends State<WaterWaveBackground> with SingleTickerProviderStateMixin {
+class _WaterWaveBackgroundState extends State<WaterWaveBackground>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 3))..repeat();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
   }
 
   @override
@@ -54,7 +64,12 @@ class _WaterRectPainter extends CustomPainter {
   final Color waterColor;
   final double waveHeightFactor;
 
-  _WaterRectPainter({required this.progress, required this.waterLevel, required this.waterColor, required this.waveHeightFactor});
+  _WaterRectPainter({
+    required this.progress,
+    required this.waterLevel,
+    required this.waterColor,
+    required this.waveHeightFactor,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -64,7 +79,10 @@ class _WaterRectPainter extends CustomPainter {
 
     wavePath.moveTo(0, baseline);
     for (double x = 0; x <= size.width; x++) {
-      final y = baseline + math.sin((x / size.width * 2 * math.pi) + (progress * 2 * math.pi)) * waveHeight;
+      final y =
+          baseline +
+          math.sin((x / size.width * 2 * math.pi) + (progress * 2 * math.pi)) *
+              waveHeight;
       wavePath.lineTo(x, y);
     }
     wavePath.lineTo(size.width, size.height);
@@ -81,6 +99,8 @@ class _WaterRectPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _WaterRectPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.waterLevel != waterLevel || oldDelegate.waterColor != waterColor;
+    return oldDelegate.progress != progress ||
+        oldDelegate.waterLevel != waterLevel ||
+        oldDelegate.waterColor != waterColor;
   }
 }

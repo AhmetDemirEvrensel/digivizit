@@ -17,13 +17,17 @@ class FourRotatingDots extends StatefulWidget {
   _FourRotatingDotsState createState() => _FourRotatingDotsState();
 }
 
-class _FourRotatingDotsState extends State<FourRotatingDots> with SingleTickerProviderStateMixin {
+class _FourRotatingDotsState extends State<FourRotatingDots>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200))..repeat();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    )..repeat();
   }
 
   Widget _rotatingDots({
@@ -92,28 +96,40 @@ class _FourRotatingDotsState extends State<FourRotatingDots> with SingleTickerPr
         children: <Widget>[
           Transform.translate(
             offset: _animationController.eval(
-              Tween<Offset>(begin: Offset(-initialOffset, 0), end: Offset(-finalOffset, 0)),
+              Tween<Offset>(
+                begin: Offset(-initialOffset, 0),
+                end: Offset(-finalOffset, 0),
+              ),
               curve: interval,
             ),
             child: DrawDot.circular(dotSize: dotSize, color: color),
           ),
           Transform.translate(
             offset: _animationController.eval(
-              Tween<Offset>(begin: Offset(initialOffset, 0), end: Offset(finalOffset, 0)),
+              Tween<Offset>(
+                begin: Offset(initialOffset, 0),
+                end: Offset(finalOffset, 0),
+              ),
               curve: interval,
             ),
             child: DrawDot.circular(dotSize: dotSize, color: color),
           ),
           Transform.translate(
             offset: _animationController.eval(
-              Tween<Offset>(begin: Offset(0, -initialOffset), end: Offset(0, -finalOffset)),
+              Tween<Offset>(
+                begin: Offset(0, -initialOffset),
+                end: Offset(0, -finalOffset),
+              ),
               curve: interval,
             ),
             child: DrawDot.circular(dotSize: dotSize, color: color),
           ),
           Transform.translate(
             offset: _animationController.eval(
-              Tween<Offset>(begin: Offset(0, initialOffset), end: Offset(0, finalOffset)),
+              Tween<Offset>(
+                begin: Offset(0, initialOffset),
+                end: Offset(0, finalOffset),
+              ),
               curve: interval,
             ),
             child: DrawDot.circular(dotSize: dotSize, color: color),
@@ -141,7 +157,11 @@ class _FourRotatingDotsState extends State<FourRotatingDots> with SingleTickerPr
             fit: StackFit.expand,
             children: <Widget>[
               Transform.rotate(
-                angle: _animationController.evalDouble(to: math.pi / 8, begin: 0.0, end: 0.18),
+                angle: _animationController.evalDouble(
+                  to: math.pi / 8,
+                  begin: 0.0,
+                  end: 0.18,
+                ),
                 child: _animatingDots(
                   visible: _animationController.value <= 0.18,
                   fixedSize: true,
@@ -149,52 +169,90 @@ class _FourRotatingDotsState extends State<FourRotatingDots> with SingleTickerPr
                   dotInitialSize: dotMaxSize,
                   initialOffset: maxOffset,
                   finalOffset: 0,
-                  interval: const Interval(0.0, 0.18, curve: Curves.easeInQuart),
+                  interval: const Interval(
+                    0.0,
+                    0.18,
+                    curve: Curves.easeInQuart,
+                  ),
                 ),
               ),
               Transform.rotate(
-                angle: _animationController.evalDouble(from: math.pi / 8, to: math.pi / 4, begin: 0.18, end: 0.36),
+                angle: _animationController.evalDouble(
+                  from: math.pi / 8,
+                  to: math.pi / 4,
+                  begin: 0.18,
+                  end: 0.36,
+                ),
                 child: _animatingDots(
-                  visible: _animationController.value >= 0.18 && _animationController.value <= 0.36,
+                  visible:
+                      _animationController.value >= 0.18 &&
+                      _animationController.value <= 0.36,
                   fixedSize: false,
                   color: color,
                   dotInitialSize: dotMaxSize,
                   dotFinalSize: dotMinSize,
                   initialOffset: 0,
                   finalOffset: maxOffset,
-                  interval: const Interval(0.18, 0.36, curve: Curves.easeOutQuart),
+                  interval: const Interval(
+                    0.18,
+                    0.36,
+                    curve: Curves.easeOutQuart,
+                  ),
                 ),
               ),
               _rotatingDots(
-                visible: _animationController.value >= 0.36 && _animationController.value <= 0.60,
+                visible:
+                    _animationController.value >= 0.36 &&
+                    _animationController.value <= 0.60,
                 color: color,
                 dotSize: dotMinSize,
                 initialAngle: math.pi / 4,
                 finalAngle: 7 * math.pi / 4,
-                interval: const Interval(0.36, 0.60, curve: Curves.easeInOutSine),
+                interval: const Interval(
+                  0.36,
+                  0.60,
+                  curve: Curves.easeInOutSine,
+                ),
                 offset: maxOffset,
               ),
               Transform.rotate(
-                angle: _animationController.evalDouble(from: 7 * math.pi / 4, to: 2 * math.pi, begin: 0.6, end: 0.78),
+                angle: _animationController.evalDouble(
+                  from: 7 * math.pi / 4,
+                  to: 2 * math.pi,
+                  begin: 0.6,
+                  end: 0.78,
+                ),
                 child: _animatingDots(
-                  visible: _animationController.value >= 0.60 && _animationController.value <= 0.78,
+                  visible:
+                      _animationController.value >= 0.60 &&
+                      _animationController.value <= 0.78,
                   fixedSize: false,
                   color: color,
                   dotInitialSize: dotMinSize,
                   dotFinalSize: dotMaxSize,
                   initialOffset: maxOffset,
                   finalOffset: 0,
-                  interval: const Interval(0.60, 0.78, curve: Curves.easeInQuart),
+                  interval: const Interval(
+                    0.60,
+                    0.78,
+                    curve: Curves.easeInQuart,
+                  ),
                 ),
               ),
               _animatingDots(
-                visible: _animationController.value >= 0.78 && _animationController.value <= 1.0,
+                visible:
+                    _animationController.value >= 0.78 &&
+                    _animationController.value <= 1.0,
                 fixedSize: true,
                 color: color,
                 dotInitialSize: dotMaxSize,
                 initialOffset: 0,
                 finalOffset: maxOffset,
-                interval: const Interval(0.78, 0.96, curve: Curves.easeOutQuart),
+                interval: const Interval(
+                  0.78,
+                  0.96,
+                  curve: Curves.easeOutQuart,
+                ),
               ),
             ],
           );
