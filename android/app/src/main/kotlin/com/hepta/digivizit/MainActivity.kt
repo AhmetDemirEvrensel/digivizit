@@ -1,4 +1,4 @@
-package com.example.digivizit
+package com.hepta.digivizit
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -219,11 +219,10 @@ extension BusinessCardDetailDataSafeFields on BusinessCardDetailData {
     return _firstValue(values) ?? fallbackMessage;
   }
 
-  List<String> get businessCardImages =>
-      (cards ?? const [])
-          .map((card) => card.url?.trim() ?? '')
-          .where((url) => url.isNotEmpty)
-          .toList();
+  List<String> get businessCardImages => (cards ?? const [])
+      .map((card) => card.url?.trim() ?? '')
+      .where((url) => url.isNotEmpty)
+      .toList();
 
   String? get companyValue => _normalizedText(companyName);
   String? get positionValue => _firstValue(unvan);
@@ -236,10 +235,10 @@ extension BusinessCardDetailDataSafeFields on BusinessCardDetailData {
 
   String? get contactPersonValue {
     final names = _normalizedList(nameSurname);
-    if (names.length <= 1) {
+    if (names.isEmpty) {
       return null;
     }
-    return names.skip(1).join(', ');
+    return names.join(', ');
   }
 
   String? get contactPhoneValue => _firstValue(phoneList) ?? phoneValue;
